@@ -94,6 +94,20 @@ const zh_CN = {
     prom_for_duration_tip:
       '通常持续时长大于执行频率，在持续时长内按照执行频率多次执行PromQL查询，每次都触发才生成告警；如果持续时长置为0，表示只要有一次PromQL查询触发阈值，就生成告警',
   },
+  bind_tag: {
+    title: '绑定标签',
+    placeholder: '标签格式为 key=value ，使用回车或空格分隔',
+    msg1: '请填写至少一项标签！',
+    msg2: '标签格式不正确，请检查！',
+    msg3: '标签 key 不能重复',
+    render_tip1: '标签长度应小于等于 64 位',
+    render_tip2: '标签格式应为 key=value。且 key 以字母或下划线开头，由字母、数字和下划线组成。',
+  },
+  unbind_tag: {
+    title: '解绑标签',
+    placeholder: '请选择要解绑的标签',
+    msg: '请填写至少一项标签！',
+  },
   metric: {
     query: {
       title: '告警条件',

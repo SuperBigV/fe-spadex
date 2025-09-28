@@ -15,7 +15,7 @@
  *
  */
 import React, { useEffect, useState, useCallback, useContext } from 'react';
-import { Modal, Form, Input, Alert, Select, Table, Divider, Checkbox, message } from 'antd';
+import { Modal, Form, Input, Alert, Select, Table, Tag, Tooltip, Divider, Checkbox, message } from 'antd';
 import { DatabaseOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import _, { debounce, set } from 'lodash';
@@ -26,7 +26,7 @@ import ServerList from './List/server';
 import NetworkList from './List/network';
 import BusinessGroup from '../assetModels/BusinessGroup';
 import BusinessGroup2, { getCleanAssetModelIds } from '@/components/BusinessGroup2';
-import { CmdbLifecycle, N9eLifecycle, initTarget, getJumpBusiGroups, fetchInitLog, getGidDetail } from './services';
+import { CmdbLifecycle, N9eLifecycle, initTarget, getJumpBusiGroups, getTargetTags, fetchInitLog, bindTargetsTags, unbindTargetsTags } from './services';
 import './locale';
 import './index.less';
 export { BusinessGroup }; // TODO 部分页面使用的老的业务组组件，后续逐步替换
@@ -36,6 +36,8 @@ interface jumpProps {
   full_value: string;
 }
 enum OperateType {
+  BindTag = 'bindTag',
+  UnbindTag = 'unbindTag',
   Init = 'init',
   Lifecycle = 'lifecycle',
   None = 'none',
@@ -79,6 +81,8 @@ const OperationModal: React.FC<OperateionModalProps> = ({ operateType, setOperat
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const [identList, setIdentList] = useState<string[]>(idents);
+  const [tagsList, setTagsList] = useState<string[]>([]);
+  const detailProp = operateType === OperateType.UnbindTag ? tagsList : [];
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
   const [jumpBusiGroups, setJumpBusiGroups] = useState<jumpProps[]>([]);
   const [initText, setInitText] = useState<any>();
@@ -157,6 +161,89 @@ const OperationModal: React.FC<OperateionModalProps> = ({ operateType, setOperat
       },
     };
   };
+  const bindTagDetail = () => {
+    // 校验单个标签格式是否正确
+    function isTagValid(tag) {
+      const contentRegExp = /^[a-zA-Z_][\w]*={1}[^=]+$/;
+      return {
+        isCorrectFormat: contentRegExp.test(tag.toString()),
+        isLengthAllowed: tag.toString().length <= 64,
+      };
+    }
+
+    // 渲染标签
+    function tagRender(content) {
+      const { isCorrectFormat, isLengthAllowed } = isTagValid(content.value);
+      return isCorrectFormat && isLengthAllowed ? (
+        <Tag closable={content.closable} onClose={content.onClose}>
+          {content.value}
+        </Tag>
+      ) : (
+        <Tooltip title={isCorrectFormat ? t('bind_tag.render_tip1') : t('bind_tag.render_tip2')}>
+          <Tag color='error' closable={content.closable} onClose={content.onClose} style={{ marginTop: '2px' }}>
+            {content.value}
+          </Tag>
+        </Tooltip>
+      );
+    }
+
+    // 校验所有标签格式
+    function isValidFormat() {
+      return {
+        validator(_, value) {
+          const isInvalid = value.some((tag) => {
+            const { isCorrectFormat, isLengthAllowed } = isTagValid(tag);
+            if (!isCorrectFormat || !isLengthAllowed) {
+              return true;
+            }
+          });
+          const tagkeys = value.map((tag) => {
+            const tagkey = tag.split('=')[0];
+            return tagkey;
+          });
+          const isDuplicateKey = tagkeys.some((tagkey, index) => {
+            return tagkeys.indexOf(tagkey) !== index;
+          });
+          if (isInvalid) {
+            return Promise.reject(new Error(t('bind_tag.msg2')));
+          }
+          if (isDuplicateKey) {
+            return Promise.reject(new Error(t('bind_tag.msg3')));
+          }
+          return Promise.resolve();
+        },
+      };
+    }
+
+    return {
+      operateTitle: t('bind_tag.title'),
+      requestFunc: bindTargetsTags,
+      isFormItem: true,
+      render() {
+        return (
+          <Form.Item label={t('common:table.tag')} name='tags' rules={[{ required: true, message: t('bind_tag.msg1') }, isValidFormat]}>
+            <Select mode='tags' tokenSeparators={[' ']} open={false} placeholder={t('bind_tag.placeholder')} tagRender={tagRender} />
+          </Form.Item>
+        );
+      },
+    };
+  };
+
+  // 解绑标签弹窗内容
+  const unbindTagDetail = (tagsList) => {
+    return {
+      operateTitle: t('unbind_tag.title'),
+      requestFunc: unbindTargetsTags,
+      isFormItem: true,
+      render() {
+        return (
+          <Form.Item label={t('common:table.tag')} name='tags' rules={[{ required: true, message: t('unbind_tag.msg') }]}>
+            <Select mode='multiple' showArrow={true} placeholder={t('unbind_tag.placeholder')} options={tagsList.map((tag) => ({ label: tag, value: tag }))} />
+          </Form.Item>
+        );
+      },
+    };
+  };
   const initTargetHandler = (data) => {
     initTarget(data).then((res) => {
       fetchInitText(res.dat);
@@ -225,6 +312,8 @@ const OperationModal: React.FC<OperateionModalProps> = ({ operateType, setOperat
   const operateDetail = {
     lifecycleDetail,
     initDetail,
+    bindTagDetail,
+    unbindTagDetail,
     noneDetail: () => ({
       operateTitle: '',
       requestFunc() {
@@ -234,7 +323,7 @@ const OperationModal: React.FC<OperateionModalProps> = ({ operateType, setOperat
       render() {},
     }),
   };
-  const { operateTitle, requestFunc, isFormItem, render } = operateDetail[`${operateType}Detail`]();
+  const { operateTitle, requestFunc, isFormItem, render } = operateDetail[`${operateType}Detail`](detailProp);
   const onCheckboxChange = (checkedValues) => {
     setCheckedValues(checkedValues);
   };
@@ -243,7 +332,11 @@ const OperationModal: React.FC<OperateionModalProps> = ({ operateType, setOperat
       setConfirmLoading(true);
       data.idents = data.idents.split('\n');
       requestFunc(data);
+      message.success(t('操作成功'));
+      setConfirmLoading(false);
+      // setConfirmLoading(false);
       reloadList();
+      setOperateType(OperateType.None);
     });
   }
   function formatValue() {
@@ -269,6 +362,19 @@ const OperationModal: React.FC<OperateionModalProps> = ({ operateType, setOperat
       });
     }
   }, [operateType, idents]);
+  useEffect(() => {
+    if (operateType === OperateType.UnbindTag && identList.length) {
+      getTargetTags({ idents: identList.join(','), ignore_host_tag: true }).then(({ dat }) => {
+        // 删除多余的选中标签
+        const curSelectedTags = form.getFieldValue('tags') || [];
+        form.setFieldsValue({
+          tags: curSelectedTags.filter((tag) => dat.includes(tag)),
+        });
+
+        setTagsList(dat);
+      });
+    }
+  }, [operateType, identList]);
   return (
     <Modal
       open={operateType !== 'none'}

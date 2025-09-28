@@ -216,7 +216,7 @@ const CreateModal: React.FC<AssetModalProps> = (props: AssetModalProps) => {
               <Select>
                 {[
                   { id: -1, name: '设备型号' },
-                  { id: -2, name: '监控分组' },
+                  { id: -2, name: '业务分组' },
                   { id: -3, name: '认证配置' },
                 ]
                   .concat(assetModels)

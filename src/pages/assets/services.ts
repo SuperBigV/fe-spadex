@@ -17,6 +17,7 @@
 import _ from 'lodash';
 import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
+import { bindTags, unbindTags } from '@/services/targets';
 export const getGidDetail = (id: string) => {
   return request(`/cmdb/asset-model/${id}`, {
     method: RequestMethod.Get,
@@ -67,5 +68,34 @@ export function getJumpBusiGroups(params) {
   return request(`/cmdb/busi-group/jump`, {
     method: RequestMethod.Get,
     params,
+  });
+}
+
+export function bindTargetsTags(data) {
+  console.log('A####:', data);
+  return bindTagsCMDB(data);
+}
+
+export function unbindTargetsTags(data) {
+  return unbindTagsCMDB(data);
+}
+export function bindTagsCMDB(data) {
+  return bindOrUnbindTags(true, data);
+}
+
+export function unbindTagsCMDB(data) {
+  return bindOrUnbindTags(false, data);
+}
+export function getTargetTags(params) {
+  return request(`/api/n9e/targets/tags`, {
+    method: RequestMethod.Get,
+    params,
+  });
+}
+
+export function bindOrUnbindTags(isBind, data) {
+  return request(`/cmdb/targets/tags`, {
+    method: isBind ? RequestMethod.Post : RequestMethod.Delete,
+    data,
   });
 }

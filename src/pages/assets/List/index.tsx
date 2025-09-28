@@ -35,6 +35,8 @@ enum OperateType {
   Init = 'init',
   Lifecycle = 'lifecycle',
   None = 'none',
+  BindTag = 'bindTag',
+  UnbindTag = 'unbindTag',
 }
 export interface IProps {
   isLeaf?: boolean;
@@ -1181,6 +1183,8 @@ export default function AssetList(props: IProps) {
                           }
                         }}
                       >
+                        <Menu.Item key={OperateType.BindTag}>{'绑定标签'}</Menu.Item>
+                        <Menu.Item key={OperateType.UnbindTag}>{'解绑标签'}</Menu.Item>
                         <Menu.Item key={OperateType.Init}>{'初始化'}</Menu.Item>
                         <Menu.Item key={OperateType.Lifecycle}>{'生命周期'}</Menu.Item>
                       </Menu>
