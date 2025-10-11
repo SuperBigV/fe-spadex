@@ -347,6 +347,7 @@ const Resource: React.FC = () => {
         visible={visible}
         action={action as ActionType}
         userType={'business'}
+        grp_type='busi'
         onClose={handleClose}
         teamId={Number(teamId)}
         onSearch={(val) => {

@@ -63,6 +63,10 @@ export const getMenuList = (t) => {
           label: '资产管理',
         },
         {
+          key: '/busi-groups',
+          label: t('软件管理'),
+        },
+        {
           key: '/ips',
           label: t('IP管理'),
         },
@@ -71,19 +75,19 @@ export const getMenuList = (t) => {
     {
       key: 'targets',
       icon: <IconFont type='icon-Menu_Infrastructure' />,
-      label: '业务中心',
+      label: '监控管理',
       children: [
         {
           key: '/targets',
-          label: '主机列表',
+          label: '业务软件',
+        },
+        {
+          key: '/net-targets',
+          label: '网络设备',
         },
         {
           key: '/business',
           label: '采集配置',
-        },
-        {
-          key: '/busi-groups',
-          label: t('业务分组'),
         },
       ],
     },

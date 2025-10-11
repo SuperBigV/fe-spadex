@@ -72,7 +72,6 @@ export function getJumpBusiGroups(params) {
 }
 
 export function bindTargetsTags(data) {
-  console.log('A####:', data);
   return bindTagsCMDB(data);
 }
 
@@ -80,10 +79,12 @@ export function unbindTargetsTags(data) {
   return unbindTagsCMDB(data);
 }
 export function bindTagsCMDB(data) {
+  bindTags(data);
   return bindOrUnbindTags(true, data);
 }
 
 export function unbindTagsCMDB(data) {
+  unbindTags(data);
   return bindOrUnbindTags(false, data);
 }
 export function getTargetTags(params) {

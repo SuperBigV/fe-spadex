@@ -91,7 +91,7 @@ const UserForm = React.forwardRef<ReactNode, ModelMetricFormProps>((props, ref) 
       <Form.Item label={'oid'} name='oid'>
         <Input />
       </Form.Item>
-      <Form.Item label={'查询方法'} name='method'>
+      {/* <Form.Item label={'查询方法'} name='method'>
         <Select>
           {methodList.map((item, index) => (
             <Option value={item.name} key={index}>
@@ -102,7 +102,7 @@ const UserForm = React.forwardRef<ReactNode, ModelMetricFormProps>((props, ref) 
             </Option>
           ))}
         </Select>
-      </Form.Item>
+      </Form.Item> */}
     </Form>
   ) : null;
 });

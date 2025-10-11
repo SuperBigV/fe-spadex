@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Table, Spin, message, Dropdown, Menu, Modal, Tag, Popconfirm, Checkbox, Button, Row, Col, Input, Image, Tooltip, Space } from 'antd';
 import { MoreOutlined, SearchOutlined, DownOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
-import { getColumnsByGid, getGidDetail, getByGidAssetsList, addAsset, editAsset, targetControlPost, getTargetPassword, getRacks } from './services'; // 假设这两个函数用于获取表格列和数据
+import { getColumnsByGid, getGidDetail, getByGidAssetsList, addAsset, addAssetToN9e, editAsset, targetControlPost, getTargetPassword, getRacks } from './services'; // 假设这两个函数用于获取表格列和数据
 import _, { includes, set } from 'lodash';
 import moment from 'moment';
 import { ColumnsType } from 'antd/es/table';
@@ -645,12 +645,24 @@ export default function AssetList(props: IProps) {
         value: item.id,
       }));
       setRackOptions(options4);
-      const busiOptions = await getBusiGroups();
-      const options2 = busiOptions.dat.map((item) => ({
-        label: item.name,
-        value: item.id,
-      }));
-      setBusiOptions(options2);
+      let busiOptions;
+      let options2;
+      if (modelGroupDetail && modelGroupDetail.uniqueIdentifier.includes('net_')) {
+        busiOptions = await getBusiGroups('', 1000, 'net');
+        options2 = busiOptions.dat.map((item) => ({
+          label: item.name,
+          value: item.id,
+        }));
+        setBusiOptions(options2);
+      } else {
+        busiOptions = await getBusiGroups();
+        options2 = busiOptions.dat.map((item) => ({
+          label: item.name,
+          value: item.id,
+        }));
+        setBusiOptions(options2);
+      }
+
       const authOptions = await getAuthConfigs();
       const options3 = authOptions.map((item) => ({
         label: item.name,
@@ -1088,7 +1100,7 @@ export default function AssetList(props: IProps) {
                                 {'改名'}
                               </Button>
                             </Menu.Item>
-                            <Menu.Item onClick={() => handleClick(ControlType.Showpassword, row.id)}>
+                            <Menu.Item>
                               <Button size='small' type='link' style={{ padding: 0 }} onClick={() => showPassword(row.id)}>
                                 {'查看密码'}
                               </Button>
@@ -1209,12 +1221,15 @@ export default function AssetList(props: IProps) {
                         operateType: 'create',
                         onOk: (values) => {
                           // values.data.category = groupName;
-                          return addAsset(gids, values).then(() => {
+                          let id;
+                          return addAsset(gids, values).then((data) => {
+                            id = data.dat;
                             run({
                               current: tableProps.pagination.current,
                               pageSize: tableProps.pagination.pageSize,
                             });
                             message.success(t('common:success.create'));
+                            addAssetToN9e(id, assetModel.uniqueIdentifier, values);
                           });
                         },
                       });

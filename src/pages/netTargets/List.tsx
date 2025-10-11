@@ -14,7 +14,6 @@ import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import { useHistory, Link } from 'react-router-dom';
-import InitModal from './controlModal/init';
 import { useAntdTable } from 'ahooks';
 import _ from 'lodash';
 import moment from 'moment';
@@ -22,7 +21,6 @@ import { useTranslation, Trans } from 'react-i18next';
 import { initTarget, getMonObjectList, postTarget, putTarget, getJumpBusiGroups } from '@/services/targets';
 import { timeFormatter } from '@/pages/dashboard/Renderer/utils/valueFormatter';
 import { CommonStateContext } from '@/App';
-import clipboard from './clipboard';
 import OrganizeColumns from './OrganizeColumns';
 import { getDefaultColumnsConfigs, setDefaultColumnsConfigs } from './utils';
 import TargetMetaDrawer from './TargetMetaDrawer';
@@ -54,7 +52,16 @@ enum OperateType {
   InitTarget = 'init',
   None = 'none',
 }
-
+export interface ITargetProps {
+  id: number;
+  cluster: string;
+  group_id: number;
+  group_objs: object[] | null;
+  ident: string;
+  note: string;
+  tags: string[];
+  update_at: number;
+}
 enum OperateLife {
   Offline = 'offline',
   Scrap = 'scrap',
@@ -167,18 +174,6 @@ export default function List(props: IProps) {
                     message.warn(t('copy.no_data'));
                     return;
                   }
-
-                  const tobeCopyStr = _.join(tobeCopy, '\n');
-                  const copySucceeded = clipboard(tobeCopyStr);
-
-                  if (copySucceeded) {
-                    message.success(t('ident_copy_success', { num: tobeCopy.length }));
-                  } else {
-                    Modal.warning({
-                      title: t('host.copy.error'),
-                      content: <Input.TextArea defaultValue={tobeCopyStr} />,
-                    });
-                  }
                 }}
               >
                 <Menu.Item key='current_page'>{t('copy.current_page')}</Menu.Item>
@@ -196,7 +191,7 @@ export default function List(props: IProps) {
         </Space>
       ),
       dataIndex: 'ident',
-      width: 220,
+      width: 180,
       className: 'n9e-hosts-table-column-ident',
       render: (text, record) => {
         return (
@@ -228,21 +223,7 @@ export default function List(props: IProps) {
         className: 'n9e-hosts-table-column-ip',
       });
     }
-    // if (item.name === 'ident_type') {
-    //   columns.push({
-    //     title: '类型',
-    //     dataIndex: 'ident_type',
-    //     width: 80,
-    //     className: 'n9e-hosts-table-column-ip',
-    //     render(typ) {
-    //       return (
-    //         <Tag color='purple' key={typ}>
-    //           {itemMap[typ]}
-    //         </Tag>
-    //       );
-    //     },
-    //   });
-    // }
+
     if (item.name === 'life_status') {
       columns.push({
         title: (
@@ -277,44 +258,28 @@ export default function List(props: IProps) {
         },
       });
     }
-    if (item.name === 'host_tags') {
+
+    if (item.name === 'group_obj') {
       columns.push({
-        title: (
-          <Space>
-            {t('common:host.host_tags')}
-            <Tooltip title={t('common:host.host_tags_tip')}>
-              <InfoCircleOutlined />
-            </Tooltip>
-          </Space>
-        ),
-        width: 100,
-        dataIndex: 'host_tags',
+        title: t('group_obj'),
+        dataIndex: 'group_objs',
         className: 'n9e-hosts-table-column-tags',
         ellipsis: {
           showTitle: false,
         },
+        width: 120,
         render(tagArr) {
+          if (_.isEmpty(tagArr)) return t('common:not_grouped');
           const content =
             tagArr &&
             tagArr.map((item) => (
-              <Tag
-                color='purple'
-                key={item}
-                onClick={(e) => {
-                  if (!tableQueryContent.includes(item)) {
-                    isAddTagToQueryInput.current = true;
-                    const val = tableQueryContent ? `${tableQueryContent.trim()} ${item}` : item;
-                    setTableQueryContent(val);
-                    setSearchVal(val);
-                  }
-                }}
-              >
-                {item}
+              <Tag color='purple' key={item.name}>
+                {item.name}
               </Tag>
             ));
           return (
             tagArr && (
-              <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body} overlayClassName='mon-manage-table-tooltip'>
+              <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body}>
                 {content}
               </Tooltip>
             )
@@ -322,6 +287,106 @@ export default function List(props: IProps) {
         },
       });
     }
+    if (item.name === 'mem_util') {
+      columns.push({
+        title: t('内存使用率'),
+        dataIndex: 'mem_util',
+        width: 100,
+        render(text, reocrd) {
+          if (reocrd.cpu_num === -1) return <Unknown />;
+          let backgroundColor = GREEN_COLOR;
+          if (text > 70) {
+            backgroundColor = YELLOW_COLOR;
+          }
+          if (text > 85) {
+            backgroundColor = RED_COLOR;
+          }
+          if (reocrd.target_up === 0) {
+            backgroundColor = LOST_COLOR;
+          }
+
+          return (
+            <div
+              className='table-td-fullBG'
+              style={{
+                backgroundColor: backgroundColor,
+              }}
+            >
+              {_.floor(text, 1)}%
+            </div>
+          );
+        },
+      });
+    }
+    if (item.name === 'cpu_util') {
+      columns.push({
+        title: t('CPU使用率'),
+        width: 100,
+        dataIndex: 'cpu_util',
+        render(text, reocrd) {
+          if (reocrd.cpu_num === -1) return <Unknown />;
+          let backgroundColor = GREEN_COLOR;
+          if (text > 70) {
+            backgroundColor = YELLOW_COLOR;
+          }
+          if (text > 85) {
+            backgroundColor = RED_COLOR;
+          }
+          if (reocrd.target_up === 0) {
+            backgroundColor = LOST_COLOR;
+          }
+          return (
+            <div
+              className='table-td-fullBG'
+              style={{
+                backgroundColor: backgroundColor,
+              }}
+            >
+              {_.floor(text, 1)}%
+            </div>
+          );
+        },
+      });
+    }
+
+    if (item.name === 'update_at') {
+      columns.push({
+        title: (
+          <Space>
+            {'监控状态'}
+            <Tooltip title={<Trans ns='targets' i18nKey='update_at_tip' components={{ 1: <br /> }} />}>
+              <InfoCircleOutlined />
+            </Tooltip>
+          </Space>
+        ),
+        width: 120,
+        sorter: true,
+        dataIndex: 'update_at',
+        render: (val, reocrd) => {
+          let result = '正常';
+          let backgroundColor = GREEN_COLOR;
+          if (reocrd.target_up === 0) {
+            backgroundColor = RED_COLOR;
+            result = '失联';
+          } else if (reocrd.target_up === 1) {
+            backgroundColor = YELLOW_COLOR;
+            result = '异常';
+          }
+          return (
+            <div
+              className='table-td-fullBG'
+              style={{
+                backgroundColor,
+              }}
+            >
+              {result}
+            </div>
+          );
+        },
+      });
+    }
+
+    extraColumns(item.name, columns);
     if (item.name === 'tags') {
       columns.push({
         title: (
@@ -367,258 +432,30 @@ export default function List(props: IProps) {
         },
       });
     }
-    if (item.name === 'group_obj') {
-      columns.push({
-        title: t('group_obj'),
-        dataIndex: 'group_objs',
-        className: 'n9e-hosts-table-column-tags',
-        ellipsis: {
-          showTitle: false,
-        },
-        width: 120,
-        render(tagArr) {
-          if (_.isEmpty(tagArr)) return t('common:not_grouped');
-          const content =
-            tagArr &&
-            tagArr.map((item) => (
-              <Tag color='purple' key={item.name}>
-                {item.name}
-              </Tag>
-            ));
-          return (
-            tagArr && (
-              <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body}>
-                {content}
-              </Tooltip>
-            )
-          );
-        },
-      });
-    }
-    if (item.name === 'mem_util') {
-      columns.push({
-        title: t('mem_util'),
-        dataIndex: 'mem_util',
-        width: 100,
-        render(text, reocrd) {
-          if (reocrd.cpu_num === -1) return <Unknown />;
-          let backgroundColor = GREEN_COLOR;
-          if (text > 70) {
-            backgroundColor = YELLOW_COLOR;
-          }
-          if (text > 85) {
-            backgroundColor = RED_COLOR;
-          }
-          if (reocrd.target_up === 0) {
-            backgroundColor = LOST_COLOR;
-          }
-
-          return (
-            <div
-              className='table-td-fullBG'
-              style={{
-                backgroundColor: backgroundColor,
-              }}
-            >
-              {_.floor(text, 1)}%
-            </div>
-          );
-        },
-      });
-    }
-    if (item.name === 'cpu_util') {
-      columns.push({
-        title: t('cpu_util'),
-        width: 100,
-        dataIndex: 'cpu_util',
-        render(text, reocrd) {
-          if (reocrd.cpu_num === -1) return <Unknown />;
-          let backgroundColor = GREEN_COLOR;
-          if (text > 70) {
-            backgroundColor = YELLOW_COLOR;
-          }
-          if (text > 85) {
-            backgroundColor = RED_COLOR;
-          }
-          if (reocrd.target_up === 0) {
-            backgroundColor = LOST_COLOR;
-          }
-          return (
-            <div
-              className='table-td-fullBG'
-              style={{
-                backgroundColor: backgroundColor,
-              }}
-            >
-              {_.floor(text, 1)}%
-            </div>
-          );
-        },
-      });
-    }
-    if (item.name === 'cpu_num') {
-      columns.push({
-        title: t('cpu_num'),
-        width: 100,
-        dataIndex: 'cpu_num',
-        render: (val, reocrd) => {
-          if (reocrd.cpu_num === -1) return <Unknown />;
-          return val;
-        },
-      });
-    }
-    if (item.name === 'offset') {
-      columns.push({
-        title: (
-          <Space>
-            {t('offset')}
-            <Tooltip title={t('offset_tip')}>
-              <InfoCircleOutlined />
-            </Tooltip>
-          </Space>
-        ),
-        dataIndex: 'offset',
-        render(text, reocrd) {
-          if (reocrd.cpu_num === -1) return <Unknown />;
-          let backgroundColor = RED_COLOR;
-          if (Math.abs(text) < 2000) {
-            backgroundColor = YELLOW_COLOR;
-          }
-          if (Math.abs(text) < 1000) {
-            backgroundColor = GREEN_COLOR;
-          }
-          if (reocrd.target_up === 0) {
-            backgroundColor = LOST_COLOR;
-          }
-          return (
-            <div
-              className='table-td-fullBG'
-              style={{
-                backgroundColor: backgroundColor,
-              }}
-            >
-              {timeFormatter(text, 'milliseconds', 2)?.text}
-            </div>
-          );
-        },
-      });
-    }
-    if (item.name === 'os') {
-      columns.push({
-        title: t('os'),
-        dataIndex: 'os',
-        width: 100,
-        render: (val, reocrd) => {
-          if (reocrd.cpu_num === -1) return <Unknown />;
-          return val;
-        },
-      });
-    }
-    if (item.name === 'arch') {
-      columns.push({
-        title: t('arch'),
-        width: 100,
-        dataIndex: 'arch',
-        render: (val, reocrd) => {
-          if (reocrd.cpu_num === -1) return <Unknown />;
-          return val;
-        },
-      });
-    }
-    if (item.name === 'update_at') {
-      columns.push({
-        title: (
-          <Space>
-            {'监控状态'}
-            <Tooltip title={<Trans ns='targets' i18nKey='update_at_tip' components={{ 1: <br /> }} />}>
-              <InfoCircleOutlined />
-            </Tooltip>
-          </Space>
-        ),
-        width: 120,
-        sorter: true,
-        dataIndex: 'update_at',
-        render: (val, reocrd) => {
-          let result = '正常';
-          let backgroundColor = GREEN_COLOR;
-          if (reocrd.target_up === 0) {
-            backgroundColor = RED_COLOR;
-            result = '失联';
-          } else if (reocrd.target_up === 1) {
-            backgroundColor = YELLOW_COLOR;
-            result = '异常';
-          }
-          return (
-            <div
-              className='table-td-fullBG'
-              style={{
-                backgroundColor,
-              }}
-            >
-              {result}
-            </div>
-          );
-        },
-      });
-    }
-    if (item.name === 'remote_addr') {
-      columns.push({
-        title: (
-          <Space>
-            {t('remote_addr')}
-            <Tooltip title={t('remote_addr_tip')}>
-              <InfoCircleOutlined />
-            </Tooltip>
-          </Space>
-        ),
-        width: 100,
-        dataIndex: 'remote_addr',
-        render: (val, reocrd) => {
-          if (reocrd.cpu_num === -1) return <Unknown />;
-          return val;
-        },
-      });
-    }
-    extraColumns(item.name, columns);
-    if (item.name === 'note') {
-      columns.push({
-        title: t('common:table.note'),
-        dataIndex: 'note',
-        ellipsis: {
-          showTitle: false,
-        },
-        render(note) {
-          return (
-            <Tooltip title={note} placement='topLeft' getPopupContainer={() => document.body}>
-              {note}
-            </Tooltip>
-          );
-        },
-      });
-    }
     if (item.name === 'operation') {
       columns.push({
         title: t('操作'),
         width: 100,
-        render: (val, reocrd) => {
+        render: (row) => {
           return (
             <>
               <Space>
                 <Button
-                  onClick={() => {
-                    handleClick('rename', reocrd);
-                  }}
-                  className='p0 height-auto'
+                  size='small'
                   type='link'
+                  style={{ padding: 0 }}
+                  onClick={() => {
+                    history.push(`/ident/${row.asset_id}/${row.ident}/terminal/net_switch`);
+                  }}
                 >
-                  {'改名'}
+                  {'远程连接'}
                 </Button>
               </Space>
-              {reocrd.life_status !== 'maintain' && (
+              {row.life_status !== 'maintain' && (
                 <Space>
                   <Button
                     onClick={() => {
-                      handleLifecycleClick('maintain', reocrd);
+                      handleLifecycleClick('maintain', row);
                     }}
                     danger
                     className='p0 height-auto'
@@ -628,11 +465,11 @@ export default function List(props: IProps) {
                   </Button>
                 </Space>
               )}
-              {reocrd.life_status === 'maintain' && (
+              {row.life_status === 'maintain' && (
                 <Space>
                   <Button
                     onClick={() => {
-                      handleLifecycleClick('normal', reocrd);
+                      handleLifecycleClick('normal', row);
                     }}
                     className='p0 height-auto'
                     type='link'
@@ -763,101 +600,11 @@ export default function List(props: IProps) {
             }}
           />
 
-          <Select
-            allowClear
-            placeholder={t('filterDowntime')}
-            style={{ width: 'max-content' }}
-            dropdownMatchSelectWidth={false}
-            options={[
-              {
-                label: t('filterDowntimeNegative'),
-                options: _.map(downtimeOptions, (item) => {
-                  return {
-                    label: t('filterDowntimeNegativeMin', { count: item }),
-                    value: -(item * 60),
-                  };
-                }),
-              },
-              {
-                label: t('filterDowntimePositive'),
-                options: _.map(downtimeOptions, (item) => {
-                  return {
-                    label: t('filterDowntimePositiveMin', { count: item }),
-                    value: item * 60,
-                  };
-                }),
-              },
-            ]}
-            value={downtime}
-            onChange={(val) => {
-              setDowntime(val);
-            }}
-          />
           <VersionSelect
             value={agentVersions}
             onChange={(val) => {
               setAgentVersions(val);
             }}
-          />
-        </Space>
-
-        <Space>
-          {editable && (
-            <>
-              <Dropdown
-                trigger={['click']}
-                overlay={
-                  <Menu
-                    onClick={({ key }) => {
-                      if (key && setOperateType) {
-                        setOperateType(key as OperateType);
-                      }
-                    }}
-                  >
-                    <Menu.Item key={OperateType.BindTag}>{t('bind_tag.title')}</Menu.Item>
-                    <Menu.Item key={OperateType.UnbindTag}>{t('unbind_tag.title')}</Menu.Item>
-                    <Menu.Item key='EditBusinessGroups'>
-                      <EditBusinessGroups
-                        gids={gids}
-                        idents={selectedIdents}
-                        selectedRows={selectedRows}
-                        onOk={() => {
-                          setRefreshFlag(_.uniqueId('refreshFlag_'));
-                          setSelectedRows([]);
-                        }}
-                      />
-                    </Menu.Item>
-                    <Menu.Item key={OperateType.UpdateNote}>{t('update_note.title')}</Menu.Item>
-                    <Menu.Item key={OperateType.Delete}>{t('batch_delete.title')}</Menu.Item>
-                    <Menu.Item key='UpgradeAgent'>
-                      <UpgradeAgent
-                        selectedIdents={selectedIdents}
-                        onOk={() => {
-                          setRefreshFlag(_.uniqueId('refreshFlag_'));
-                        }}
-                      />
-                    </Menu.Item>
-                  </Menu>
-                }
-              >
-                <Button>
-                  {t('common:btn.batch_operations')} <DownOutlined />
-                </Button>
-              </Dropdown>
-            </>
-          )}
-          {explorable && <Explorer selectedIdents={selectedIdents} />}
-          <Button
-            onClick={() => {
-              OrganizeColumns({
-                value: columnsConfigs,
-                onChange: (val) => {
-                  setColumnsConfigs(val);
-                  setDefaultColumnsConfigs(val);
-                },
-              });
-            }}
-            icon={<EyeOutlined />}
           />
         </Space>
       </div>

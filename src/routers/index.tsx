@@ -79,6 +79,7 @@ import AuthConfigs from '@/pages/authConfigs';
 import SiteSettings from '@/pages/siteSettings';
 import BusiLineQA from '@/pages/busiLine/qa';
 import IdentTerminal from '@/pages/identTerminal';
+import NetTargets from '@/pages/netTargets';
 import { dynamicPackages, Entry, dynamicPages } from '@/utils';
 // @ts-ignore
 import { Jobs as StrategyBrain } from 'plus:/datasource/anomaly';
@@ -170,7 +171,6 @@ export default function Content() {
         <Route path='/asset-models' component={AssetModels} />
         <Route path='/asset-icons' component={AssetIcons} />
         <Route path='/asset-list' component={AssetList} />
-        <Route path='/asset-list' component={AssetList} />
         <Route path='/ips' component={IpManage} />
 
         <Route exact path='/alert-rules/add/:bgid' component={AlertRuleAdd} />
@@ -196,6 +196,7 @@ export default function Content() {
         <Route exact path='/alert-cur-events/:eventId' component={EventDetail} />
         <Route exact path='/alert-his-events/:eventId' component={EventDetail} />
         <Route exact path='/targets' component={Targets} />
+        <Route exact path='/net-targets' component={NetTargets} />
         <Route exact path='/business' component={BusiLine} />
         <Route exact path='/busi-topology' component={BusiLineQA} />
 

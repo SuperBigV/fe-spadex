@@ -18,6 +18,7 @@ import _ from 'lodash';
 import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 import { RASConfig } from '../types';
+import { addTarget, editTarget } from '@/services/manage';
 export const getColumnsByGid = (id: string) => {
   return request(`/cmdb/${id}/columns`, {
     method: RequestMethod.Get,
@@ -68,6 +69,20 @@ export const getRacksByRoomId = (id) => {
     method: RequestMethod.Get,
   });
 };
+export const addAssetToN9e = function (id, grp, data) {
+  const n9eData = {
+    ident: data.data.name,
+    host_ip: data.data.ip,
+    group_ids: data.data.busi,
+    ident_type: grp,
+    asset_id: id,
+    attr: {
+      device_model_id: data.data.model,
+    },
+  };
+  console.log('n9eData:', n9eData);
+  return addTarget(n9eData);
+};
 export const addAsset = function (gid, data) {
   return request(`/cmdb/asset/${gid}`, {
     method: RequestMethod.Post,
@@ -94,6 +109,17 @@ export const targetControlPost = function (data) {
   });
 };
 export const editAsset = function (id, data) {
+  const n9eData = {
+    ident: data.data.name,
+    host_ip: data.data.ip,
+    group_ids: data.data.busi,
+    asset_id: id,
+    attr: {
+      device_model_id: data.data.model,
+    },
+  };
+  console.log('n9eData:', n9eData, 'data:', data);
+  editTarget(n9eData);
   return request(`/cmdb/asset/${id}`, {
     method: RequestMethod.Put,
     data,

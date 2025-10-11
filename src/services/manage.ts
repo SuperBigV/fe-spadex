@@ -247,7 +247,7 @@ export const addTarget = function (data: object) {
   }).then((res) => res && res.dat);
 };
 
-export const editTarget = function (data: object) {
+export const editTarget = function (data) {
   return request(`/api/n9e/target`, {
     method: RequestMethod.Put,
     data,

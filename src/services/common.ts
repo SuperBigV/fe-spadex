@@ -32,7 +32,7 @@ export function getDatasourceBriefList(): Promise<{ name: string; id: number; pl
     });
 }
 
-export function getBusiGroups(query = '', limit: number = 5000, gtp: string = '') {
+export function getBusiGroups(query = '', limit: number = 5000, typ: string = 'busi') {
   return request(`/api/n9e/busi-groups`, {
     method: RequestMethod.Get,
     params: Object.assign(
@@ -40,7 +40,7 @@ export function getBusiGroups(query = '', limit: number = 5000, gtp: string = ''
         limit,
       },
       query ? { query } : {},
-      gtp ? { gtp } : {},
+      typ ? { typ } : {},
     ),
   }).then((res) => {
     return {
@@ -71,6 +71,7 @@ export function getAssetModels(query = '', limit: number = 5000) {
     };
   });
 }
+
 export function getBusiGroupsForChBusi(query = '', limit: number = 5000, gtp: string = '') {
   return request(`/api/n9e/busi-groups/ch-busi`, {
     method: RequestMethod.Get,

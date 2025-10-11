@@ -32,6 +32,7 @@ import { getLicense } from '@/components/AdvancedWrap';
 import { getVersions } from '@/components/pageLayout/Version/services';
 import { getCleanBusinessGroupIds, getDefaultBusiness, getVaildBusinessGroup } from '@/components/BusinessGroup';
 import { getCleanAssetModelIds, getDefaultAssetModel, getVaildAssetModel } from '@/components/BusinessGroup2';
+import { getCleanNetGroupIds, getDefaultNetGroup, getVaildNetGroup } from '@/components/BusinessNetGroup';
 // import { getCleanAssetGroupIds, getVaildAssetGroup } from '@/components/BusinessGroupAsset';
 import { getCleanModelGroupIds, getDefaultModel, getVaildModelGroup } from '@/components/ModelGroup';
 import Feedback from '@/components/Feedback';
@@ -90,9 +91,22 @@ export interface ICommonState {
     id: number;
     label_value?: string;
   }[];
+  netGroups: {
+    name: string;
+    id: number;
+  }[];
+  setNetGroups: (groups: { name: string; id: number }[]) => void;
+
   setModelGroups: (groups: { name: string; id: number }[]) => void;
   curBusiId: number;
   setCurBusiId: (id: number) => void;
+  netGroup: {
+    key?: string; // 业务组组件本身的key
+    ids?: string; // 逗号分割 'id1,id2,id3'
+    id?: number; // 叶子节点的id 用于兼容旧的代码
+    isLeaf?: boolean;
+  };
+  setNetGroup: (group: { key?: string; ids?: string; id?: number; isLeaf?: boolean }) => void;
   businessGroup: {
     key?: string; // 业务组组件本身的key
     ids?: string; // 逗号分割 'id1,id2,id3'
@@ -116,6 +130,8 @@ export interface ICommonState {
   setAssetModel: (group: { key?: string; ids?: string; id?: number; isLeaf?: boolean }) => void;
   modelGroupOnChange: (key: string) => void;
   getVaildBusinessGroup: (busiGroups: any[], businessGroupKey: { key?: string; ids?: string; id?: number; isLeaf?: boolean }) => void;
+  getVaildNetGroup: (busiGroups: any[], businessGroupKey: { key?: string; ids?: string; id?: number; isLeaf?: boolean }) => void;
+  netGroupOnChange: (key: string) => void;
   businessGroupOnChange: (key: string) => void;
   getVaildAssetModel: (assetModels: any[], assetModelKey: { key?: string; ids?: string; id?: number; isLeaf?: boolean }) => void;
   assetModelOnChange: (key: string) => void;
@@ -175,6 +191,10 @@ function App() {
     setAssetModels: (assetModels) => {
       setCommonState((state) => ({ ...state, assetModels }));
     },
+    netGroups: [],
+    setNetGroups: (netGroups) => {
+      setCommonState((state) => ({ ...state, netGroups }));
+    },
     busiGroups: [],
     setBusiGroups: (busiGroups) => {
       setCommonState((state) => ({ ...state, busiGroups }));
@@ -187,6 +207,10 @@ function App() {
     businessGroup: {},
     setBusiGroup: (businessGroup) => {
       setCommonState((state) => ({ ...state, businessGroup }));
+    },
+    netGroup: {},
+    setNetGroup: (netGroup) => {
+      setCommonState((state) => ({ ...state, netGroup }));
     },
     assetModel: {},
     setAssetModel: (assetModel) => {
@@ -211,6 +235,7 @@ function App() {
       }));
     },
     getVaildBusinessGroup,
+    getVaildNetGroup,
     businessGroupOnChange: (key: string) => {
       window.localStorage.setItem('businessGroupKey', key);
       const ids = getCleanBusinessGroupIds(key);
@@ -218,6 +243,20 @@ function App() {
       setCommonState((state) => ({
         ...state,
         businessGroup: {
+          key,
+          ids,
+          id: _.map(_.split(ids, ','), _.toNumber)?.[0],
+          isLeaf: !_.startsWith(key, 'group,'),
+        },
+      }));
+    },
+    netGroupOnChange: (key: string) => {
+      window.localStorage.setItem('netGroupKey', key);
+      const ids = getCleanNetGroupIds(key);
+
+      setCommonState((state) => ({
+        ...state,
+        netGroup: {
           key,
           ids,
           id: _.map(_.split(ids, ','), _.toNumber)?.[0],
@@ -294,6 +333,7 @@ function App() {
           const { dat: profile } = await GetProfile();
           const { dat: busiGroups } = await getBusiGroups('', 5000, 'busi');
           const { dat: assetModels } = await getAssetModels('', 5000);
+          const { dat: netGroups } = await getBusiGroups('', 5000, 'net');
           // const { dat: assetGroups } = await getBusiGroups('', 5000, 'asset');
           const { dat: modelGroups } = await getModelGroups();
           const { dat: perms } = await getMenuPerm();
@@ -315,10 +355,12 @@ function App() {
               profile,
               busiGroups,
               assetModels,
+              netGroups,
               modelGroups,
               businessGroup: getDefaultBusiness(busiGroups),
               // assetGroup: getDefaultBusiness(assetGroups),
               assetModel: getDefaultAssetModel(assetModels),
+              netGroup: getDefaultNetGroup(netGroups),
               modelGroup: getDefaultModel(modelGroups),
               datasourceCateOptions: getAuthorizedDatasourceCates(feats, isPlus, (cate) => {
                 const groupedDatasourceList = _.groupBy(datasourceList, 'plugin_type');
