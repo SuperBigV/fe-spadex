@@ -85,10 +85,10 @@ export const getMenuList = (t) => {
           key: '/net-targets',
           label: '网络设备',
         },
-        {
-          key: '/business',
-          label: '采集配置',
-        },
+        // {
+        //   key: '/business',
+        //   label: '采集配置',
+        // },
       ],
     },
     {

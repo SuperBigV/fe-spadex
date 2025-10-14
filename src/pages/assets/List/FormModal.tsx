@@ -73,7 +73,7 @@ function FormModal(props: Props & ModalWrapProps) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [initialValues, setInitalValues] = useState<any>({});
-  const [relationOptions, setRelationOptions] = useState<any[]>([]);
+  const [relationOptions, setRelationOptions] = useState<{}>({});
   const [iconOptions, setIconOptions] = useState<{ name: string; id: number; src: string }[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   // const [modelOptions, setModelOptions] = useState<any[]>([]);
@@ -121,6 +121,18 @@ function FormModal(props: Props & ModalWrapProps) {
             value: item.id,
           }));
           setRoomOptions(options);
+        });
+      }
+      if (field.fieldType === 'relation') {
+        getModelOptions(field.relatedModel).then((res) => {
+          const options = res.map((item) => ({
+            label: item.name,
+            value: item.id,
+          }));
+          setRelationOptions((prevRelation) => ({
+            ...prevRelation,
+            [field.uniqueIdentifier]: options,
+          }));
         });
       }
     });
@@ -240,7 +252,7 @@ function FormModal(props: Props & ModalWrapProps) {
                       } else if (relatedModel === -3) {
                         inputComponent = <Select options={authOptions}></Select>;
                       } else {
-                        inputComponent = <Select options={relationOptions}></Select>;
+                        inputComponent = <Select options={relationOptions[uniqueIdentifier]}></Select>;
                       }
                       break;
                     default:

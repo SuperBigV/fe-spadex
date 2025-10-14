@@ -197,7 +197,7 @@ export default function Content() {
         <Route exact path='/alert-his-events/:eventId' component={EventDetail} />
         <Route exact path='/targets' component={Targets} />
         <Route exact path='/net-targets' component={NetTargets} />
-        <Route exact path='/business' component={BusiLine} />
+        {/* <Route exact path='/business' component={BusiLine} /> */}
         <Route exact path='/busi-topology' component={BusiLineQA} />
 
         <Route exact path='/rooms' component={Room} />

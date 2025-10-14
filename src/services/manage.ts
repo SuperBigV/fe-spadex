@@ -24,6 +24,11 @@ export const getUserInfoList = function (params = {}) {
     params,
   });
 };
+export const getUnit = (unit) => {
+  return request(`/cmdb/assets/${unit}`, {
+    method: RequestMethod.Get,
+  }).then((res) => res.dat);
+};
 export const getTeamInfoList = function (params?: { query: string; limit?: number }) {
   const data = params ? (params.limit ? params : { ...params, limit: 5000 }) : { limit: 5000 };
   return request(`/api/n9e/user-groups`, {

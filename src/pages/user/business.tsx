@@ -19,10 +19,10 @@ import moment from 'moment';
 import _ from 'lodash';
 import classNames from 'classnames';
 import PageLayout, { HelpLink } from '@/components/pageLayout';
-import { Button, Table, Input, message, Row, Col, Modal, Space } from 'antd';
+import { Button, Table, Input, message, Row, Col, Modal, Space, Descriptions } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined, UserOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import UserInfoModal from './component/createModal';
-import { deleteBusinessTeamMember, getBusinessTeamList, getBusinessTeamInfo, deleteBusinessTeam } from '@/services/manage';
+import { deleteBusinessTeamMember, getBusinessTeamList, getBusinessTeamInfo, deleteBusinessTeam, getUnit } from '@/services/manage';
 import { Team, ActionType } from '@/store/manageInterface';
 import { CommonStateContext } from '@/App';
 import { ColumnsType } from 'antd/lib/table';
@@ -45,8 +45,10 @@ const Resource: React.FC = () => {
   const [action, setAction] = useState<ActionType>();
   const [teamId, setTeamId] = useState<string>(id || '');
   const [memberList, setMemberList] = useState<{ user_group: any }[]>([]);
-  const [teamInfo, setTeamInfo] = useState<{ name: string; id: number; update_by: string; update_at: number }>();
+  const [teamInfo, setTeamInfo] = useState<{ name: string; attr: any; id: number; update_by: string; update_at: number }>();
   const [teamList, setTeamList] = useState<Team[]>([]);
+  const [opserOptions, setOpserOptions] = useState<{ id: number; name: string; data: { name: string; tel: string; contacts: string } }[]>([]);
+  const [maintenerOptions, setMaintenerOptions] = useState<{ id: number; name: string; data: { name: string; tel: string; contacts: string } }[]>([]);
   const [memberLoading, setMemberLoading] = useState<boolean>(false);
   const [searchMemberValue, setSearchMemberValue] = useState<string>('');
   const teamMemberColumns: ColumnsType<any> = [
@@ -106,6 +108,14 @@ const Resource: React.FC = () => {
 
   useEffect(() => {
     getTeamList();
+    // 运维单位
+    getUnit('opser').then((res) => {
+      setOpserOptions(res);
+    });
+    //维保单位
+    getUnit('maintener').then((res) => {
+      setMaintenerOptions(res);
+    });
   }, []);
 
   const getList = (action) => {
@@ -287,7 +297,7 @@ const Resource: React.FC = () => {
                     // color: '#666',
                   }}
                 >
-                  <Space>
+                  {/* <Space>
                     <span>ID：{teamInfo?.id}</span>
                     <span>
                       {t('common:table.note')}：{t('business.note_content')}
@@ -298,7 +308,30 @@ const Resource: React.FC = () => {
                     <span>
                       {t('common:table.update_at')}：{teamInfo?.update_at ? moment.unix(teamInfo.update_at).format('YYYY-MM-DD HH:mm:ss') : '-'}
                     </span>
-                  </Space>
+                  </Space> */}
+                  <Descriptions bordered size='small' column={4}>
+                    <Descriptions.Item label='软件名称'>{teamInfo?.name.split('/').pop()}</Descriptions.Item>
+                    <Descriptions.Item label='语言'>{teamInfo?.attr?.language}</Descriptions.Item>
+                    <Descriptions.Item label='进程采集'>{teamInfo?.attr?.is_collection_enabled ? '已开启' : '未开启'}</Descriptions.Item>
+                    <Descriptions.Item label='进程名称'>{teamInfo?.attr?.processName}</Descriptions.Item>
+                    <Descriptions.Item label='日志采集'>{teamInfo?.attr?.is_log_collection_enabled ? '已开启' : '未开启'}</Descriptions.Item>
+                    <Descriptions.Item label='日志位置'>{teamInfo?.attr?.logPath}</Descriptions.Item>
+                    <Descriptions.Item label='运维单位'>
+                      {opserOptions.map((item) => {
+                        console.log('####item:', item);
+                        if (item.id == teamInfo?.attr?.opsUnit) {
+                          return item.data.name;
+                        }
+                      })}
+                    </Descriptions.Item>
+                    <Descriptions.Item label='维保单位'>
+                      {maintenerOptions.map((item) => {
+                        if (item.id == teamInfo?.attr?.maintainUnit) {
+                          return item.data.name;
+                        }
+                      })}
+                    </Descriptions.Item>
+                  </Descriptions>
                 </Col>
               </Row>
               <Row justify='space-between' align='middle'>

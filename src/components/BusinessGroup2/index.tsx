@@ -246,6 +246,7 @@ export default function index(props: IProps) {
           id={editBusiId}
           open={editBusiDrawerVisible}
           onCloseDrawer={() => {
+            setEditBusiId(undefined);
             setEditBusiDrawerVisible(false);
             reloadData();
           }}

@@ -1229,7 +1229,9 @@ export default function AssetList(props: IProps) {
                               pageSize: tableProps.pagination.pageSize,
                             });
                             message.success(t('common:success.create'));
-                            addAssetToN9e(id, assetModel.uniqueIdentifier, values);
+                            if (assetModel.uniqueIdentifier.includes('host_') || assetModel.uniqueIdentifier.includes('net_')) {
+                              addAssetToN9e(id, assetModel.uniqueIdentifier, values);
+                            }
                           });
                         },
                       });
