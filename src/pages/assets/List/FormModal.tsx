@@ -125,8 +125,9 @@ function FormModal(props: Props & ModalWrapProps) {
       }
       if (field.fieldType === 'relation') {
         getModelOptions(field.relatedModel).then((res) => {
-          const options = res.map((item) => ({
-            label: item.name,
+          console.log('res', res);
+          const options = res?.map((item) => ({
+            label: item.data.name,
             value: item.id,
           }));
           setRelationOptions((prevRelation) => ({
@@ -168,7 +169,7 @@ function FormModal(props: Props & ModalWrapProps) {
     getRacksByRoomId(value).then((data) => {
       const options = data.dat.map((item) => ({
         label: item.data.name,
-        value: item.name,
+        value: item.id,
       }));
       setRackOptions(options);
     });

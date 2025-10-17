@@ -451,7 +451,7 @@ export default function List(props: ListProps) {
               window.sessionStorage.setItem(FILTER_LOCAL_STORAGE_KEY, JSON.stringify(newFilter));
             }}
           />
-          <DatasourceSelect
+          {/* <DatasourceSelect // 数据源选择
             style={{ minWidth: 100 }}
             filterKey='alertRule'
             disableResponsive
@@ -464,7 +464,7 @@ export default function List(props: ListProps) {
               setFilter(newFilter);
               window.sessionStorage.setItem(FILTER_LOCAL_STORAGE_KEY, JSON.stringify(newFilter));
             }}
-          />
+          /> */}
           <Select
             mode='multiple'
             placeholder={t('severity')}
@@ -480,9 +480,9 @@ export default function List(props: ListProps) {
             }}
             dropdownMatchSelectWidth={false}
           >
-            <Select.Option value={1}>S1（Critical）</Select.Option>
-            <Select.Option value={2}>S2（Warning）</Select.Option>
-            <Select.Option value={3}>S3（Info）</Select.Option>
+            <Select.Option value={1}>S1（严重）</Select.Option>
+            <Select.Option value={2}>S2（警告）</Select.Option>
+            <Select.Option value={3}>S3（通知）</Select.Option>
           </Select>
           <Input
             placeholder={t('search_placeholder')}

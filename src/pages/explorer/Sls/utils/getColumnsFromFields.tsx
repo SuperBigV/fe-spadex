@@ -25,7 +25,6 @@ function localeCompareFunc(a, b) {
 
 export function getColumnsFromFields(selectedFields: { name: string; type: string }[], queryValue: any, fieldConfig?: any) {
   const { date_field: dateField } = queryValue;
-  console.log('@@@dateField:', dateField);
   let columns: any[] = [];
   if (_.isEmpty(selectedFields)) {
     columns = [

@@ -25,11 +25,14 @@ const zh_CN = {
   rule_prod: {
     firemap: '灭火图',
     northstar: '北极星',
-    metric: 'Metric',
-    host: 'Host',
-    logging: 'Log',
+    metric: '指标',
+    host: '主机',
+    logging: '日志',
     anomaly: 'Anomaly',
     loki: 'Loki',
+    1: '严重',
+    2: '警告',
+    3: '通知',
   },
 };
 export default zh_CN;

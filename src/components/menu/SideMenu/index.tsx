@@ -23,30 +23,38 @@ import getPlusMenu from 'plus:/menu';
 
 export const getMenuList = (t) => {
   const menuList = [
-    {
-      key: 'workbench',
-      icon: <IconFont type='icon-Menu_Dashboard' />,
-      label: t('工作台'),
-      children: [
-        {
-          key: '/workbench',
-          label: t('我的工作台'),
-        },
-      ],
-    },
+    // {
+    //   key: 'workbench',
+    //   icon: <IconFont type='icon-Menu_Dashboard' />,
+    //   label: t('工作台'),
+    //   children: [
+    //     {
+    //       key: '/workbench',
+    //       label: t('我的工作台'),
+    //     },
+    //   ],
+    // },
     {
       key: 'dashboard',
       icon: <IconFont type='icon-Menu_Dashboard' />,
-      label: t('仪表盘'),
+      label: t('态势大屏'),
       children: [
         {
-          key: '/dashboards',
-          label: t('监控仪表盘'),
+          key: '/dashboards/3',
+          label: t('主机态势'),
         },
         {
-          key: '/embedded-dashboards',
-          label: t('embeddedDashboards:title'),
+          key: '/dashboards/2',
+          label: t('网络态势'),
         },
+        {
+          key: '/dashboards',
+          label: t('业务态势'),
+        },
+        // {
+        //   key: '/embedded-dashboards',
+        //   label: t('embeddedDashboards:title'),
+        // },
       ],
     },
     {
@@ -75,7 +83,7 @@ export const getMenuList = (t) => {
     {
       key: 'targets',
       icon: <IconFont type='icon-Menu_Infrastructure' />,
-      label: '监控管理',
+      label: '业务管理',
       children: [
         {
           key: '/targets',

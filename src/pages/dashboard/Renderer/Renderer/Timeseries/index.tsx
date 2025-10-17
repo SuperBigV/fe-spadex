@@ -122,7 +122,6 @@ export default function index(props: IProps) {
   const darkMode = appDarkMode || localStorage.getItem('darkMode') === 'true';
   const { t } = useTranslation('dashboard');
   const { time, setRange, values, series, inDashboard = true, chartHeight = '200px', tableHeight = '200px', onClick, isPreview, colors } = props;
-  console.log('###series:', series);
   const themeMode = props.themeMode || (darkMode ? 'dark' : 'light');
   const history = useHistory();
   const location = useLocation();
@@ -206,7 +205,6 @@ export default function index(props: IProps) {
   useEffect(() => {
     setSeriesData(
       _.map(series, (item) => {
-        console.log('@@@item:', item);
         return {
           ...item,
           // 2024-06-28 serie.name 放到这里处理，原 datasource 里的 name 都删除掉

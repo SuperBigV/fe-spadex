@@ -196,7 +196,7 @@ export default function List(props: IProps) {
         </Space>
       ),
       dataIndex: 'ident',
-      width: 220,
+      width: 200,
       className: 'n9e-hosts-table-column-ident',
       render: (text, record) => {
         return (
@@ -243,130 +243,130 @@ export default function List(props: IProps) {
     //     },
     //   });
     // }
-    if (item.name === 'life_status') {
-      columns.push({
-        title: (
-          <Space>
-            {'运行状态'}
-            <Tooltip title={'维护中状态不会告警'}>
-              <InfoCircleOutlined />
-            </Tooltip>
-          </Space>
-        ),
-        width: 100,
-        sorter: true,
-        dataIndex: 'life_status',
-        render: (val, reocrd) => {
-          let result = '正常';
-          let backgroundColor = GREEN_COLOR;
-          if (reocrd.life_status === 'maintain') {
-            backgroundColor = MAINTAIN_COLOR;
-            result = '维护';
-          }
+    // if (item.name === 'life_status') {
+    //   columns.push({
+    //     title: (
+    //       <Space>
+    //         {'运行状态'}
+    //         <Tooltip title={'维护中状态不会告警'}>
+    //           <InfoCircleOutlined />
+    //         </Tooltip>
+    //       </Space>
+    //     ),
+    //     width: 100,
+    //     sorter: true,
+    //     dataIndex: 'life_status',
+    //     render: (val, reocrd) => {
+    //       let result = '正常';
+    //       let backgroundColor = GREEN_COLOR;
+    //       if (reocrd.life_status === 'maintain') {
+    //         backgroundColor = MAINTAIN_COLOR;
+    //         result = '维护';
+    //       }
 
-          return (
-            <div
-              className='table-td-fullBG'
-              style={{
-                backgroundColor,
-              }}
-            >
-              {result}
-            </div>
-          );
-        },
-      });
-    }
-    if (item.name === 'host_tags') {
-      columns.push({
-        title: (
-          <Space>
-            {t('common:host.host_tags')}
-            <Tooltip title={t('common:host.host_tags_tip')}>
-              <InfoCircleOutlined />
-            </Tooltip>
-          </Space>
-        ),
-        width: 100,
-        dataIndex: 'host_tags',
-        className: 'n9e-hosts-table-column-tags',
-        ellipsis: {
-          showTitle: false,
-        },
-        render(tagArr) {
-          const content =
-            tagArr &&
-            tagArr.map((item) => (
-              <Tag
-                color='purple'
-                key={item}
-                onClick={(e) => {
-                  if (!tableQueryContent.includes(item)) {
-                    isAddTagToQueryInput.current = true;
-                    const val = tableQueryContent ? `${tableQueryContent.trim()} ${item}` : item;
-                    setTableQueryContent(val);
-                    setSearchVal(val);
-                  }
-                }}
-              >
-                {item}
-              </Tag>
-            ));
-          return (
-            tagArr && (
-              <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body} overlayClassName='mon-manage-table-tooltip'>
-                {content}
-              </Tooltip>
-            )
-          );
-        },
-      });
-    }
-    if (item.name === 'tags') {
-      columns.push({
-        title: (
-          <Space>
-            {t('common:host.tags')}
-            <Tooltip title={t('common:host.tags_tip')}>
-              <InfoCircleOutlined />
-            </Tooltip>
-          </Space>
-        ),
-        width: 120,
-        dataIndex: 'tags',
-        className: 'n9e-hosts-table-column-tags',
-        ellipsis: {
-          showTitle: false,
-        },
-        render(tagArr) {
-          const content =
-            tagArr &&
-            tagArr.map((item) => (
-              <Tag
-                color='purple'
-                key={item}
-                onClick={(e) => {
-                  if (!tableQueryContent.includes(item)) {
-                    isAddTagToQueryInput.current = true;
-                    const val = tableQueryContent ? `${tableQueryContent.trim()} ${item}` : item;
-                    setTableQueryContent(val);
-                    setSearchVal(val);
-                  }
-                }}
-              >
-                {item}
-              </Tag>
-            ));
-          return (
-            tagArr && (
-              <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body} overlayClassName='mon-manage-table-tooltip'>
-                {content}
-              </Tooltip>
-            )
-          );
-        },
-      });
-    }
+    //       return (
+    //         <div
+    //           className='table-td-fullBG'
+    //           style={{
+    //             backgroundColor,
+    //           }}
+    //         >
+    //           {result}
+    //         </div>
+    //       );
+    //     },
+    //   });
+    // }
+    // if (item.name === 'host_tags') {
+    //   columns.push({
+    //     title: (
+    //       <Space>
+    //         {t('common:host.host_tags')}
+    //         <Tooltip title={t('common:host.host_tags_tip')}>
+    //           <InfoCircleOutlined />
+    //         </Tooltip>
+    //       </Space>
+    //     ),
+    //     width: 100,
+    //     dataIndex: 'host_tags',
+    //     className: 'n9e-hosts-table-column-tags',
+    //     ellipsis: {
+    //       showTitle: false,
+    //     },
+    //     render(tagArr) {
+    //       const content =
+    //         tagArr &&
+    //         tagArr.map((item) => (
+    //           <Tag
+    //             color='purple'
+    //             key={item}
+    //             onClick={(e) => {
+    //               if (!tableQueryContent.includes(item)) {
+    //                 isAddTagToQueryInput.current = true;
+    //                 const val = tableQueryContent ? `${tableQueryContent.trim()} ${item}` : item;
+    //                 setTableQueryContent(val);
+    //                 setSearchVal(val);
+    //               }
+    //             }}
+    //           >
+    //             {item}
+    //           </Tag>
+    //         ));
+    //       return (
+    //         tagArr && (
+    //           <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body} overlayClassName='mon-manage-table-tooltip'>
+    //             {content}
+    //           </Tooltip>
+    //         )
+    //       );
+    //     },
+    //   });
+    // }
+    // if (item.name === 'tags') {
+    //   columns.push({
+    //     title: (
+    //       <Space>
+    //         {t('common:host.tags')}
+    //         <Tooltip title={t('common:host.tags_tip')}>
+    //           <InfoCircleOutlined />
+    //         </Tooltip>
+    //       </Space>
+    //     ),
+    //     width: 120,
+    //     dataIndex: 'tags',
+    //     className: 'n9e-hosts-table-column-tags',
+    //     ellipsis: {
+    //       showTitle: false,
+    //     },
+    //     render(tagArr) {
+    //       const content =
+    //         tagArr &&
+    //         tagArr.map((item) => (
+    //           <Tag
+    //             color='purple'
+    //             key={item}
+    //             onClick={(e) => {
+    //               if (!tableQueryContent.includes(item)) {
+    //                 isAddTagToQueryInput.current = true;
+    //                 const val = tableQueryContent ? `${tableQueryContent.trim()} ${item}` : item;
+    //                 setTableQueryContent(val);
+    //                 setSearchVal(val);
+    //               }
+    //             }}
+    //           >
+    //             {item}
+    //           </Tag>
+    //         ));
+    //       return (
+    //         tagArr && (
+    //           <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body} overlayClassName='mon-manage-table-tooltip'>
+    //             {content}
+    //           </Tooltip>
+    //         )
+    //       );
+    //     },
+    //   });
+    // }
     if (item.name === 'group_obj') {
       columns.push({
         title: t('group_obj'),
@@ -599,21 +599,23 @@ export default function List(props: IProps) {
     if (item.name === 'operation') {
       columns.push({
         title: t('操作'),
-        width: 100,
+        width: 180,
         render: (val, reocrd) => {
           return (
             <>
               <Space>
                 <Button
-                  onClick={() => {
-                    handleClick('rename', reocrd);
-                  }}
-                  className='p0 height-auto'
+                  size='small'
                   type='link'
+                  style={{ padding: 0 }}
+                  onClick={() => {
+                    history.push(`/ident/${reocrd.asset_id}/${reocrd.ident}/terminal/host`);
+                  }}
                 >
-                  {'改名'}
+                  {'远程连接'}
                 </Button>
               </Space>
+
               {reocrd.life_status !== 'maintain' && (
                 <Space>
                   <Button
@@ -641,6 +643,36 @@ export default function List(props: IProps) {
                   </Button>
                 </Space>
               )}
+              <Dropdown
+                overlay={
+                  <Menu>
+                    <>
+                      <Menu.Item onClick={() => handleClick(ControlType.Restart, reocrd)}>
+                        <Button className='p0 height-auto' type='link'>
+                          {'重启'}
+                        </Button>
+                      </Menu.Item>
+                      <Menu.Item onClick={() => handleClick(ControlType.Start, reocrd)}>
+                        <Button className='p0 height-auto' type='link'>
+                          {'启动'}
+                        </Button>
+                      </Menu.Item>
+                      <Menu.Item onClick={() => handleClick(ControlType.Stop, reocrd)}>
+                        <Button className='p0 height-auto' type='link'>
+                          {'停止'}
+                        </Button>
+                      </Menu.Item>
+                      <Menu.Item onClick={() => handleClick(ControlType.Rename, reocrd)}>
+                        <Button className='p0 height-auto' type='link'>
+                          {'改名'}
+                        </Button>
+                      </Menu.Item>
+                    </>
+                  </Menu>
+                }
+              >
+                <Button type='link' icon={<MoreOutlined />} />
+              </Dropdown>
             </>
           );
         },

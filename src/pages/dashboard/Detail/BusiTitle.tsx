@@ -140,26 +140,7 @@ export default function Title(props: IProps) {
       }}
     >
       <div className='dashboard-detail-header-left'>
-        {isPreview && !isBuiltin ? null : (
-          <Space>
-            <Tooltip title={isBuiltin ? t('back_icon_tip_is_built_in') : t('back_icon_tip')}>
-              <RollbackOutlined
-                className='back_icon'
-                onClick={() => {
-                  goBack(history).catch(() => {
-                    history.push(props.gobackPath || '/dashboards');
-                  });
-                }}
-              />
-            </Tooltip>
-            <Space className='pr1'>
-              <Link to={props.gobackPath || '/dashboards'} style={{ fontSize: 14 }}>
-                {isBuiltin ? t('builtInComponents:title') : t('态势列表')}
-              </Link>
-              {'/'}
-            </Space>
-          </Space>
-        )}
+        {/* <div className='title'>{dashboard.name}</div> */}
         {isPreview === true || __public__ === 'true' ? (
           // 公开仪表盘不显示下拉
           <div className='title'>{dashboard.name}</div>
@@ -190,7 +171,7 @@ export default function Title(props: IProps) {
                         <Menu.Item
                           key={item.id}
                           onClick={() => {
-                            history.push(`/dashboards/${item.ident || item.id}`);
+                            history.push(`/targets?ident=all&isLeaf=true&did=${item.ident || item.id}`);
                             setDashboardListDropdownVisible(false);
                             setDashboardListDropdownSearch('');
                           }}
@@ -215,31 +196,6 @@ export default function Title(props: IProps) {
         <Space>
           {dashboard.configs?.mode !== 'iframe' ? (
             <>
-              {isAuthorized && (
-                <Dropdown
-                  trigger={['click']}
-                  overlay={
-                    <Menu>
-                      {_.map(_.concat(panelClipboard ? [{ type: 'pastePanel' }] : [], [{ type: 'row', name: 'row' }], visualizations), (item) => {
-                        return (
-                          <Menu.Item
-                            key={item.type}
-                            onClick={() => {
-                              onAddPanel(item.type);
-                            }}
-                          >
-                            {t(`visualizations.${item.type}`)}
-                          </Menu.Item>
-                        );
-                      })}
-                    </Menu>
-                  }
-                >
-                  <Button type='primary' icon={<AddPanelIcon />}>
-                    {t('add_panel')}
-                  </Button>
-                </Dropdown>
-              )}
               <TimeRangePickerWithRefresh
                 localKey={`${dashboardTimeCacheKey}_${dashboard.id}`}
                 dateFormat='YYYY-MM-DD HH:mm:ss'
@@ -287,32 +243,6 @@ export default function Title(props: IProps) {
                   }}
                 />
               )}
-              {isAuthorized && (
-                <Button
-                  icon={<SettingOutlined />}
-                  onClick={() => {
-                    FormModal({
-                      action: 'edit',
-                      initialValues: dashboard,
-                      onOk: () => {
-                        window.location.reload();
-                      },
-                    });
-                  }}
-                />
-              )}
-              <DashboardLinks
-                editable={isAuthorized}
-                value={dashboardLinks}
-                onChange={(v) => {
-                  const dashboardConfigs: any = dashboard.configs;
-                  dashboardConfigs.links = v;
-                  handleUpdateDashboardConfigs(dashboard.id, {
-                    configs: JSON.stringify(dashboardConfigs),
-                  });
-                  setDashboardLinks(v);
-                }}
-              />
             </>
           ) : (
             <>

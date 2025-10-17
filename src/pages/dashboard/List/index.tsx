@@ -102,7 +102,7 @@ export default function index() {
   }, []);
 
   return (
-    <PageLayout title={t('title')} icon={<FundViewOutlined />}>
+    <PageLayout title={t('态势大屏')} icon={<FundViewOutlined />}>
       <div style={{ display: 'flex' }}>
         <BusinessGroupSideBarWithAll
           gids={gids}
@@ -169,40 +169,40 @@ export default function index() {
                       );
                     },
                   },
-                  {
-                    title: t('tags'),
-                    dataIndex: 'tags',
-                    className: 'tags-column',
-                    render: (text: string) => (
-                      <>
-                        {_.map(_.split(text, ' '), (tag, index) => {
-                          return tag ? (
-                            <Tag
-                              color='purple'
-                              key={index}
-                              style={{
-                                cursor: 'pointer',
-                              }}
-                              onClick={() => {
-                                const queryItem = searchVal.length > 0 ? searchVal.split(' ') : [];
-                                if (queryItem.includes(tag)) return;
-                                setsearchVal((searchVal) => {
-                                  if (searchVal) {
-                                    localStorage.setItem(SEARCH_LOCAL_STORAGE_KEY, searchVal + ' ' + tag);
-                                    return searchVal + ' ' + tag;
-                                  }
-                                  localStorage.setItem(SEARCH_LOCAL_STORAGE_KEY, tag);
-                                  return tag;
-                                });
-                              }}
-                            >
-                              {tag}
-                            </Tag>
-                          ) : null;
-                        })}
-                      </>
-                    ),
-                  },
+                  // {
+                  //   title: t('tags'),
+                  //   dataIndex: 'tags',
+                  //   className: 'tags-column',
+                  //   render: (text: string) => (
+                  //     <>
+                  //       {_.map(_.split(text, ' '), (tag, index) => {
+                  //         return tag ? (
+                  //           <Tag
+                  //             color='purple'
+                  //             key={index}
+                  //             style={{
+                  //               cursor: 'pointer',
+                  //             }}
+                  //             onClick={() => {
+                  //               const queryItem = searchVal.length > 0 ? searchVal.split(' ') : [];
+                  //               if (queryItem.includes(tag)) return;
+                  //               setsearchVal((searchVal) => {
+                  //                 if (searchVal) {
+                  //                   localStorage.setItem(SEARCH_LOCAL_STORAGE_KEY, searchVal + ' ' + tag);
+                  //                   return searchVal + ' ' + tag;
+                  //                 }
+                  //                 localStorage.setItem(SEARCH_LOCAL_STORAGE_KEY, tag);
+                  //                 return tag;
+                  //               });
+                  //             }}
+                  //           >
+                  //             {tag}
+                  //           </Tag>
+                  //         ) : null;
+                  //       })}
+                  //     </>
+                  //   ),
+                  // },
                   {
                     title: t('common:table.update_at'),
                     width: 150,

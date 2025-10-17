@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
-import { Modal, Tag, Form, Input, Alert, Select, Tooltip, Table, message, Checkbox, Spin, Divider } from 'antd';
+import { Modal, Tag, Form, Input, Alert, Select, Tooltip, Table, message, Checkbox, Spin, Divider, Tabs } from 'antd';
 import { DatabaseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
@@ -18,21 +18,28 @@ import {
   fetchInitLog,
 } from '@/services/targets';
 import { getBusinessTeamInfo } from '@/services/manage';
-
+const { TabPane } = Tabs;
 import PageLayout from '@/components/pageLayout';
 import { getBusiGroups } from '@/services/common';
 import { CommonStateContext } from '@/App';
 import List, { ITargetProps } from './List';
 import BusinessGroup from './BusinessGroup';
+import BusiDetail from '@/pages/dashboard/Detail/BusiDetail';
 import BusinessGroup2, { getCleanBusinessGroupIds } from '@/components/BusinessGroup';
 import './locale';
-import { getJumpBusiGroups } from '@/services/targets';
+import { useLocation } from 'react-router-dom';
+import { IDashboard } from '@/pages/dashboard/types';
 import './index.less';
-
+import AlertRuleList from '@/pages/alertRules/List';
+import HistoryEvents from '@/pages/historyEvents/busiEvents';
+import { getDashboard, updateDashboardConfigs, getDashboardPure, getBusiGroupsDashboards } from '@/services/dashboardV2';
 export { BusinessGroup }; // TODO 部分页面使用的老的业务组组件，后续逐步替换
 interface jumpProps {
   id: string;
   full_value: string;
+}
+interface URLParam {
+  did: string;
 }
 enum OperateType {
   BindTag = 'bindTag',
@@ -446,7 +453,55 @@ const Targets: React.FC = () => {
   //     // setLabelKey(res?.label_key || '');
   //   });
   // }, []);
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeKey, setActiveKey] = useState('1');
+  const [dashboardId, setDashboardId] = useState<number>(0);
+  const [dashboardList, setDashboardList] = useState<IDashboard[]>([]);
 
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const did = params.get('did');
+  // 函数用于解析查询参数
+
+  const onChange = (key) => {
+    switch (key) {
+      case '3':
+        getBusiGroupsDashboards(gids).then((res) => {
+          setDashboardList(res);
+        });
+        if (dashboardList.length > 0) {
+          const id = dashboardList[0].id;
+          setDashboardId(id);
+          setIsLoading(true);
+        }
+    }
+    setActiveKey(key);
+  };
+  useEffect(() => {
+    if (did) {
+      setDashboardId(Number(did));
+      setActiveKey('3');
+    } else {
+      getBusiGroupsDashboards(gids).then((res) => {
+        setDashboardList(res);
+      });
+      if (dashboardList.length > 0) {
+        const id = dashboardList[0].id;
+        setDashboardId(id);
+        setIsLoading(true);
+      }
+    }
+  }, [did]);
+  useEffect(() => {
+    setIsLoading(false);
+    getBusiGroupsDashboards(gids).then((res) => {
+      setDashboardList(res);
+    });
+    if (dashboardList.length > 0) {
+      const id = dashboardList[0].id;
+      setDashboardId(id);
+    }
+  }, [gids]);
   return (
     <PageLayout icon={<DatabaseOutlined />} title={t('title')}>
       <div className='object-manage-page-content'>
@@ -483,7 +538,7 @@ const Targets: React.FC = () => {
           // }}
           onSelect={(key) => {
             const ids = getCleanBusinessGroupIds(key);
-
+            setActiveKey('1');
             setGids(ids);
           }}
         />
@@ -494,15 +549,37 @@ const Targets: React.FC = () => {
             overflowY: 'auto',
           }}
         >
-          <List
-            gids={gids}
-            selectedRows={selectedRows}
-            setSelectedRows={setSelectedRows}
-            // targetType={labelValue}
-            refreshFlag={refreshFlag}
-            setRefreshFlag={setRefreshFlag}
-            setOperateType={setOperateType}
-          />
+          <Tabs activeKey={activeKey} onChange={onChange}>
+            <TabPane tab='软件概览' key='1'>
+              {/* <SoftwareOverview /> */}
+            </TabPane>
+            <TabPane tab='主机列表' key='2'>
+              <List
+                gids={gids}
+                selectedRows={selectedRows}
+                setSelectedRows={setSelectedRows}
+                // targetType={labelValue}
+                refreshFlag={refreshFlag}
+                setRefreshFlag={setRefreshFlag}
+                setOperateType={setOperateType}
+              />
+            </TabPane>
+            <TabPane tab='监控态势' key='3'>
+              {/* <MonitoringStatus /> */}
+              {isLoading && <BusiDetail dashboardId={_.toString(dashboardId)} />}
+            </TabPane>
+            <TabPane tab='告警规则' key='4'>
+              {/* <AlarmRules /> */}
+              <AlertRuleList gids={gids} />
+            </TabPane>
+            {/* <TabPane tab='正在告警' key='5'>
+              <ActiveAlerts />
+            </TabPane> */}
+            <TabPane tab='告警记录' key='6'>
+              {/* <AlarmHistory /> */}
+              <HistoryEvents></HistoryEvents>
+            </TabPane>
+          </Tabs>
         </div>
       </div>
       {_.includes(_.values(OperateType), operateType) && (

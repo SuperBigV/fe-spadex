@@ -96,17 +96,17 @@ export const defaultValues = {
 
 export const ruleTypeOptions = [
   {
-    label: 'Metric',
+    label: '指标',
     value: 'metric',
     pro: false,
   },
   {
-    label: 'Host',
+    label: '主机',
     value: 'host',
     pro: false,
   },
   {
-    label: 'Log',
+    label: '日志',
     value: 'logging',
     pro: false,
   },

@@ -25,7 +25,7 @@ interface Props {
 }
 
 export function getDefaultGids(localeKey: string, businessGroup: any) {
-  return localStorage.getItem(localeKey) || businessGroup.ids || '-2';
+  return businessGroup.ids || '-2';
 }
 
 export function getDefaultGidsInDashboard(localeKey: string, businessGroup: any) {
@@ -42,53 +42,53 @@ export default function BusinessGroupSideBarWithAll(props: Props) {
   }, [businessGroup]);
   return (
     <BusinessGroup
-      renderHeadExtra={() => {
-        return (
-          <div>
-            <div className='n9e-biz-group-container-group-title'>{t('default_filter.title')}</div>
-            {showPublicOption && publicOptionLabel && (
-              <div
-                className={classNames({
-                  'n9e-biz-group-item': true,
-                  active: gids === '-1',
-                })}
-                onClick={() => {
-                  setGids('-1');
-                  localStorage.setItem(localeKey, '-1');
-                }}
-              >
-                {publicOptionLabel}
-              </div>
-            )}
-            <div
-              className={classNames({
-                'n9e-biz-group-item': true,
-                active: gids === '-2',
-              })}
-              onClick={() => {
-                setGids('-2');
-                localStorage.setItem(localeKey, '-2');
-              }}
-            >
-              <Space>
-                {allOptionLabel || t('default_filter.all')}
-                {allOptionTooltip && (
-                  <Tooltip title={allOptionTooltip}>
-                    <InfoCircleOutlined />
-                  </Tooltip>
-                )}
-              </Space>
-            </div>
-          </div>
-        );
-      }}
-      // showSelected={gids !== '-1' && gids !== '-2'}
-      showSelected={true}
-      onSelect={(key) => {
-        const ids = getCleanBusinessGroupIds(key);
-        setGids(ids);
-        localStorage.removeItem(localeKey);
-      }}
+    // renderHeadExtra={() => {
+    //   return (
+    //     <div>
+    //       <div className='n9e-biz-group-container-group-title'>{t('default_filter.title')}</div>
+    //       {showPublicOption && publicOptionLabel && (
+    //         <div
+    //           className={classNames({
+    //             'n9e-biz-group-item': true,
+    //             active: gids === '-1',
+    //           })}
+    //           onClick={() => {
+    //             setGids('-1');
+    //             localStorage.setItem(localeKey, '-1');
+    //           }}
+    //         >
+    //           {publicOptionLabel}
+    //         </div>
+    //       )}
+    //       <div
+    //         className={classNames({
+    //           'n9e-biz-group-item': true,
+    //           active: gids === '-2',
+    //         })}
+    //         onClick={() => {
+    //           setGids('-2');
+    //           localStorage.setItem(localeKey, '-2');
+    //         }}
+    //       >
+    //         <Space>
+    //           {allOptionLabel || t('default_filter.all')}
+    //           {allOptionTooltip && (
+    //             <Tooltip title={allOptionTooltip}>
+    //               <InfoCircleOutlined />
+    //             </Tooltip>
+    //           )}
+    //         </Space>
+    //       </div>
+    //     </div>
+    //   );
+    // }}
+    // // showSelected={gids !== '-1' && gids !== '-2'}
+    // showSelected={true}
+    // onSelect={(key) => {
+    //   const ids = getCleanBusinessGroupIds(key);
+    //   setGids(ids);
+    //   localStorage.removeItem(localeKey);
+    // }}
     />
   );
 }

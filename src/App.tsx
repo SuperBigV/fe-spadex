@@ -324,7 +324,8 @@ function App() {
             console.error(e);
           }
         }
-        document.title = siteInfo?.page_title || 'Nightingale';
+        // document.title = siteInfo?.page_title || 'Spidex';
+        document.title = 'Spadex';
         if (iconLink) {
           iconLink.href = siteInfo?.favicon_url || '/image/favicon.ico';
         }
