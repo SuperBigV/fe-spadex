@@ -60,7 +60,7 @@ interface Props {
   operateType: string;
   groups: Group[];
   title: string;
-  gid: number;
+  gid?: number;
   visiable?: boolean;
   modelOptions?: any[];
   busiOptions?: any[];

@@ -1,0 +1,180 @@
+/* topology-editor.css */
+.topology-editor {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.device-panel {
+  width: 200px;
+  background-color: black;
+  padding: 15px;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.device-panel h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #777;
+}
+
+.device-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 8px;
+  background-color: #777;
+  border-radius: 5px;
+  cursor: grab;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+}
+
+.device-item:hover {
+  background-color: #e9f5ff;
+  transform: translateX(2px);
+}
+
+.device-icon {
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+.flow-container {
+  flex-grow: 1;
+  height: 100%;
+}
+
+.device-node {
+  padding: 10px;
+  border-radius: 5px;
+  background: white;
+  border: 2px solid #555;
+  min-width: 120px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.device-node .device-icon {
+  font-size: 2em;
+  margin-bottom: 5px;
+}
+
+.device-node .device-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.device-node .device-asset {
+  font-size: 0.8em;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+.room-node {
+  padding: 20px;
+  border: 2px dashed #777;
+  border-radius: 5px;
+  background: rgba(200, 200, 200, 0.2);
+  min-width: 150px;
+  min-height: 100px;
+  text-align: center;
+}
+
+.room-node .room-label {
+  font-weight: bold;
+  color: #555;
+}
+
+.custom-edge {
+  font-size: 0.7em;
+  text-align: center;
+}
+
+.edge-stats {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin: 2px;
+  border: 1px solid #ddd;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 400px;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal h2 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.form-group select[multiple] {
+  height: 120px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.modal-actions button:first-child {
+  background-color: #e0e0e0;
+}
+
+.modal-actions button:last-child {
+  background-color: #1890ff;
+  color: white;
+}

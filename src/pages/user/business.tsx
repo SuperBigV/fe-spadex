@@ -311,16 +311,17 @@ const Resource: React.FC = () => {
                   </Space> */}
                   <Descriptions bordered size='small' column={4}>
                     <Descriptions.Item label='软件名称'>{teamInfo?.name.split('/').pop()}</Descriptions.Item>
-                    <Descriptions.Item label='语言'>{teamInfo?.attr?.language}</Descriptions.Item>
+                    <Descriptions.Item label='语言'>{teamInfo?.attr?.language || '未配置'}</Descriptions.Item>
                     <Descriptions.Item label='进程采集'>{teamInfo?.attr?.is_collection_enabled ? '已开启' : '未开启'}</Descriptions.Item>
-                    <Descriptions.Item label='进程名称'>{teamInfo?.attr?.processName}</Descriptions.Item>
+                    <Descriptions.Item label='进程名称'>{teamInfo?.attr?.processName || '未配置'}</Descriptions.Item>
                     <Descriptions.Item label='日志采集'>{teamInfo?.attr?.is_log_collection_enabled ? '已开启' : '未开启'}</Descriptions.Item>
-                    <Descriptions.Item label='日志位置'>{teamInfo?.attr?.logPath}</Descriptions.Item>
+                    <Descriptions.Item label='日志位置'>{teamInfo?.attr?.logPath || '未配置'}</Descriptions.Item>
                     <Descriptions.Item label='运维单位'>
                       {opserOptions.map((item) => {
-                        console.log('####item:', item);
                         if (item.id == teamInfo?.attr?.opsUnit) {
                           return item.data.name;
+                        } else {
+                          return '未配置';
                         }
                       })}
                     </Descriptions.Item>

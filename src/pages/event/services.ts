@@ -12,3 +12,9 @@ export function getEvents(params) {
     params,
   });
 }
+export function getCurEventsOfMe(params) {
+  return request('/api/n9e/alert-cur-events/me', {
+    method: RequestMethod.Get,
+    params,
+  });
+}

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import Icon, { MenuUnfoldOutlined, MenuFoldOutlined, NotificationFilled } from '@ant-design/icons';
+import Icon, { MenuUnfoldOutlined, MenuFoldOutlined, GlobalOutlined, AppstoreAddOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 import querystring from 'query-string';
 import { useTranslation } from 'react-i18next';
@@ -17,23 +17,22 @@ import QuickMenu from './QuickMenu';
 import { IMenuItem } from './types';
 import './menu.less';
 import '../locale';
-
 // @ts-ignore
 import getPlusMenu from 'plus:/menu';
 
 export const getMenuList = (t) => {
   const menuList = [
-    // {
-    //   key: 'workbench',
-    //   icon: <IconFont type='icon-Menu_Dashboard' />,
-    //   label: t('工作台'),
-    //   children: [
-    //     {
-    //       key: '/workbench',
-    //       label: t('我的工作台'),
-    //     },
-    //   ],
-    // },
+    {
+      key: 'workbench',
+      icon: <GlobalOutlined />,
+      label: t('工作台'),
+      children: [
+        {
+          key: '/workbench',
+          label: t('我的工作台'),
+        },
+      ],
+    },
     {
       key: 'dashboard',
       icon: <IconFont type='icon-Menu_Dashboard' />,
@@ -59,7 +58,7 @@ export const getMenuList = (t) => {
     },
     {
       key: 'assets',
-      icon: <IconFont type='icon-Menu_Infrastructure' />,
+      icon: <AppstoreAddOutlined />,
       label: '资产管理',
       children: [
         {

@@ -454,7 +454,7 @@ const Targets: React.FC = () => {
   //   });
   // }, []);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeKey, setActiveKey] = useState('1');
+  const [activeKey, setActiveKey] = useState('2');
   const [dashboardId, setDashboardId] = useState<number>(0);
   const [dashboardList, setDashboardList] = useState<IDashboard[]>([]);
 
@@ -538,7 +538,7 @@ const Targets: React.FC = () => {
           // }}
           onSelect={(key) => {
             const ids = getCleanBusinessGroupIds(key);
-            setActiveKey('1');
+            setActiveKey('2');
             setGids(ids);
           }}
         />
@@ -550,9 +550,8 @@ const Targets: React.FC = () => {
           }}
         >
           <Tabs activeKey={activeKey} onChange={onChange}>
-            <TabPane tab='软件概览' key='1'>
-              {/* <SoftwareOverview /> */}
-            </TabPane>
+            {/* <TabPane tab='软件概览' key='1'>
+            </TabPane> */}
             <TabPane tab='主机列表' key='2'>
               <List
                 gids={gids}

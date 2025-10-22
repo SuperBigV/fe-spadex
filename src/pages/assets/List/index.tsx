@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Table, Spin, message, Dropdown, Menu, Modal, Tag, Popconfirm, Checkbox, Button, Row, Col, Input, Image, Tooltip, Space } from 'antd';
-import { MoreOutlined, SearchOutlined, DownOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { MoreOutlined, CodeOutlined, DesktopOutlined, SearchOutlined, DownOutlined, InfoCircleOutlined, LinkOutlined, ReloadOutlined, PoweroffOutlined } from '@ant-design/icons';
 
 import { getColumnsByGid, getGidDetail, getByGidAssetsList, addAsset, addAssetToN9e, editAsset, targetControlPost, getTargetPassword, getRacks } from './services'; // 假设这两个函数用于获取表格列和数据
 import _, { includes, set } from 'lodash';
@@ -1052,6 +1052,7 @@ export default function AssetList(props: IProps) {
                 </Button>
                 {modelGroupDetail.uniqueIdentifier.includes('host_') && (
                   <Button
+                    icon={<LinkOutlined />}
                     size='small'
                     type='link'
                     style={{ padding: 0 }}
