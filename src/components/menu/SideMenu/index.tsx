@@ -101,7 +101,7 @@ export const getMenuList = (t) => {
     {
       key: 'metric',
       icon: <IconFont type='icon-IndexManagement1' />,
-      label: t('数据查询'),
+      label: t('数据洞察'),
       children: [
         {
           key: '/metric/explorer',
@@ -117,7 +117,7 @@ export const getMenuList = (t) => {
         // },
         {
           key: '/object/explorer',
-          label: t('快捷视图'),
+          label: t('洞察中心'),
         },
         // {
         //   key: '/recording-rules',
@@ -206,8 +206,16 @@ export const getMenuList = (t) => {
           label: '任务历史',
         },
         {
+          key: '/topology',
+          label: '网络拓扑',
+        },
+        {
           key: '/pollings',
           label: '智能巡检',
+        },
+        {
+          key: '/probes',
+          label: '拨测工具',
         },
       ],
     },

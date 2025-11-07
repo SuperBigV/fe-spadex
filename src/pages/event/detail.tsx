@@ -110,26 +110,26 @@ const EventDetailPage: React.FC = () => {
             },
           },
         ]),
-    { label: t('detail.rule_note'), key: 'rule_note' },
-    ...(!_.includes(['firemap', 'northstar'], eventDetail?.rule_prod)
-      ? [
-          {
-            label: t('detail.datasource_id'),
-            key: 'datasource_id',
-            render(content) {
-              return _.find(datasourceList, (item) => item.id === content)?.name;
-            },
-          },
-        ]
-      : [false]),
+    // { label: t('detail.rule_note'), key: 'rule_note' },
+    // ...(!_.includes(['firemap', 'northstar'], eventDetail?.rule_prod)
+    //   ? [
+    //       {
+    //         label: t('detail.datasource_id'),
+    //         key: 'datasource_id',
+    //         render(content) {
+    //           return _.find(datasourceList, (item) => item.id === content)?.name;
+    //         },
+    //       },
+    //     ]
+    //   : [false]),
     {
       label: t('detail.severity'),
       key: 'severity',
       render: (severity) => {
         const severityMap = {
-          1: '（Critical）',
-          2: '（Warning）',
-          3: '（Info）',
+          1: '严重',
+          2: '警告',
+          3: '通知',
         };
         return (
           <Tag color={priorityColor[severity - 1]}>
@@ -142,9 +142,10 @@ const EventDetailPage: React.FC = () => {
       label: t('detail.is_recovered'),
       key: 'is_recovered',
       render(isRecovered) {
-        return <Tag color={isRecovered ? 'green' : 'red'}>{isRecovered ? 'Recovered' : 'Triggered'}</Tag>;
+        return <Tag color={isRecovered ? 'green' : 'red'}>{isRecovered ? '已恢复' : '正在告警'}</Tag>;
       },
     },
+
     {
       label: t('detail.tags'),
       key: 'tags',
@@ -158,7 +159,11 @@ const EventDetailPage: React.FC = () => {
           : '';
       },
     },
-    ...(!_.includes(['firemap', 'northstar'], eventDetail?.rule_prod) ? [{ label: t('detail.target_note'), key: 'target_note' }] : [false]),
+    {
+      label: '告警对象',
+      key: 'target_ident',
+    },
+    // ...(!_.includes(['firemap', 'northstar'], eventDetail?.rule_prod) ? [{ label: t('detail.target_note'), key: 'target_note' }] : [false]),
     {
       label: t('detail.first_trigger_time'),
       key: 'first_trigger_time',
@@ -212,7 +217,8 @@ const EventDetailPage: React.FC = () => {
     ...(_.includes(['firemap', 'northstar'], eventDetail?.rule_prod)
       ? [
           {
-            label: t(`detail.${eventDetail?.rule_prod}_ql_label`),
+            // label: t(`detail.${eventDetail?.rule_prod}_ql_label`),
+            label: t(`查询条件`),
             key: 'prom_ql',
             render: (val) => {
               return val;
@@ -264,21 +270,21 @@ const EventDetailPage: React.FC = () => {
         return groups ? groups.map((group) => <Tag color='purple'>{group.name}</Tag>) : '';
       },
     },
-    {
-      label: t('detail.callbacks'),
-      key: 'callbacks',
-      render(callbacks) {
-        return callbacks
-          ? callbacks.map((callback) => (
-              <Tag>
-                <Paragraph copyable style={{ margin: 0 }}>
-                  {callback}
-                </Paragraph>
-              </Tag>
-            ))
-          : '';
-      },
-    },
+    // {
+    //   label: t('detail.callbacks'),
+    //   key: 'callbacks',
+    //   render(callbacks) {
+    //     return callbacks
+    //       ? callbacks.map((callback) => (
+    //           <Tag>
+    //             <Paragraph copyable style={{ margin: 0 }}>
+    //               {callback}
+    //             </Paragraph>
+    //           </Tag>
+    //         ))
+    //       : '';
+    //   },
+    // },
   ];
 
   if (eventDetail?.annotations) {
@@ -379,7 +385,7 @@ const EventDetailPage: React.FC = () => {
                       </div>
                     );
                   })}
-                <EventNotifyRecords eventId={eventDetail.id} />
+                {/* <EventNotifyRecords eventId={eventDetail.id} /> */}
                 <TaskTpls eventDetail={eventDetail} />
               </div>
             )}

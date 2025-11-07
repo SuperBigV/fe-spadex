@@ -6,7 +6,6 @@ import { CommonStateContext } from '@/App';
 import ModelForm from '../modelForm';
 import { createAssetModelField, updateAssetModelField, getAssetModelFieldDetail } from '../../services';
 
-import { createAssetModel } from '../../services';
 import { useTranslation } from 'react-i18next';
 import { getRSAConfig } from '@/services/login';
 import { RsaEncry } from '@/utils/rsa';

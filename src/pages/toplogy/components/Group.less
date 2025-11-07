@@ -1,0 +1,139 @@
+.group-room {
+  position: absolute;
+  background: rgba(77, 140, 255, 0.15);
+  border: 2px solid rgba(77, 140, 255, 0.5);
+  border-radius: 8px;
+  cursor: move;
+  user-select: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #4d8cff;
+    background: rgba(77, 140, 255, 0.2);
+  }
+
+  &.selected {
+    border-color: #4d8cff;
+    background: rgba(77, 140, 255, 0.25);
+    box-shadow: 0 0 0 2px rgba(77, 140, 255, 0.3);
+  }
+
+  .delete-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background: #f44336;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 10px;
+
+    &:hover {
+      background: #d32f2f;
+    }
+  }
+
+  .group-header {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+
+    .group-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #4d8cff;
+    }
+
+    .device-count {
+      font-size: 12px;
+      color: #aaa;
+    }
+  }
+
+  .group-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+
+    .group-device {
+      position: absolute;
+      background: #2d2d3d;
+      border: 1px solid #3d3d4d;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: move;
+      user-select: none;
+
+      &.dragging {
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .device-icon {
+        font-size: 16px;
+        margin-bottom: 2px;
+
+        &.router {
+          color: #4d8cff;
+        }
+
+        &.switch {
+          color: #4caf50;
+        }
+
+        &.firewall {
+          color: #ff9800;
+        }
+
+        &.server {
+          color: #9c27b0;
+        }
+
+        &.wireless {
+          color: #00bcd4;
+        }
+      }
+
+      .device-name {
+        font-size: 10px;
+        text-align: center;
+        color: #e0e0e0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 90%;
+      }
+    }
+  }
+
+  .resize-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    right: -6px;
+    bottom: -6px;
+    background: #4d8cff;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    cursor: se-resize;
+    z-index: 10;
+  }
+}

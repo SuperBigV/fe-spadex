@@ -67,7 +67,7 @@ const SoftwareList = () => {
 
   const [searchText, setSearchText] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedSoftware, setSelectedSoftware] = useState(null);
+  const [selectedSoftware, setSelectedSoftware] = useState<any>(null);
   const [actionModalVisible, setActionModalVisible] = useState(false);
 
   // 处理进程采集状态切换

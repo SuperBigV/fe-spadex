@@ -1,463 +1,390 @@
-import React, { useState, useCallback, useRef } from 'react';
-import {
-  ReactFlow,
-  Background,
-  Controls,
-  MiniMap,
-  addEdge,
-  useNodesState,
-  useEdgesState,
-  Panel,
-  useReactFlow,
-  ReactFlowProvider,
-  MarkerType,
-  Handle,
-  Position,
-  EdgeProps,
-  BaseEdge,
-  type OnConnect,
-  type Node,
-  type Edge,
-  ConnectionMode,
-  getStraightPath,
-  NodeProps,
-  Connection,
-  ReactFlowInstance,
-} from '@xyflow/react';
-import { Layout, Menu, Card, Typography, Button, Tooltip, message } from 'antd';
-import { CloudOutlined, FireOutlined, GatewayOutlined, SwapOutlined, DesktopOutlined, DatabaseOutlined, QuestionCircleOutlined, DeleteOutlined } from '@ant-design/icons';
-import '@xyflow/react/dist/style.css';
+import React, { useState, useRef, useCallback } from 'react';
+import { Layout } from 'antd';
+import { DatabaseOutlined } from '@ant-design/icons';
 import PageLayout from '@/components/pageLayout';
-import CustomEdge from './customEdge';
-import CustomNode from './customNode';
-const { Sider, Content } = Layout;
-const { Title } = Typography;
+// import TopBar from './components/TopBar';
+import Sidebar from './components/Sidebar';
+import Canvas from './components/Canvas';
+import PropertyPanel from './components/PropertyPanel';
+import './style.less';
 
-// 节点数据类型定义
-interface NodeData {
-  label: string;
-  icon: string;
-  type: string;
-}
+const { Header, Sider, Content } = Layout;
 
-// 设备类型定义
-interface DeviceType {
-  key: string;
-  label: string;
-  icon: string;
-  type: string;
-  children?: DeviceType[];
-}
+const Topology = () => {
+  const [devices, setDevices] = useState<any>([]);
+  const [connections, setConnections] = useState<any>([]);
+  const [groups, setGroups] = useState<any>([]);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [canvasScale, setCanvasScale] = useState(1);
+  const [canvasPosition, setCanvasPosition] = useState({ x: 0, y: 0 });
+  const [history, setHistory] = useState<any>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const canvasRef = useRef();
+  // 保存当前状态到历史记录
+  const saveToHistory = useCallback(() => {
+    const newState = {
+      devices: JSON.parse(JSON.stringify(devices)),
+      connections: JSON.parse(JSON.stringify(connections)),
+      groups: JSON.parse(JSON.stringify(groups)),
+    };
+    const newHistory = history.slice(0, historyIndex + 1);
+    newHistory.push(newState);
+    setHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+  }, [devices, connections, groups, history, historyIndex]);
 
-// 自定义边组件
-// const CustomEdge: React.FC<EdgeProps> = ({ id, sourceX, sourceY, targetX, targetY, selected, markerEnd }) => {
-//   const [edgeHovered, setEdgeHovered] = useState(false);
-//   const { setEdges } = useReactFlow();
+  // 撤销操作
+  const handleUndo = useCallback(() => {
+    if (historyIndex > 0) {
+      const prevState = history[historyIndex - 1];
+      setDevices(prevState.devices);
+      setConnections(prevState.connections);
+      setGroups(prevState.groups);
+      setHistoryIndex(historyIndex - 1);
+    }
+  }, [history, historyIndex]);
 
-//   // 删除边
-//   const onEdgeClick = useCallback(
-//     (event: React.MouseEvent, edgeId: string) => {
-//       event.stopPropagation();
-//       setEdges((edges) => edges.filter((edge) => edge.id !== edgeId));
-//       message.success('连线已删除');
-//     },
-//     [setEdges],
-//   );
+  // 重做操作
+  const handleRedo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      const nextState = history[historyIndex + 1];
+      setDevices(nextState.devices);
+      setConnections(nextState.connections);
+      setGroups(nextState.groups);
+      setHistoryIndex(historyIndex + 1);
+    }
+  }, [history, historyIndex]);
 
-//   const [edgePath] = getStraightPath({
-//     sourceX,
-//     sourceY,
-//     targetX,
-//     targetY,
-//   });
-
-//   const centerX = (sourceX + targetX) / 2;
-//   const centerY = (sourceY + targetY) / 2;
-
-//   return (
-//     <>
-//       <BaseEdge
-//         id={id}
-//         path={edgePath}
-//         style={{
-//           stroke: selected ? '#1890ff' : '#999',
-//           strokeWidth: selected ? 3 : 2,
-//         }}
-//         markerEnd={markerEnd}
-//       />
-//       {(edgeHovered || selected) && (
-//         <g transform={`translate(${centerX}, ${centerY})`} onMouseEnter={() => setEdgeHovered(true)} onMouseLeave={() => setEdgeHovered(false)}>
-//           <circle
-//             r={10}
-//             fill={selected ? '#1890ff' : 'red'}
-//             onClick={(event) => onEdgeClick(event, id)}
-//             style={{
-//               cursor: 'pointer',
-//               opacity: 0.8,
-//             }}
-//           />
-//           <text dy='0.3em' textAnchor='middle' fill='white' fontSize={10} fontWeight='bold' style={{ pointerEvents: 'none' }}>
-//             ×
-//           </text>
-//         </g>
-//       )}
-//     </>
-//   );
-// };
-
-// 定义节点和边类型
-const nodeTypes = {
-  custom: CustomNode,
-};
-
-const edgeTypes = {
-  custom: CustomEdge,
-};
-
-// 设备类型数据
-const deviceTypes: DeviceType[] = [
-  {
-    key: 'cloud',
-    label: '云',
-    icon: '/image/topology_cloud.png',
-    type: 'cloud',
-  },
-  {
-    key: 'firewall',
-    label: '防火墙',
-    icon: '/image/topology_fireware.png',
-    type: 'firewall',
-  },
-  {
-    key: 'router',
-    label: '路由器',
-    icon: '/image/topology_router.png',
-    type: 'router',
-  },
-  {
-    key: 'switch',
-    label: '交换机',
-    icon: '',
-    type: 'switch',
-    children: [
-      {
-        key: 'three_switch',
-        label: '三层交换机',
-        icon: '/image/topology_three_switch.png',
-        type: 'switch',
-      },
-      {
-        key: 'core_switch',
-        label: '核心交换机',
-        icon: '/image/topology_core_switch.png',
-        type: 'switch',
-      },
-      {
-        key: 'aggr_switch',
-        label: '汇聚交换机',
-        icon: '/image/topology_aggr_switch.png',
-        type: 'switch',
-      },
-      {
-        key: 'access_switch',
-        label: '接入交换机',
-        icon: '/image/topology_arcess_switch.png',
-        type: 'switch',
-      },
-    ],
-  },
-  {
-    key: 'server',
-    label: '服务器',
-    icon: '/image/topology_host.png',
-    type: 'server',
-  },
-];
-
-// 主组件
-const TopologyEditor: React.FC = () => {
-  const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState<any>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<any>([]);
-  const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
-  const { screenToFlowPosition } = useReactFlow();
-
-  // 处理拖拽开始
-  const onDragStart = (event: React.DragEvent, nodeType: string, icon: string, label: string) => {
-    event.dataTransfer.setData(
-      'application/reactflow',
-      JSON.stringify({
-        type: nodeType,
-        icon,
-        label,
-      }),
-    );
-    event.dataTransfer.effectAllowed = 'move';
-  };
-
-  // 处理拖拽放置
-  const onDrop = useCallback(
-    (event: React.DragEvent) => {
-      event.preventDefault();
-
-      if (!reactFlowWrapper.current) return;
-
-      const data = event.dataTransfer.getData('application/reactflow');
-      if (!data) return;
-
-      const { type, icon, label } = JSON.parse(data);
-
-      const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-      const position = screenToFlowPosition({
-        x: event.clientX - reactFlowBounds.left,
-        y: event.clientY - reactFlowBounds.top,
-      });
-
-      const newNode = {
-        id: `${type}-${Date.now()}`,
-        type: 'custom',
-        position,
-        data: {
-          label,
-          icon,
-          type,
-        },
+  // 添加设备
+  const addDevice = useCallback(
+    (device) => {
+      const newDevice = {
+        ...device,
+        id: `device-${Date.now()}`,
+        x: device.x || 100,
+        y: device.y || 100,
+        width: 80,
+        height: 60,
+        ports:
+          device.type === 'router'
+            ? [
+                { id: 'p1', name: 'GE0/0/1', status: 'up', bandwidth: 1000 },
+                { id: 'p2', name: 'GE0/0/2', status: 'up', bandwidth: 1000 },
+                { id: 'p3', name: 'GE0/0/3', status: 'down', bandwidth: 1000 },
+                { id: 'p4', name: 'GE0/0/4', status: 'up', bandwidth: 1000 },
+              ]
+            : device.type === 'switch'
+            ? [
+                { id: 'p1', name: 'Fa0/1', status: 'up', bandwidth: 100 },
+                { id: 'p2', name: 'Fa0/2', status: 'up', bandwidth: 100 },
+                { id: 'p3', name: 'Fa0/3', status: 'down', bandwidth: 100 },
+                { id: 'p4', name: 'Fa0/4', status: 'up', bandwidth: 100 },
+                { id: 'p5', name: 'Fa0/5', status: 'up', bandwidth: 100 },
+                { id: 'p6', name: 'Fa0/6', status: 'up', bandwidth: 100 },
+                { id: 'p7', name: 'Fa0/7', status: 'up', bandwidth: 100 },
+                { id: 'p8', name: 'Fa0/8', status: 'up', bandwidth: 100 },
+              ]
+            : device.type === 'firewall'
+            ? [
+                { id: 'p1', name: 'Eth1', status: 'up', bandwidth: 1000 },
+                { id: 'p2', name: 'Eth2', status: 'up', bandwidth: 1000 },
+              ]
+            : device.type === 'server'
+            ? [
+                { id: 'p1', name: 'Eth0', status: 'up', bandwidth: 1000 },
+                { id: 'p2', name: 'Eth1', status: 'up', bandwidth: 1000 },
+              ]
+            : device.type === 'wireless'
+            ? [{ id: 'p1', name: 'Eth0', status: 'up', bandwidth: 100 }]
+            : [
+                { id: 'p1', name: 'Port1', status: 'up', bandwidth: 1000 },
+                { id: 'p2', name: 'Port2', status: 'up', bandwidth: 1000 },
+              ],
+        alarm: false,
       };
-
-      setNodes((nds) => [...nds, newNode]);
-      message.success(`已添加 ${label}`);
+      setDevices((prev) => [...prev, newDevice]);
+      saveToHistory();
     },
-    [screenToFlowPosition, setNodes],
+    [saveToHistory],
   );
 
-  // 处理连线
-  const onConnect: OnConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
+  // 添加机房组
+  const addGroup = useCallback(
+    (group) => {
+      const newGroup = {
+        ...group,
+        id: `group-${Date.now()}`,
+        x: group.x || 100,
+        y: group.y || 100,
+        width: 300,
+        height: 200,
+        devices: [],
+        groups: [],
+        name: '新机房',
+      };
+      setGroups((prev) => [...prev, newGroup]);
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
 
-  // 删除选中节点和边
-  const deleteSelected = useCallback(() => {
-    const selectedNodes = nodes.filter((node) => node.selected);
-    const selectedEdges = edges.filter((edge) => edge.selected);
+  // 更新设备属性
+  const updateDevice = useCallback(
+    (id, updates) => {
+      setDevices((prev) => prev.map((device) => (device.id === id ? { ...device, ...updates } : device)));
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
 
-    if (selectedNodes.length === 0 && selectedEdges.length === 0) {
-      message.warning('请先选择要删除的节点或连线');
-      return;
-    }
+  // 更新机房属性
+  const updateGroup = useCallback(
+    (id, updates) => {
+      setGroups((prev) => prev.map((group) => (group.id === id ? { ...group, ...updates } : group)));
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
 
-    setNodes((nds) => nds.filter((node) => !node.selected));
-    setEdges((eds) => eds.filter((edge) => !edge.selected));
-    message.success(`已删除 ${selectedNodes.length} 个节点和 ${selectedEdges.length} 条连线`);
-  }, [nodes, edges, setNodes, setEdges]);
+  // 删除设备
+  const deleteDevice = useCallback(
+    (id) => {
+      setDevices((prev) => prev.filter((device) => device.id !== id));
+      setConnections((prev) => prev.filter((conn) => conn.source.deviceId !== id && conn.target.deviceId !== id));
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
 
-  // 删除所有
-  const deleteAll = useCallback(() => {
-    if (nodes.length === 0 && edges.length === 0) {
-      message.warning('画布已经是空的');
-      return;
-    }
+  // 删除机房
+  const deleteGroup = useCallback(
+    (id) => {
+      setGroups((prev) => prev.filter((group) => group.id !== id));
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
 
-    setNodes([]);
-    setEdges([]);
-    message.success('已清空画布');
-  }, [nodes, edges, setNodes, setEdges]);
+  // 添加连接
+  const addConnection = useCallback(
+    (connection) => {
+      const newConnection = {
+        ...connection,
+        id: `conn-${Date.now()}`,
+      };
+      setConnections((prev) => [...prev, newConnection]);
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
 
-  // 获取设备类型的图标
-  const getIconForType = (type: string) => {
-    switch (type) {
-      case 'cloud':
-        return <CloudOutlined />;
-      case 'firewall':
-        return <FireOutlined />;
-      case 'router':
-        return <GatewayOutlined />;
-      case 'switch':
-        return <SwapOutlined />;
-      case 'server':
-        return <DesktopOutlined />;
-      default:
-        return <DesktopOutlined />;
-    }
-  };
+  // 更新连接
+  const updateConnection = useCallback(
+    (id, updates) => {
+      setConnections((prev) => prev.map((conn) => (conn.id === id ? { ...conn, ...updates } : conn)));
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
 
-  // 渲染设备菜单项
-  const renderMenuItem = (item: DeviceType) => {
-    if (item.children) {
-      return (
-        <Menu.SubMenu key={item.key} icon={getIconForType(item.type)} title={item.label}>
-          {item.children.map((child) => (
-            <Menu.Item key={child.key}>
-              <div
-                className='device-menu-item'
-                draggable
-                onDragStart={(e) => onDragStart(e, child.type, child.icon, child.label)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '8px 0',
-                  cursor: 'grab',
-                }}
-              >
-                <img src={child.icon} alt={child.label} width={24} height={24} />
-                <span>{child.label}</span>
-              </div>
-            </Menu.Item>
-          ))}
-        </Menu.SubMenu>
+  // 删除连接
+  const deleteConnection = useCallback(
+    (id) => {
+      setConnections((prev) => prev.filter((conn) => conn.id !== id));
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
+
+  // 清空画布
+  const clearCanvas = useCallback(() => {
+    setDevices([]);
+    setConnections([]);
+    setGroups([]);
+    setSelectedItem(null);
+    saveToHistory();
+  }, [saveToHistory]);
+
+  // 将设备添加到机房
+  const addDeviceToGroup = useCallback(
+    (deviceId, groupId) => {
+      setGroups((prev) =>
+        prev.map((group) => {
+          if (group.id === groupId) {
+            return {
+              ...group,
+              devices: [...group.devices, deviceId],
+            };
+          }
+          return group;
+        }),
       );
-    }
 
-    return (
-      <Menu.Item key={item.key}>
-        <div
-          className='device-menu-item'
-          draggable
-          onDragStart={(e) => onDragStart(e, item.type, item.icon, item.label)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '8px 0',
-            cursor: 'grab',
-          }}
-        >
-          <img src={item.icon} alt={item.label} width={24} height={24} />
-          <span>{item.label}</span>
-        </div>
-      </Menu.Item>
-    );
-  };
+      setDevices((prev) =>
+        prev.map((device) => {
+          if (device.id === deviceId) {
+            return {
+              ...device,
+              groupId,
+            };
+          }
+          return device;
+        }),
+      );
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
+
+  // 从机房移除设备
+  const removeDeviceFromGroup = useCallback(
+    (deviceId, groupId) => {
+      setGroups((prev) =>
+        prev.map((group) => {
+          if (group.id === groupId) {
+            return {
+              ...group,
+              devices: group.devices.filter((id) => id !== deviceId),
+            };
+          }
+          return group;
+        }),
+      );
+
+      setDevices((prev) =>
+        prev.map((device) => {
+          if (device.id === deviceId) {
+            const { groupId, ...rest } = device;
+            return rest;
+          }
+          return device;
+        }),
+      );
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
+
+  // 移动设备
+  const moveDevice = useCallback((id, x, y) => {
+    setDevices((prev) => prev.map((device) => (device.id === id ? { ...device, x, y } : device)));
+  }, []);
+
+  // 移动机房
+  const moveGroup = useCallback(
+    (id, x, y) => {
+      // 移动机房时，同时移动机房内的所有设备
+      const group = groups.find((g) => g.id === id);
+      if (group) {
+        const deltaX = x - group.x;
+        const deltaY = y - group.y;
+
+        // 更新机房内设备的位置
+        setDevices((prev) =>
+          prev.map((device) => {
+            if (device.groupId === id) {
+              return {
+                ...device,
+                x: device.x + deltaX,
+                y: device.y + deltaY,
+              };
+            }
+            return device;
+          }),
+        );
+      }
+
+      // 更新机房位置
+      setGroups((prev) => prev.map((group) => (group.id === id ? { ...group, x, y } : group)));
+    },
+    [groups],
+  );
+
+  // 调整机房大小
+  const resizeGroup = useCallback((id, width, height) => {
+    setGroups((prev) => prev.map((group) => (group.id === id ? { ...group, width, height } : group)));
+  }, []);
+
+  // 导出图片
+  const exportImage = useCallback(() => {
+    alert('导出图片功能已触发');
+  }, []);
+
+  // 全屏显示
+  const toggleFullscreen = useCallback(() => {
+    alert('全屏显示功能已触发');
+  }, []);
+
+  // 缩放画布
+  const zoomCanvas = useCallback((delta) => {
+    setCanvasScale((prev) => Math.min(Math.max(0.5, prev + delta), 2));
+  }, []);
+
+  // 重置画布缩放
+  const resetCanvas = useCallback(() => {
+    setCanvasScale(1);
+    setCanvasPosition({ x: 0, y: 0 });
+  }, []);
 
   return (
     <PageLayout icon={<DatabaseOutlined />} title={'网络拓扑'}>
-      <Layout style={{ height: '100vh' }}>
-        <Sider width={180}>
-          <div style={{ padding: '0 16px' }}>
-            <Title level={4}>设备类型</Title>
-            <p style={{ color: '#666', fontSize: '12px', marginTop: '-8px' }}>拖拽设备到画布，悬停节点显示连接点</p>
-          </div>
-          <Menu mode='inline' style={{ border: 'none' }}>
-            {deviceTypes.map((device) => renderMenuItem(device))}
-          </Menu>
+      <Layout className='net-topology'>
+        <Sider width={80} className='net-sidebar'>
+          <Sidebar
+            onAddDevice={addDevice}
+            onAddGroup={addGroup}
+            onClearCanvas={clearCanvas}
+            onZoomIn={() => zoomCanvas(0.1)}
+            onZoomOut={() => zoomCanvas(-0.1)}
+            onResetCanvas={resetCanvas}
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+            onExportImage={exportImage}
+            onFullscreen={toggleFullscreen}
+            canUndo={historyIndex > 0}
+            canRedo={historyIndex < history.length - 1}
+          />
         </Sider>
-
-        <Layout>
-          <Content>
-            <div className='topology-container' ref={reactFlowWrapper}>
-              <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                onDrop={onDrop}
-                onDragOver={(e) => e.preventDefault()}
-                onInit={(instance: ReactFlowInstance) => setReactFlowInstance(instance)}
-                nodeTypes={nodeTypes}
-                edgeTypes={edgeTypes}
-                fitView
-                connectionMode={ConnectionMode.Loose}
-              >
-                <Background />
-                <Controls />
-                {/* <MiniMap
-                  style={{
-                    backgroundColor: '#C6C6C6',
-                    border: '1px solid #d9d9d9',
-                  }}
-                /> */}
-                <Panel position='top-right'>
-                  <Card size='small' title='操作面板' style={{ width: 220 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <Button icon={<DeleteOutlined />} onClick={deleteSelected} type='primary' danger block>
-                        删除选中项
-                      </Button>
-                      <Button onClick={deleteAll} danger style={{ marginTop: '8px' }} block>
-                        清空画布
-                      </Button>
-                      <Button type='primary' onClick={() => reactFlowInstance?.fitView()}>
-                        适应视图
-                      </Button>
-                      <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
-                        <QuestionCircleOutlined /> 提示：悬停节点显示连接点
-                      </div>
-                    </div>
-                  </Card>
-                </Panel>
-              </ReactFlow>
-            </div>
-          </Content>
-        </Layout>
+        <Content className='net-content'>
+          <Canvas
+            ref={canvasRef}
+            devices={devices}
+            connections={connections}
+            groups={groups}
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+            canvasScale={canvasScale}
+            canvasPosition={canvasPosition}
+            setCanvasPosition={setCanvasPosition}
+            onAddDevice={addDevice}
+            onAddConnection={addConnection}
+            onUpdateDevice={updateDevice}
+            onDeleteDevice={deleteDevice}
+            onMoveDevice={moveDevice}
+            onMoveGroup={moveGroup}
+            onResizeGroup={resizeGroup}
+            onAddDeviceToGroup={addDeviceToGroup}
+            onRemoveDeviceFromGroup={removeDeviceFromGroup}
+            onAddGroup={addGroup}
+          />
+        </Content>
+        <Sider width={300} className='app-property-panel'>
+          <PropertyPanel
+            selectedItem={selectedItem}
+            devices={devices}
+            connections={connections}
+            groups={groups}
+            onUpdateDevice={updateDevice}
+            onUpdateGroup={updateGroup}
+            onUpdateConnection={updateConnection}
+            onDeleteDevice={deleteDevice}
+            onDeleteGroup={deleteGroup}
+            onDeleteConnection={deleteConnection}
+          />
+        </Sider>
       </Layout>
     </PageLayout>
   );
 };
 
-// 包装组件以提供React Flow上下文
-const TopologyEditorWrapper = () => (
-  <ReactFlowProvider>
-    <TopologyEditor />
-  </ReactFlowProvider>
-);
-
-// 样式
-const styles = `
-.topology-container {
-  width: 100%;
-  height: 100%;
-}
-
-.custom-node {
-  text-align: center;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-  position: relative;
-}
-
-.custom-node .node-icon {
-  margin-bottom: 5px;
-}
-
-.custom-node .node-label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #2c3e50;
-}
-
-.connection-handle {
-  width: 8px;
-  height: 8px;
-  background: white;
-  border: 2px solid #fff;
-  border-radius: 50%;
-}
-
-.connection-handle:hover {
-  background: #1890ff;
-}
-
-.device-menu-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 0;
-}
-
-.ant-menu-item .device-menu-item {
-  margin: -8px 0;
-}
-
-.ant-layout-sider {
-  box-shadow: 2px 0 6px rgba(0,0,0,0.05);
-}
-
-.ant-menu-inline {
-  border-inline-end: none !important;
-}
-  
-`;
-
-// 添加样式到文档
-const styleSheet = document.createElement('style');
-styleSheet.innerText = styles;
-document.head.appendChild(styleSheet);
-
-export default TopologyEditorWrapper;
+export default Topology;

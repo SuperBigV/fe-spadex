@@ -18,7 +18,8 @@ export default function PrometheusDetail(props: IProps) {
   if (eventDetail?.rule_config?.version === 'v2') {
     return [
       {
-        label: i18next.t('alertRules:ruleConfigPromVersionV2.query.title'),
+        // label: i18next.t('alertRules:ruleConfigPromVersionV2.query.title'),
+        label: '告警条件',
         key: 'rule_config',
         render(ruleConfig) {
           const queries = _.get(ruleConfig, 'queries', []);
@@ -62,7 +63,7 @@ export default function PrometheusDetail(props: IProps) {
         },
       },
       {
-        label: i18next.t('datasource:es.alert.trigger.title'),
+        label: '告警条件',
         key: 'rule_config',
         render(val) {
           const triggers = _.get(val, 'triggers', []);
@@ -83,7 +84,7 @@ export default function PrometheusDetail(props: IProps) {
 
   return [
     {
-      label: 'PromQL',
+      label: '告警条件',
       key: 'rule_config',
       render(ruleConfig) {
         const prom_ql = eventDetail.prom_ql;

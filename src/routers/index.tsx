@@ -81,6 +81,7 @@ import BusiLineQA from '@/pages/busiLine/qa';
 import IdentTerminal from '@/pages/identTerminal';
 import NetTargets from '@/pages/netTargets';
 import NetToplogy from '@/pages/toplogy';
+import ProbeTools from '@/pages/probeTools';
 import { dynamicPackages, Entry, dynamicPages } from '@/utils';
 // @ts-ignore
 import { Jobs as StrategyBrain } from 'plus:/datasource/anomaly';
@@ -201,6 +202,7 @@ export default function Content() {
         {/* <Route exact path='/business' component={BusiLine} /> */}
         <Route exact path='/busi-topology' component={BusiLineQA} />
         <Route exact path='/pollings' component={NetToplogy} />
+        <Route exact path='/topology' component={NetToplogy} />
 
         <Route exact path='/rooms' component={Room} />
         <Route exact path='/room-rack/add' component={RoomAdd} />
@@ -214,6 +216,7 @@ export default function Content() {
         <Route exact path='/job-tasks/add' component={TaskAdd} />
         <Route exact path='/job-tasks/:id/result' component={TaskResult} />
         <Route exact path='/job-tasks/:id/detail' component={TaskDetail} />
+        <Route exact path='/probes' component={ProbeTools} />
 
         <Route exact path='/help/version' component={Version} />
         <Route exact path='/help/servers' component={Servers} />

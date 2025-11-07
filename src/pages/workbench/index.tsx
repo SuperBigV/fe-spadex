@@ -107,23 +107,23 @@ const Dashboard = () => {
                   size='small'
                   style={{
                     cursor: 'pointer',
-                    border: selectedCard === card.key ? '2px solid #d9d9d9' : '1px solid #4E505C',
+                    border: selectedCard === card.key ? '2px solid #d9d9d9' : '1px solid #906EF9',
                     display: 'flex',
                     alignItems: 'center',
                     padding: '12px', // 添加内边距
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div
-                      style={{
-                        marginRight: '18px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      {iconMap[card.key]}
-                    </div>
+                    {card.key === 'healthy' && (
+                      <div style={{ marginRight: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'green' }}>{iconMap[card.key]}</div>
+                    )}
+                    {card.key === 'host' && <div style={{ marginRight: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{iconMap[card.key]}</div>}
+                    {card.key === 'soft' && (
+                      <div style={{ marginRight: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#906EF9' }}>{iconMap[card.key]}</div>
+                    )}
+                    {card.key === 'alert' && (
+                      <div style={{ marginRight: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'red' }}>{iconMap[card.key]}</div>
+                    )}
                     <div>
                       <h3 style={{ margin: 0, fontSize: '18px', lineHeight: '1.4' }}>{card.title}</h3>
                       <p
