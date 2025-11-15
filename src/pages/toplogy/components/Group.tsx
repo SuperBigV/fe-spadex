@@ -5,7 +5,7 @@ import './Group.less';
 const Group = ({ group, devices, isSelected, onDragStart, onResizeStart, onSelect, onDeviceSelect, onDeviceDragStart, onDeviceMove }) => {
   const [draggingDevice, setDraggingDevice] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const groupRef = useRef(null);
+  const groupRef = useRef<any>(null);
 
   const handleMouseDown = (e) => {
     if (e.button === 0) {
@@ -65,7 +65,7 @@ const Group = ({ group, devices, isSelected, onDragStart, onResizeStart, onSelec
 
   // 添加事件监听器
   useEffect(() => {
-    const groupElement = groupRef.current;
+    const groupElement: any = groupRef.current;
     if (groupElement && draggingDevice) {
       const handleMouseMove = (e) => handleDeviceDrag(e);
       const handleMouseUp = () => handleDeviceDragEnd();

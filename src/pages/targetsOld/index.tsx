@@ -503,10 +503,39 @@ const Targets: React.FC = () => {
     }
   }, [gids]);
   return (
-    <PageLayout icon={<DatabaseOutlined />} title={t('软件洞察')}>
+    <PageLayout icon={<DatabaseOutlined />} title={t('title')}>
       <div className='object-manage-page-content'>
         <BusinessGroup2
           showSelected={gids !== '0' && gids !== undefined}
+          // renderHeadExtra={() => {
+          //   return (
+          //     <div>
+          //       <div className='n9e-biz-group-container-group-title'>{t('default_filter')}</div>
+          //       <div
+          //         className={classNames({
+          //           'n9e-biz-group-item': true,
+          //           active: gids === '0',
+          //         })}
+          //         onClick={() => {
+          //           setGids('0');
+          //         }}
+          //       >
+          //         {t('ungrouped_targets')}
+          //       </div>
+          //       <div
+          //         className={classNames({
+          //           'n9e-biz-group-item': true,
+          //           active: gids === undefined,
+          //         })}
+          //         onClick={() => {
+          //           setGids(undefined);
+          //         }}
+          //       >
+          //         {t('all_targets')}
+          //       </div>
+          //     </div>
+          //   );
+          // }}
           onSelect={(key) => {
             const ids = getCleanBusinessGroupIds(key);
             setActiveKey('2');

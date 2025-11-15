@@ -11,7 +11,7 @@ import './style.less';
 const { Header, Sider, Content } = Layout;
 
 const Topology = () => {
-  const [devices, setDevices] = useState<any>([]);
+  const [devices, setDevices] = useState<any[]>([]);
   const [connections, setConnections] = useState<any>([]);
   const [groups, setGroups] = useState<any>([]);
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -77,12 +77,6 @@ const Topology = () => {
             ? [
                 { id: 'p1', name: 'Fa0/1', status: 'up', bandwidth: 100 },
                 { id: 'p2', name: 'Fa0/2', status: 'up', bandwidth: 100 },
-                { id: 'p3', name: 'Fa0/3', status: 'down', bandwidth: 100 },
-                { id: 'p4', name: 'Fa0/4', status: 'up', bandwidth: 100 },
-                { id: 'p5', name: 'Fa0/5', status: 'up', bandwidth: 100 },
-                { id: 'p6', name: 'Fa0/6', status: 'up', bandwidth: 100 },
-                { id: 'p7', name: 'Fa0/7', status: 'up', bandwidth: 100 },
-                { id: 'p8', name: 'Fa0/8', status: 'up', bandwidth: 100 },
               ]
             : device.type === 'firewall'
             ? [
@@ -168,6 +162,7 @@ const Topology = () => {
   // 添加连接
   const addConnection = useCallback(
     (connection) => {
+      console.log('@@@addConnection:', connection);
       const newConnection = {
         ...connection,
         id: `conn-${Date.now()}`,

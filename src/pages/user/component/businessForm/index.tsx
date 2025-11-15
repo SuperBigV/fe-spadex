@@ -17,12 +17,12 @@
 import React, { useEffect, useState, useImperativeHandle, ReactNode, useCallback, useContext } from 'react';
 import { Form, Input, Select, Switch, Tag, Space, Button } from 'antd';
 import { MinusCircleOutlined, PlusOutlined, CaretDownOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { getBusinessTeamInfo, getTeamInfoList, getUnit } from '@/services/manage';
+import { getBusinessTeamInfo, getTeamInfoList, getUnit, getUserInfoList } from '@/services/manage';
 import { TeamProps, Team, ActionType } from '@/store/manageInterface';
 import { useTranslation, Trans } from 'react-i18next';
 import { debounce } from 'lodash';
 import { CommonStateContext } from '@/App';
-
+import { getAuthConfigs } from '@/pages/authConfigs/services';
 const { Option } = Select;
 const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
   const { siteInfo } = useContext(CommonStateContext);
@@ -32,9 +32,10 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
   const [userTeam, setUserTeam] = useState<Team[]>([]);
   const [opserOptions, setOpserOptions] = useState([]);
   const [maintenerOptions, setMaintenerOptions] = useState([]);
+  const [users, setUsers] = useState<any>([]);
   const [initialValues, setInitialValues] = useState({
     members: [{ perm_flag: true }],
-    attr: {},
+    attr: { soft_type: 'business' },
     name: '',
     // is_collection_enabled: false,
     // process_name: '',
@@ -44,18 +45,31 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
   // 状态用于控制进程采集开关
   const [isProcessCollectionEnabled, setIsProcessCollectionEnabled] = useState(false);
   const [isLogCollectionEnabled, setIsLogCollectionEnabled] = useState(false);
+  const [currentSoftType, setCurrentSoftType] = useState('business');
+  const [authOptions, setAuthOptions] = useState<any>([]);
   useImperativeHandle(ref, () => ({
     form: form,
   }));
-
+  const getAuthConfig = async () => {
+    const authOptions = await getAuthConfigs();
+    const options = authOptions.map((item) => ({
+      label: item.name,
+      value: item.id + ' ' + item.auth_type + ' ' + item.username + ' ' + item.password + ' ' + item.port,
+    }));
+    setAuthOptions(options);
+  };
   useEffect(() => {
+    getAuthConfig();
     if (businessId && action === ActionType.EditBusiness) {
       getTeamInfoDetail(businessId);
     } else {
       setLoading(false);
     }
   }, []);
-
+  const changeSoftType = (value: string) => {
+    setCurrentSoftType(value);
+    // console.log('softType:', value);
+  };
   const getTeamInfoDetail = (id: number) => {
     getBusinessTeamInfo(id).then(
       (data: {
@@ -68,6 +82,9 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
         user_groups: { perm_flag: string; user_group: { id: number } }[];
       }) => {
         setIsProcessCollectionEnabled(data.attr.is_collection_enabled);
+        if (data.attr.auth) {
+          setCurrentSoftType(data.attr.auth.soft_type);
+        }
         setInitialValues({
           name: data.name,
           attr: data.attr,
@@ -90,6 +107,9 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
   const getList = (str: string) => {
     getTeamInfoList({ query: str }).then((res) => {
       setUserTeam(res.dat);
+    });
+    getUserInfoList().then((res) => {
+      setUsers(res.dat.list);
     });
     // 运维单位
     getUnit('opser').then((res) => {
@@ -116,7 +136,26 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
       {action !== ActionType.AddBusinessMember && (
         <>
           <Form.Item
-            label={t('business.name')}
+            label={t('分组类型')}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+            name={['attr', 'soft_type']}
+          >
+            <Select
+              placeholder={'请选择分组类型'}
+              onChange={changeSoftType}
+              options={[
+                { label: '业务软件', value: 'business' },
+                { label: '数据库', value: 'database' },
+                { label: '中间件', value: 'middleware' },
+              ]}
+            ></Select>
+          </Form.Item>
+          <Form.Item
+            label={t('分组名称')}
             name='name'
             rules={[
               {
@@ -138,18 +177,34 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
           >
             <Input />
           </Form.Item>
-          <Form.Item label={t('开发语言')} name={['attr', 'language']}>
-            <Select
-              placeholder={'请选择开发语言'}
-              options={[
-                { label: 'Java', value: 'Java' },
-                { label: 'Golang', value: 'Golang' },
-                { label: 'Python', value: 'Python' },
-              ]}
-            ></Select>
+          <Form.Item label={t('负责人')} name={['attr', 'manager']}>
+            <Select placeholder={'请选择负责人'}>
+              {users.map((item) => (
+                <Option key={item.id} value={item.id}>
+                  {item.nickname || item.username}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
+          {currentSoftType === 'business' && (
+            <Form.Item label={t('开发语言')} name={['attr', 'language']}>
+              <Select
+                placeholder={'请选择开发语言'}
+                options={[
+                  { label: 'Java', value: 'Java' },
+                  { label: 'Golang', value: 'Golang' },
+                  { label: 'Python', value: 'Python' },
+                ]}
+              ></Select>
+            </Form.Item>
+          )}
+          {currentSoftType !== 'business' && (
+            <Form.Item label={t('认证配置')} name={['attr', 'auth']}>
+              <Select options={authOptions}></Select>
+            </Form.Item>
+          )}
           {/* 添加进程采集开关 */}
-          <Form.Item label='进程采集开关' name={['attr', 'is_collection_enabled']}>
+          <Form.Item label='进程采集开关' name={JSON.stringify(form.getFieldValue(['attr', 'auth']))}>
             <Switch checked={isProcessCollectionEnabled} onChange={setIsProcessCollectionEnabled} />
           </Form.Item>
 

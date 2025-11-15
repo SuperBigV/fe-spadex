@@ -86,7 +86,6 @@ function FormModal(props: Props & ModalWrapProps) {
       setIconOptions(data);
     });
   };
-
   const allGroups = groups
     .filter((item) => item.fields)
     .map((item) => ({
@@ -125,9 +124,8 @@ function FormModal(props: Props & ModalWrapProps) {
       }
       if (field.fieldType === 'relation') {
         getModelOptions(field.relatedModel).then((res) => {
-          console.log('res', res);
           const options = res?.map((item) => ({
-            label: item.data.name,
+            label: item.name,
             value: item.id,
           }));
           setRelationOptions((prevRelation) => ({

@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { SwitcherOutlined, WifiOutlined, CloseOutlined, WarningOutlined } from '@ant-design/icons';
 import './Device.less';
 
 const Device = ({ device, isSelected, onDragStart, onSelect, onConnectionStart, onConnectionEnd, onDelete }) => {
-  const [isConnecting, setIsConnecting] = useState(false);
-
   const getDeviceIcon = (type) => {
     switch (type) {
       case 'router':
@@ -42,16 +40,12 @@ const Device = ({ device, isSelected, onDragStart, onSelect, onConnectionStart, 
 
   const handlePortMouseDown = (e, portId) => {
     e.stopPropagation();
-    setIsConnecting(true);
     onConnectionStart(device.id, portId);
   };
 
   const handlePortMouseUp = (e, portId) => {
     e.stopPropagation();
-    if (isConnecting) {
-      onConnectionEnd(device.id, portId);
-      setIsConnecting(false);
-    }
+    onConnectionEnd(device.id, portId);
   };
 
   const handleDelete = (e) => {

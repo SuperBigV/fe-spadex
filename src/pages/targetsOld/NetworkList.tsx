@@ -1,0 +1,697 @@
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import { Table, Tag, Tooltip, Space, Input, Dropdown, Menu, Button, Modal, message, Select } from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import { SearchOutlined, DownOutlined, ReloadOutlined, CopyOutlined, ApartmentOutlined, InfoCircleOutlined, EyeOutlined } from '@ant-design/icons';
+import { useAntdTable } from 'ahooks';
+import _ from 'lodash';
+import moment from 'moment';
+import { useHistory, Link } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
+import { getMonObjectList, postTarget, putTarget } from '@/services/targets';
+import { timeFormatter } from '@/pages/dashboard/Renderer/utils/valueFormatter';
+import { CommonStateContext } from '@/App';
+import clipboard from './clipboard';
+import OrganizeColumns from './OrganizeColumns';
+import { getMiddlewareColumnsConfigs, setMiddlewareColumnsConfigs } from './utils';
+import TargetMetaDrawer from './TargetMetaDrawer';
+import categrafInstallationDrawer from './components/categrafInstallationDrawer';
+import Explorer from './components/Explorer';
+import EditBusinessGroups from './components/EditBusinessGroups';
+import { ActionType } from '@/store/manageInterface';
+// @ts-ignore
+import CollectsDrawer from 'plus:/pages/collects/CollectsDrawer';
+// @ts-ignore
+import UpgradeAgent from 'plus:/parcels/Targets/UpgradeAgent';
+// @ts-ignore
+import VersionSelect from 'plus:/parcels/Targets/VersionSelect';
+// @ts-ignore
+import { extraColumns } from 'plus:/parcels/Targets';
+import CreateModal from './createModal/network';
+import './locale';
+export const pageSizeOptions = ['10', '20', '50', '100'];
+
+enum OperateType {
+  BindTag = 'bindTag',
+  UnbindTag = 'unbindTag',
+  UpdateBusi = 'updateBusi',
+  RemoveBusi = 'removeBusi',
+  UpdateNote = 'updateNote',
+  Delete = 'delete',
+  None = 'none',
+}
+
+export interface ITargetProps {
+  id: number;
+  cluster: string;
+  group_id: number;
+  group_objs: object[] | null;
+  ident: string;
+  note: string;
+  tags: string[];
+  update_at: number;
+}
+
+interface IProps {
+  editable?: boolean;
+  explorable?: boolean;
+  gids?: string;
+  selectedRows: ITargetProps[];
+  setSelectedRows: (selectedRowKeys: ITargetProps[]) => void;
+  refreshFlag: string;
+  setRefreshFlag: (refreshFlag: string) => void;
+  setOperateType?: (operateType: OperateType) => void;
+  targetType: string;
+}
+
+const GREEN_COLOR = '#3FC453';
+const YELLOW_COLOR = '#FF9919';
+const RED_COLOR = '#FF656B';
+const LOST_COLOR_LIGHT = '#CCCCCC';
+const LOST_COLOR_DARK = '#929090';
+const downtimeOptions = [1, 2, 3, 5, 10, 30];
+const Unknown = () => {
+  const { t } = useTranslation('targets');
+  return <Tooltip title={t('unknown_tip')}>unknown</Tooltip>;
+};
+
+export default function List(props: IProps) {
+  const { t } = useTranslation('targets');
+  const { darkMode } = useContext(CommonStateContext);
+  const { editable = true, explorable = true, gids, selectedRows, targetType, setSelectedRows, refreshFlag, setRefreshFlag, setOperateType } = props;
+  const selectedIdents = _.map(selectedRows, 'ident');
+  const isAddTagToQueryInput = useRef(false);
+  const [searchVal, setSearchVal] = useState('');
+  const [tableQueryContent, setTableQueryContent] = useState<string>('');
+  const [columnsConfigs, setColumnsConfigs] = useState<{ name: string; visible: boolean }[]>(getMiddlewareColumnsConfigs());
+  const [collectsDrawerVisible, setCollectsDrawerVisible] = useState(false);
+  const [collectsDrawerIdent, setCollectsDrawerIdent] = useState('');
+  const [downtime, setDowntime] = useState();
+  const [agentVersions, setAgentVersions] = useState<string>();
+  const sorterRef = useRef<any>();
+  const [visiable, setVisiable] = useState(false);
+  const [actionType, setActionType] = useState<ActionType>();
+  const targetRef = useRef(null as any);
+  const LOST_COLOR = darkMode ? LOST_COLOR_DARK : LOST_COLOR_LIGHT;
+  const history = useHistory();
+  const columns: ColumnsType<any> = [
+    {
+      title: (
+        <Space>
+          {t('common:table.ident')}
+          <Dropdown
+            trigger={['click']}
+            overlay={
+              <Menu
+                onClick={async ({ key }) => {
+                  let tobeCopy = _.map(tableProps.dataSource, (item) => item.ident);
+                  if (key === 'all') {
+                    try {
+                      const result = await featchData({ current: 1, pageSize: tableProps.pagination.total });
+                      tobeCopy = _.map(result.list, (item) => item.ident);
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  } else if (key === 'selected') {
+                    tobeCopy = selectedIdents;
+                  }
+
+                  if (_.isEmpty(tobeCopy)) {
+                    message.warn(t('copy.no_data'));
+                    return;
+                  }
+
+                  const tobeCopyStr = _.join(tobeCopy, '\n');
+                  const copySucceeded = clipboard(tobeCopyStr);
+
+                  if (copySucceeded) {
+                    message.success(t('ident_copy_success', { num: tobeCopy.length }));
+                  } else {
+                    Modal.warning({
+                      title: t('host.copy.error'),
+                      content: <Input.TextArea defaultValue={tobeCopyStr} />,
+                    });
+                  }
+                }}
+              >
+                <Menu.Item key='current_page'>{t('copy.current_page')}</Menu.Item>
+                <Menu.Item key='all'>{t('copy.all')}</Menu.Item>
+                <Menu.Item key='selected'>{t('copy.selected')}</Menu.Item>
+              </Menu>
+            }
+          >
+            <CopyOutlined
+              style={{
+                cursor: 'pointer',
+              }}
+            />
+          </Dropdown>
+        </Space>
+      ),
+      dataIndex: 'ident',
+      className: 'n9e-hosts-table-column-ident',
+      render: (text, record) => {
+        return (
+          <Space>
+            <TargetMetaDrawer ident={text} />
+            {import.meta.env['VITE_IS_PRO'] && (
+              <Tooltip title='查看关联采集配置'>
+                <ApartmentOutlined
+                  onClick={() => {
+                    setCollectsDrawerVisible(true);
+                    setCollectsDrawerIdent(text);
+                  }}
+                />
+              </Tooltip>
+            )}
+          </Space>
+        );
+      },
+    },
+  ];
+
+  _.forEach(columnsConfigs, (item) => {
+    if (!item.visible) return;
+    if (item.name === 'host_ip') {
+      columns.push({
+        title: t('host_ip'),
+        dataIndex: 'host_ip',
+        className: 'n9e-hosts-table-column-ip',
+      });
+    }
+    if (item.name === 'host_tags') {
+      columns.push({
+        title: (
+          <Space>
+            {t('common:host.host_tags')}
+            <Tooltip title={t('common:host.host_tags_tip')}>
+              <InfoCircleOutlined />
+            </Tooltip>
+          </Space>
+        ),
+        dataIndex: 'host_tags',
+        className: 'n9e-hosts-table-column-tags',
+        ellipsis: {
+          showTitle: false,
+        },
+        render(tagArr) {
+          const content =
+            tagArr &&
+            tagArr.map((item) => (
+              <Tag
+                color='purple'
+                key={item}
+                onClick={(e) => {
+                  if (!tableQueryContent.includes(item)) {
+                    isAddTagToQueryInput.current = true;
+                    const val = tableQueryContent ? `${tableQueryContent.trim()} ${item}` : item;
+                    setTableQueryContent(val);
+                    setSearchVal(val);
+                  }
+                }}
+              >
+                {item}
+              </Tag>
+            ));
+          return (
+            tagArr && (
+              <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body} overlayClassName='mon-manage-table-tooltip'>
+                {content}
+              </Tooltip>
+            )
+          );
+        },
+      });
+    }
+    if (item.name === 'update_at') {
+      // columns.push({
+      //   title: (
+      //     <Space>
+      //       {t('update_at')}
+      //       <Tooltip title={<Trans ns='targets' i18nKey='update_at_tip' components={{ 1: <br /> }} />}>
+      //         <InfoCircleOutlined />
+      //       </Tooltip>
+      //     </Space>
+      //   ),
+      //   width: 100,
+      //   sorter: true,
+      //   dataIndex: 'update_at',
+      //   render: (val, reocrd) => {
+      //     let result = moment.unix(val).format('YYYY-MM-DD HH:mm:ss');
+      //     let backgroundColor = GREEN_COLOR;
+      //     if (reocrd.target_up === 0) {
+      //       backgroundColor = RED_COLOR;
+      //     } else if (reocrd.target_up === 1) {
+      //       backgroundColor = YELLOW_COLOR;
+      //     }
+      //     return (
+      //       <div
+      //         className='table-td-fullBG'
+      //         style={{
+      //           backgroundColor,
+      //         }}
+      //       >
+      //         {result}
+      //       </div>
+      //     );
+      //   },
+      // });
+      columns.push({
+        title: (
+          <Space>
+            {'监控状态'}
+            <Tooltip title={<Trans ns='targets' i18nKey='update_at_tip' components={{ 1: <br /> }} />}>
+              <InfoCircleOutlined />
+            </Tooltip>
+          </Space>
+        ),
+        width: 120,
+        sorter: true,
+        dataIndex: 'update_at',
+        render: (val, reocrd) => {
+          let result = '正常';
+          let backgroundColor = GREEN_COLOR;
+          if (reocrd.target_up === 0) {
+            backgroundColor = RED_COLOR;
+            result = '失联';
+          } else if (reocrd.target_up === 1) {
+            backgroundColor = YELLOW_COLOR;
+            result = '异常';
+          }
+          return (
+            <div
+              className='table-td-fullBG'
+              style={{
+                backgroundColor,
+              }}
+            >
+              {result}
+            </div>
+          );
+        },
+      });
+    }
+    if (item.name === 'tags') {
+      columns.push({
+        title: (
+          <Space>
+            {t('common:host.tags')}
+            <Tooltip title={t('common:host.tags_tip')}>
+              <InfoCircleOutlined />
+            </Tooltip>
+          </Space>
+        ),
+        dataIndex: 'tags',
+        className: 'n9e-hosts-table-column-tags',
+        ellipsis: {
+          showTitle: false,
+        },
+        render(tagArr) {
+          const content =
+            tagArr &&
+            tagArr.map((item) => (
+              <Tag
+                color='purple'
+                key={item}
+                onClick={(e) => {
+                  if (!tableQueryContent.includes(item)) {
+                    isAddTagToQueryInput.current = true;
+                    const val = tableQueryContent ? `${tableQueryContent.trim()} ${item}` : item;
+                    setTableQueryContent(val);
+                    setSearchVal(val);
+                  }
+                }}
+              >
+                {item}
+              </Tag>
+            ));
+          return (
+            tagArr && (
+              <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body} overlayClassName='mon-manage-table-tooltip'>
+                {content}
+              </Tooltip>
+            )
+          );
+        },
+      });
+    }
+
+    if (item.name === 'group_obj') {
+      columns.push({
+        title: t('group_obj'),
+        dataIndex: 'group_objs',
+        className: 'n9e-hosts-table-column-tags',
+        ellipsis: {
+          showTitle: false,
+        },
+        render(tagArr) {
+          if (_.isEmpty(tagArr)) return t('common:not_grouped');
+          const content =
+            tagArr &&
+            tagArr.map((item) => (
+              <Tag color='purple' key={item.name}>
+                {item.name}
+              </Tag>
+            ));
+          return (
+            tagArr && (
+              <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body}>
+                {content}
+              </Tooltip>
+            )
+          );
+        },
+      });
+    }
+
+    extraColumns(item.name, columns);
+    if (item.name === 'note') {
+      columns.push({
+        title: t('common:table.note'),
+        dataIndex: 'note',
+        ellipsis: {
+          showTitle: false,
+        },
+        render(note) {
+          return (
+            <Tooltip title={note} placement='topLeft' getPopupContainer={() => document.body}>
+              {note}
+            </Tooltip>
+          );
+        },
+      });
+    }
+
+    if (item.name === 'operation') {
+      columns.push({
+        title: '操作',
+        ellipsis: {
+          showTitle: false,
+        },
+        render(row) {
+          return (
+            <>
+              <Button
+                size='small'
+                type='link'
+                style={{ padding: 0 }}
+                onClick={() => {
+                  if (row.attr.auth_ids === undefined || row.attr.auth_ids.length === 0) {
+                    message.error('未配置认证信息, 无法远程连接');
+                    return;
+                  }
+                  history.push(`/ident/${row.id}/${row.ident}/terminal/${row.ident_type}`);
+                }}
+              >
+                {'远程连接'}
+              </Button>
+              <Button
+                size='small'
+                type='link'
+                style={{ padding: 0 }}
+                onClick={() => {
+                  // <AssetModal visible={visiable} action={actionType} onClose={handleClose} targetType={targetType} />
+                  CreateModal({
+                    visible: visiable,
+                    action: ActionType.EditTarget,
+                    targetType: targetType,
+                    data: row,
+                    destroy: () => {
+                      setVisiable(false);
+                    },
+                    onOk: (values) => {
+                      values.id = row.id;
+                      values.group_id = Number(gids);
+                      return putTarget(values).then(() => {
+                        setRefreshFlag(_.uniqueId('refreshFlag_'));
+                        message.success(t('common:success.edit'));
+                      });
+                    },
+                  });
+                }}
+              >
+                {t('common:btn.edit')}
+              </Button>
+            </>
+          );
+        },
+      });
+    }
+  });
+
+  const featchData = ({ current, pageSize, sorter }: { current: number; pageSize: number; sorter?: any }): Promise<any> => {
+    const query = {
+      query: tableQueryContent,
+      gids: gids,
+      limit: pageSize,
+      typ: targetType,
+      p: current,
+      downtime,
+      agent_versions: _.isEmpty(agentVersions) ? undefined : JSON.stringify(agentVersions),
+      order: sorter?.field,
+      desc: sorter?.field ? sorter?.order === 'descend' : undefined,
+    };
+    return getMonObjectList(query).then((res) => {
+      return {
+        total: res.dat.total,
+        list: res.dat.list,
+      };
+    });
+  };
+
+  const showTotal = (total: number) => {
+    return t('common:table.total', { total });
+  };
+
+  const { tableProps, run } = useAntdTable(featchData, {
+    manual: true,
+    defaultPageSize: localStorage.getItem('targetsListPageSize') ? _.toNumber(localStorage.getItem('targetsListPageSize')) : 30,
+  });
+  const gidNumber = Number(gids);
+  useEffect(() => {
+    run({
+      current: 1,
+      pageSize: tableProps.pagination.pageSize,
+      sorter: sorterRef.current,
+    });
+  }, [tableQueryContent, gids, downtime, agentVersions, targetType]);
+
+  useEffect(() => {
+    run({
+      current: tableProps.pagination.current,
+      pageSize: tableProps.pagination.pageSize,
+      sorter: sorterRef.current,
+    });
+  }, [refreshFlag]);
+
+  function reload(typ: string) {
+    run({
+      current: 1,
+      pageSize: tableProps.pagination.pageSize,
+      sorter: sorterRef.current,
+    });
+  }
+
+  return (
+    <div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Space>
+          <Button
+            icon={<ReloadOutlined />}
+            onClick={() => {
+              setRefreshFlag(_.uniqueId('refreshFlag_'));
+            }}
+          />
+          <Input
+            style={{ width: 300 }}
+            prefix={<SearchOutlined />}
+            placeholder={t('search_placeholder')}
+            value={searchVal}
+            onChange={(e) => setSearchVal(e.target.value)}
+            onPressEnter={() => {
+              setTableQueryContent(searchVal);
+            }}
+            onBlur={() => {
+              setTableQueryContent(searchVal);
+            }}
+          />
+
+          <Select
+            allowClear
+            placeholder={t('filterDowntime')}
+            style={{ width: 'max-content' }}
+            dropdownMatchSelectWidth={false}
+            options={[
+              {
+                label: t('filterDowntimeNegative'),
+                options: _.map(downtimeOptions, (item) => {
+                  return {
+                    label: t('filterDowntimeNegativeMin', { count: item }),
+                    value: -(item * 60),
+                  };
+                }),
+              },
+              {
+                label: t('filterDowntimePositive'),
+                options: _.map(downtimeOptions, (item) => {
+                  return {
+                    label: t('filterDowntimePositiveMin', { count: item }),
+                    value: item * 60,
+                  };
+                }),
+              },
+            ]}
+            value={downtime}
+            onChange={(val) => {
+              setDowntime(val);
+            }}
+          />
+          <VersionSelect
+            value={agentVersions}
+            onChange={(val) => {
+              setAgentVersions(val);
+            }}
+          />
+        </Space>
+
+        <Space>
+          {isNaN(gidNumber) ? null : (
+            <Button
+              type='primary'
+              onClick={() => {
+                CreateModal({
+                  visible: visiable,
+                  action: ActionType.AddTarget,
+                  targetType: targetType,
+                  destroy: () => {
+                    setVisiable(false);
+                  },
+                  onOk: (values) => {
+                    values.group_id = Number(gids);
+                    values.ident_type = targetType;
+                    return postTarget(values).then(() => {
+                      setRefreshFlag(_.uniqueId('refreshFlag_'));
+                      message.success(t('common:success.add'));
+                    });
+                  },
+                });
+                setVisiable(true);
+              }}
+            >
+              创建
+            </Button>
+          )}
+          {editable && (
+            <Dropdown
+              trigger={['click']}
+              overlay={
+                <Menu
+                  onClick={({ key }) => {
+                    if (key && setOperateType) {
+                      setOperateType(key as OperateType);
+                    }
+                  }}
+                >
+                  <Menu.Item key={OperateType.BindTag}>{t('bind_tag.title')}</Menu.Item>
+                  <Menu.Item key={OperateType.UnbindTag}>{t('unbind_tag.title')}</Menu.Item>
+                  <Menu.Item key='EditBusinessGroups'>
+                    <EditBusinessGroups
+                      gids={gids}
+                      idents={selectedIdents}
+                      selectedRows={selectedRows}
+                      onOk={() => {
+                        setRefreshFlag(_.uniqueId('refreshFlag_'));
+                        setSelectedRows([]);
+                      }}
+                    />
+                  </Menu.Item>
+                  <Menu.Item key={OperateType.UpdateNote}>{t('update_note.title')}</Menu.Item>
+                  <Menu.Item key={OperateType.Delete}>{t('batch_delete.title')}</Menu.Item>
+                  <Menu.Item key='UpgradeAgent'>
+                    <UpgradeAgent
+                      selectedIdents={selectedIdents}
+                      onOk={() => {
+                        setRefreshFlag(_.uniqueId('refreshFlag_'));
+                      }}
+                    />
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <Button>
+                {t('common:btn.batch_operations')} <DownOutlined />
+              </Button>
+            </Dropdown>
+          )}
+          {explorable && <Explorer selectedIdents={selectedIdents} />}
+          <Button
+            onClick={() => {
+              OrganizeColumns({
+                value: columnsConfigs,
+                onChange: (val) => {
+                  setColumnsConfigs(val);
+                  setMiddlewareColumnsConfigs(val);
+                },
+              });
+            }}
+            icon={<EyeOutlined />}
+          />
+        </Space>
+      </div>
+      <Table
+        className='mt8 n9e-hosts-table'
+        rowKey='id'
+        columns={columns}
+        size='small'
+        {...tableProps}
+        showSorterTooltip={false}
+        rowSelection={{
+          type: 'checkbox',
+          selectedRowKeys: _.map(selectedRows, 'id'),
+          onChange(selectedRowKeys, selectedRows: ITargetProps[]) {
+            setSelectedRows(selectedRows);
+          },
+        }}
+        pagination={{
+          ...tableProps.pagination,
+          showTotal: showTotal,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          pageSizeOptions: pageSizeOptions,
+          onChange(page, pageSize) {
+            localStorage.setItem('targetsListPageSize', _.toString(pageSize));
+          },
+        }}
+        scroll={{ x: 'max-content' }}
+        locale={{
+          emptyText:
+            gids === undefined ? (
+              <Trans
+                ns='targets'
+                i18nKey='all_no_data'
+                components={{
+                  a: (
+                    <a
+                      onClick={() => {
+                        categrafInstallationDrawer({ darkMode });
+                      }}
+                    />
+                  ),
+                }}
+              />
+            ) : undefined,
+        }}
+        onChange={(pagination, filters, sorter) => {
+          sorterRef.current = sorter;
+          tableProps.onChange(pagination, filters, sorter);
+        }}
+      />
+      <CollectsDrawer visible={collectsDrawerVisible} setVisiable={setCollectsDrawerVisible} ident={collectsDrawerIdent} />
+      {/* <AssetModal visible={visiable} action={actionType} onClose={handleClose} targetType={targetType} /> */}
+    </div>
+  );
+}

@@ -48,7 +48,7 @@ export const getMenuList = (t) => {
         },
         {
           key: '/dashboards',
-          label: t('业务态势'),
+          label: t('软件态势'),
         },
         // {
         //   key: '/embedded-dashboards',
@@ -79,30 +79,42 @@ export const getMenuList = (t) => {
         },
       ],
     },
-    {
-      key: 'targets',
-      icon: <IconFont type='icon-Menu_Infrastructure' />,
-      label: '业务管理',
-      children: [
-        {
-          key: '/targets',
-          label: '业务软件',
-        },
-        {
-          key: '/net-targets',
-          label: '网络设备',
-        },
-        // {
-        //   key: '/business',
-        //   label: '采集配置',
-        // },
-      ],
-    },
+    // {
+    //   key: 'targets',
+    //   icon: <IconFont type='icon-Menu_Infrastructure' />,
+    //   label: '业务管理',
+    //   children: [
+    //     {
+    //       key: '/targets',
+    //       label: '业务软件',
+    //     },
+    //     {
+    //       key: '/net-targets',
+    //       label: '网络设备',
+    //     },
+    //   ],
+    // },
     {
       key: 'metric',
       icon: <IconFont type='icon-IndexManagement1' />,
       label: t('数据洞察'),
       children: [
+        {
+          key: '/targets',
+          label: '软件洞察',
+        },
+        {
+          key: '/topology',
+          label: '网络拓扑',
+        },
+        {
+          key: '/assets-analysis',
+          label: '资源分析',
+        },
+        {
+          key: '/prediction',
+          label: '趋势预测',
+        },
         {
           key: '/metric/explorer',
           label: t('指标查询'),
@@ -115,10 +127,11 @@ export const getMenuList = (t) => {
         //   key: '/metrics-built-in',
         //   label: t('metricsBuiltin:title'),
         // },
-        {
-          key: '/object/explorer',
-          label: t('洞察中心'),
-        },
+        // {
+        //   key: '/object/explorer',
+        //   label: t('洞察中心'),
+        // },
+
         // {
         //   key: '/recording-rules',
         //   label: t('记录规则'),
@@ -205,10 +218,7 @@ export const getMenuList = (t) => {
           key: '/job-tasks',
           label: '任务历史',
         },
-        {
-          key: '/topology',
-          label: '网络拓扑',
-        },
+
         {
           key: '/pollings',
           label: '智能巡检',

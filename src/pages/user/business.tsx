@@ -22,7 +22,7 @@ import PageLayout, { HelpLink } from '@/components/pageLayout';
 import { Button, Table, Input, message, Row, Col, Modal, Space, Descriptions } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined, UserOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import UserInfoModal from './component/createModal';
-import { deleteBusinessTeamMember, getBusinessTeamList, getBusinessTeamInfo, deleteBusinessTeam, getUnit } from '@/services/manage';
+import { deleteBusinessTeamMember, getBusinessTeamList, getBusinessTeamInfo, deleteBusinessTeam, getUnit, getUserInfoList } from '@/services/manage';
 import { Team, ActionType } from '@/store/manageInterface';
 import { CommonStateContext } from '@/App';
 import { ColumnsType } from 'antd/lib/table';
@@ -51,6 +51,7 @@ const Resource: React.FC = () => {
   const [maintenerOptions, setMaintenerOptions] = useState<{ id: number; name: string; data: { name: string; tel: string; contacts: string } }[]>([]);
   const [memberLoading, setMemberLoading] = useState<boolean>(false);
   const [searchMemberValue, setSearchMemberValue] = useState<string>('');
+  const [users, setUsers] = useState<any>([]);
   const teamMemberColumns: ColumnsType<any> = [
     {
       title: t('team.name'),
@@ -108,6 +109,9 @@ const Resource: React.FC = () => {
 
   useEffect(() => {
     getTeamList();
+    getUserInfoList().then((res) => {
+      setUsers(res.dat.list);
+    });
     // 运维单位
     getUnit('opser').then((res) => {
       setOpserOptions(res);
@@ -178,7 +182,7 @@ const Resource: React.FC = () => {
       title={
         <Space>
           {t('business.title')}
-          <HelpLink src='https://flashcat.cloud/docs/content/flashcat-monitor/nightingale-v7/usage/personnel-permissions/-business-group/' />
+          {/* <HelpLink src='https://flashcat.cloud/docs/content/flashcat-monitor/nightingale-v7/usage/personnel-permissions/-business-group/' /> */}
         </Space>
       }
       icon={<UserOutlined />}
@@ -187,7 +191,8 @@ const Resource: React.FC = () => {
         <div style={{ display: 'flex', gap: 10, height: '100%', background: 'unset' }}>
           <div className='left-tree-area'>
             <div className='sub-title'>
-              {t('business.list')}
+              {/* {t('business.list')} */}
+              {t('软件分组')}
               <Button
                 style={{
                   height: '30px',
@@ -311,6 +316,16 @@ const Resource: React.FC = () => {
                   </Space> */}
                   <Descriptions bordered size='small' column={4}>
                     <Descriptions.Item label='软件名称'>{teamInfo?.name.split('/').pop()}</Descriptions.Item>
+                    <Descriptions.Item label='负责人'>
+                      {users.find((item) => item.id == teamInfo?.attr?.manager)?.nickname || '未配置'}
+                      {/* {users.map((item) => {
+                        if (item.id == teamInfo?.attr?.manager) {
+                          return item.nickname;
+                        } else {
+                          return '未配置';
+                        }
+                      })} */}
+                    </Descriptions.Item>
                     <Descriptions.Item label='语言'>{teamInfo?.attr?.language || '未配置'}</Descriptions.Item>
                     <Descriptions.Item label='进程采集'>{teamInfo?.attr?.is_collection_enabled ? '已开启' : '未开启'}</Descriptions.Item>
                     <Descriptions.Item label='进程名称'>{teamInfo?.attr?.processName || '未配置'}</Descriptions.Item>

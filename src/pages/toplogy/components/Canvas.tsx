@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import Device from './Device';
+// import ConnectionLine from './ConnectionLine';
 import Connection from './Connection';
 import Group from './Group';
 import './Canvas.less';
 
-const Canvas = forwardRef(
+const Canvas = forwardRef<any, any>(
   (
     {
       devices,
@@ -18,7 +19,6 @@ const Canvas = forwardRef(
       onAddDevice,
       onAddConnection,
       onUpdateDevice,
-      onCreateConnection,
       onDeleteDevice,
       onMoveDevice,
       onMoveGroup,
@@ -26,21 +26,22 @@ const Canvas = forwardRef(
       onAddDeviceToGroup,
       onRemoveDeviceFromGroup,
       onAddGroup,
-      onSelectConnection,
+      onSelect,
     },
     ref,
   ) => {
-    const canvasRef = useRef(null);
-    const [isConnecting, setIsConnecting] = useState(false);
-    const [connectionStart, setConnectionStart] = useState(null);
-    const [tempConnection, setTempConnection] = useState(null);
-    const [draggingItem, setDraggingItem] = useState(null);
+    const canvasRef = useRef<any>(null);
+    const [isConnecting, setIsConnecting] = useState<any>(false);
+    const [connectionStart, setConnectionStart] = useState<any>(null);
+    const [tempConnection, setTempConnection] = useState<any>(null);
+    const [draggingItem, setDraggingItem] = useState<any>(null);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const [isPanning, setIsPanning] = useState(false);
     const [panStart, setPanStart] = useState({ x: 0, y: 0 });
     const [resizingGroup, setResizingGroup] = useState(null);
     const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
-
+    const isConnectingRef = useRef<any>(false);
+    const connectionStartRef = useRef<any>(null);
     useImperativeHandle(ref, () => ({
       getCanvasRef: () => canvasRef,
     }));
@@ -67,7 +68,7 @@ const Canvas = forwardRef(
       // setSelectedConnectionId(connection.id);
       // setSelectedDeviceId(null);
       setSelectedItem(connection);
-      onSelectConnection(connection);
+      onSelect(connection);
     };
     // 处理机房拖拽开始
     const handleGroupDragStart = (e, group) => {
@@ -118,7 +119,7 @@ const Canvas = forwardRef(
         onMoveDevice(draggingItem.id, x, y);
 
         // 检查是否拖入机房
-        let inGroup = null;
+        let inGroup: any = null;
         groups.forEach((group) => {
           if (x >= group.x && x <= group.x + group.width && y >= group.y && y <= group.y + group.height) {
             inGroup = group;
@@ -234,19 +235,47 @@ const Canvas = forwardRef(
       }
     };
 
-    // 处理连接开始
+    // // 处理连接开始
+    // const handleConnectionStart = (deviceId, portId) => {
+    //   console.log('handleConnectionStart', deviceId, portId);
+    //   setIsConnecting(true);
+    //   setConnectionStart({ deviceId, portId });
+    // };
     const handleConnectionStart = (deviceId, portId) => {
+      console.log('=== Canvas: 开始连接 ===');
+      console.log('设备:', deviceId, '端口:', portId);
+
+      const newConnectionStart = { deviceId, portId };
+
       setIsConnecting(true);
-      setConnectionStart({ deviceId, portId });
+      setConnectionStart(newConnectionStart);
+
+      // 立即更新 ref
+      isConnectingRef.current = true;
+      connectionStartRef.current = newConnectionStart;
+
+      console.log('Canvas 状态已更新:', {
+        isConnecting: isConnectingRef.current,
+        connectionStart: connectionStartRef.current,
+      });
     };
 
     // 处理连接结束
     const handleConnectionEnd = (targetDeviceId, targetPortId) => {
-      if (isConnecting && connectionStart && targetDeviceId && targetPortId) {
+      // console.log('handleConnectionEnd', targetDeviceId, targetPortId, 'isConnecting:', isConnecting, 'connectionStart:', connectionStart);
+      console.log('=== Canvas: 结束连接 ===');
+      console.log('目标设备:', targetDeviceId, '目标端口:', targetPortId);
+      console.log('Canvas ref 状态:', {
+        isConnecting: isConnectingRef.current,
+        connectionStart: connectionStartRef.current,
+      });
+      console.log('isConnecting:', isConnectingRef.current, 'connectionStart:', connectionStartRef.current);
+      if (isConnectingRef.current && connectionStartRef.current && targetDeviceId && targetPortId) {
+        console.log('=== Canvas: 添加连接 ===');
         // 避免连接到自身
-        if (connectionStart.deviceId !== targetDeviceId) {
+        if (connectionStartRef.current.deviceId !== targetDeviceId) {
           onAddConnection({
-            source: connectionStart,
+            source: connectionStartRef.current,
             target: { deviceId: targetDeviceId, portId: targetPortId },
           });
         }

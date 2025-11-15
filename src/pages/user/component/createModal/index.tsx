@@ -183,7 +183,7 @@ const CreateModal: React.FC<ModalProps> = (props: ModalProps) => {
       return t('team.create');
     }
     if (action === ActionType.CreateBusiness) {
-      return t('business.create');
+      return t('创建分组');
     }
     if (action === ActionType.AddBusinessMember) {
       return t('business.add_team');

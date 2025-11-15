@@ -8,7 +8,7 @@ const { Option } = Select;
 
 const PropertyPanel = ({ selectedItem, devices, connections, groups, onUpdateDevice, onUpdateGroup, onUpdateConnection, onDeleteDevice, onDeleteGroup, onDeleteConnection }) => {
   const [form] = Form.useForm();
-  const [devicePorts, setDevicePorts] = useState([]);
+  const [devicePorts, setDevicePorts] = useState<any[]>([]);
 
   useEffect(() => {
     if (selectedItem) {
@@ -111,14 +111,6 @@ const PropertyPanel = ({ selectedItem, devices, connections, groups, onUpdateDev
               />
             </Form.Item>
 
-            <Form.Item label='带宽 (Mbps)' name='bandwidth'>
-              <Select>
-                <Option value={100}>100</Option>
-                <Option value={1000}>1000</Option>
-                <Option value={10000}>10000</Option>
-              </Select>
-            </Form.Item>
-
             <Divider />
             <Button danger block onClick={() => onDeleteConnection(selectedItem.id)}>
               删除连接
@@ -175,21 +167,13 @@ const PropertyPanel = ({ selectedItem, devices, connections, groups, onUpdateDev
                   <Form.Item label='端口名称' initialValue={port.name}>
                     <Input value={port.name} onChange={(e) => handlePortChange(index, 'name', e.target.value)} style={{ width: 120 }} />
                   </Form.Item>
-
+                  {/* 
                   <Form.Item label='状态' initialValue={port.status}>
                     <Select value={port.status} onChange={(value) => handlePortChange(index, 'status', value)} style={{ width: 100 }}>
                       <Option value='up'>启用</Option>
                       <Option value='down'>禁用</Option>
                     </Select>
-                  </Form.Item>
-
-                  <Form.Item label='带宽' initialValue={port.bandwidth}>
-                    <Select value={port.bandwidth} onChange={(value) => handlePortChange(index, 'bandwidth', value)} style={{ width: 100 }}>
-                      <Option value={100}>100M</Option>
-                      <Option value={1000}>1G</Option>
-                      <Option value={10000}>10G</Option>
-                    </Select>
-                  </Form.Item>
+                  </Form.Item> */}
 
                   <Button icon={<MinusOutlined />} onClick={() => removePort(index)} danger />
                 </Space>
