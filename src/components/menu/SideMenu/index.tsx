@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import Icon, { MenuUnfoldOutlined, MenuFoldOutlined, GlobalOutlined, AppstoreAddOutlined } from '@ant-design/icons';
+import Icon, { MenuUnfoldOutlined, MenuFoldOutlined, GlobalOutlined, AppstoreAddOutlined, AndroidOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 import querystring from 'query-string';
 import { useTranslation } from 'react-i18next';
@@ -31,8 +31,18 @@ export const getMenuList = (t) => {
           key: '/workbench',
           label: t('我的工作台'),
         },
+        {
+          key: '/embedded-dashboards',
+          label: 'AI知识库',
+        },
       ],
     },
+
+    // {
+    //   key: '/aiKnowlage',
+    //   icon: <AndroidOutlined />,
+    //   label: t('Ai知识库'),
+    // },
     {
       key: 'dashboard',
       icon: <IconFont type='icon-Menu_Dashboard' />,
@@ -50,10 +60,6 @@ export const getMenuList = (t) => {
           key: '/dashboards',
           label: t('软件态势'),
         },
-        // {
-        //   key: '/embedded-dashboards',
-        //   label: t('embeddedDashboards:title'),
-        // },
       ],
     },
     {
@@ -102,6 +108,10 @@ export const getMenuList = (t) => {
         {
           key: '/targets',
           label: '软件洞察',
+        },
+        {
+          key: '/net-targets',
+          label: '网络设备',
         },
         {
           key: '/topology',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Tooltip, Spin } from 'antd';
+import { Button, Tooltip } from 'antd';
 import {
   SwitcherOutlined,
   WifiOutlined,
@@ -10,29 +10,12 @@ import {
   CompressOutlined,
   UndoOutlined,
   RedoOutlined,
-  SaveOutlined,
   FullscreenOutlined,
   DownloadOutlined,
 } from '@ant-design/icons';
 import './Sidebar.less';
 
-const TopologySidebar = ({
-  onAddDevice,
-  onAddGroup,
-  onClearCanvas,
-  onZoomIn,
-  onZoomOut,
-  onResetCanvas,
-  onUndo,
-  onRedo,
-  onExportImage,
-  onFullscreen,
-  canUndo,
-  canRedo,
-  onSaveTopology,
-  isSaving = false, // 新增保存状态
-  isLoading = false,
-}) => {
+const TopologySidebar = ({ onAddDevice, onAddGroup, onClearCanvas, onZoomIn, onZoomOut, onResetCanvas, onUndo, onRedo, onExportImage, onFullscreen, canUndo, canRedo }) => {
   const deviceTypes = [
     { id: 1, type: 'net_router', name: '路由器', iconType: 'net_router', icon: '/public/image/topology_router.png' },
     { id: 2, type: 'net_switch', name: '接入交换机', iconType: 'net_switch_access', icon: '/public/image/topology_arcess_switch.png' },
@@ -85,9 +68,6 @@ const TopologySidebar = ({
       <div className='canvas-tools'>
         <h3>画布工具</h3>
         <div className='tool-list'>
-          <Tooltip title='保存拓扑' placement='right'>
-            <Button size='large' shape='circle' icon={isSaving ? <Spin size='small' /> : <SaveOutlined />} onClick={onSaveTopology} disabled={isSaving} className='action-btn' />
-          </Tooltip>
           <Tooltip title='清空画布'>
             <Button icon={<ClearOutlined />} size='large' shape='circle' onClick={onClearCanvas} />
           </Tooltip>

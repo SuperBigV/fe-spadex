@@ -174,7 +174,7 @@ export default function Login() {
             </Form>
           )}
 
-          <div className='login-other'>
+          {/* <div className='login-other'>
             <strong>其他登录方式：</strong>
             {showDingTalkLogin ? ( // 根据状态显示账号密码登录图标
               <LockOutlined
@@ -228,7 +228,7 @@ export default function Login() {
             >
               {displayName.oauth}
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -82,6 +82,7 @@ import IdentTerminal from '@/pages/identTerminal';
 import NetTargets from '@/pages/netTargets';
 import NetToplogy from '@/pages/toplogy';
 import ProbeTools from '@/pages/probeTools';
+import AiKnowlage from '@/pages/aiKnowlage';
 import { dynamicPackages, Entry, dynamicPages } from '@/utils';
 // @ts-ignore
 import { Jobs as StrategyBrain } from 'plus:/datasource/anomaly';
@@ -163,6 +164,7 @@ export default function Content() {
         <Route path='/users' component={Users} />
         <Route path='/user-groups' component={Groups} />
         <Route path='/account/profile/:tab' component={Profile} />
+        <Route path='/aiKnowlage' component={AiKnowlage} />
 
         <Route path='/dashboard/:id' exact component={DashboardDetail} />
         <Route path='/dashboards/:id' exact component={DashboardDetail} />

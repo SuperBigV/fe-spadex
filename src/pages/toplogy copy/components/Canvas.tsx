@@ -5,7 +5,7 @@ import Group from './Group';
 import './Canvas.less';
 import DeviceSelectionModal from './DeviceSelectionModal';
 import { getAssetOfCategoryList } from './services';
-import GroupConfigModal from './GroupConfigModal';
+
 const Canvas = forwardRef<any, any>(
   (
     {
@@ -17,15 +17,15 @@ const Canvas = forwardRef<any, any>(
       canvasScale,
       canvasPosition,
       setCanvasPosition,
-      deleteConnection,
       onAddDevice,
       onAddConnection,
-      onDeleteGroup,
       onUpdateDevice,
       onDeleteDevice,
       onMoveDevice,
       onMoveGroup,
       onResizeGroup,
+      onAddDeviceToGroup,
+      onRemoveDeviceFromGroup,
       onAddGroup,
       onSelectConnection,
     },
@@ -49,14 +49,13 @@ const Canvas = forwardRef<any, any>(
     const [roomOptions, setRoomOptions] = useState([]);
     const [dropPosition, setDropPosition] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
-    const [groupModalVisible, setGroupModalVisible] = useState(false);
-    const [pendingGroupPosition, setPendingGroupPosition] = useState({ x: 0, y: 0 });
+
     // 添加一个强制重新渲染的状态
     const [forceRender, setForceRender] = useState(0);
 
     useImperativeHandle(ref, () => ({
       getCanvasRef: () => canvasRef,
-      forceUpdate: () => setForceRender((prev) => prev + 1),
+      forceUpdate: () => setForceRender((prev) => prev + 1), // 暴露强制更新方法
     }));
 
     // 处理画布点击
@@ -109,17 +108,49 @@ const Canvas = forwardRef<any, any>(
       setSelectedItem(group);
     };
 
-    // 处理拖拽 - 简化逻辑，移除设备与组关联
+    // 处理拖拽 - 使用useCallback避免重复创建
     const handleDrag = useCallback(
       (e) => {
         if (!draggingItem) return;
 
         const rect = canvasRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left - dragOffset.x;
-        const y = e.clientY - rect.top - dragOffset.y;
+        let x = e.clientX - rect.left - dragOffset.x;
+        let y = e.clientY - rect.top - dragOffset.y;
 
         if (draggingItem.type === 'device') {
+          // 检查设备是否在某个机房内
+          const device = devices.find((d) => d.id === draggingItem.id);
+          if (device && device.groupId) {
+            // 设备在机房内，限制移动范围
+            const group = groups.find((g) => g.id === device.groupId);
+            if (group) {
+              // 限制设备在机房范围内移动
+              x = Math.max(group.x, Math.min(x, group.x + group.width - device.width));
+              y = Math.max(group.y, Math.min(y, group.y + group.height - device.height));
+            }
+          }
+
           onMoveDevice(draggingItem.id, x, y);
+
+          // 检查是否拖入机房
+          let inGroup: any = null;
+          groups.forEach((group) => {
+            if (x >= group.x && x <= group.x + group.width && y >= group.y && y <= group.y + group.height) {
+              inGroup = group;
+            }
+          });
+
+          if (inGroup && (!device.groupId || device.groupId !== inGroup.id)) {
+            // 添加到机房
+            if (device.groupId) {
+              onRemoveDeviceFromGroup(device.id, device.groupId);
+            }
+            onAddDeviceToGroup(device.id, inGroup.id);
+          } else if (!inGroup && device.groupId) {
+            // 从机房移除
+            onRemoveDeviceFromGroup(device.id, device.groupId);
+          }
+
           // 强制重新渲染连接线
           setForceRender((prev) => prev + 1);
           console.log('Device moved, forcing connection re-render');
@@ -130,7 +161,7 @@ const Canvas = forwardRef<any, any>(
           console.log('Group moved, forcing connection re-render');
         }
       },
-      [draggingItem, dragOffset, onMoveDevice, onMoveGroup],
+      [draggingItem, dragOffset, devices, groups, onMoveDevice, onMoveGroup, onRemoveDeviceFromGroup, onAddDeviceToGroup],
     );
 
     // 处理调整大小
@@ -259,6 +290,7 @@ const Canvas = forwardRef<any, any>(
       }
     };
 
+    // 在 Canvas 组件中修改 handleConnectionEnd 函数
     const handleConnectionEnd = (targetDeviceId, targetPortId, targetPortPosition) => {
       console.log('=== Canvas: 结束连接 ===');
       console.log('目标设备:', targetDeviceId, '目标端口:', targetPortId, '目标端口位置:', targetPortPosition);
@@ -276,12 +308,12 @@ const Canvas = forwardRef<any, any>(
             source: {
               deviceId: connectionStartRef.current.deviceId,
               portId: connectionStartRef.current.portId,
-              portPosition: connectionStartRef.current.portPosition,
+              portPosition: connectionStartRef.current.portPosition, // 确保传递端口位置
             },
             target: {
               deviceId: targetDeviceId,
               portId: targetPortId,
-              portPosition: targetPortPosition,
+              portPosition: targetPortPosition, // 确保传递端口位置
             },
           });
         }
@@ -291,37 +323,19 @@ const Canvas = forwardRef<any, any>(
       setConnectionStart(null);
       setTempConnection(null);
     };
-
     const handleDeleteConnection = (connectionId) => {
       console.log('@删除线id:', connectionId);
-      deleteConnection(connectionId);
-    };
-    // 处理组配置确认
-    const handleGroupConfigOk = (groupName) => {
-      console.log('创建组:', groupName, '位置:', pendingGroupPosition);
-      onAddGroup({
-        type: 'group',
-        x: pendingGroupPosition.x,
-        y: pendingGroupPosition.y,
-        name: groupName,
-      });
-      setGroupModalVisible(false);
     };
 
-    // 处理组配置取消
-    const handleGroupConfigCancel = () => {
-      setGroupModalVisible(false);
-    };
     // 处理画布拖拽放置
     const handleDrop = (e) => {
       e.preventDefault();
       const deviceType = e.dataTransfer.getData('deviceType');
       const iconType = e.dataTransfer.getData('iconType');
-      console.log('@@@deviceType:', deviceType, 'iconType:', iconType);
       setSelectedDeviceType(deviceType);
       setSelectedDeviceIconType(iconType);
+      setModalVisible(true);
       if (deviceType && deviceType !== 'group') {
-        setModalVisible(true);
         const rect = canvasRef.current.getBoundingClientRect();
         const x = (e.clientX - rect.left - canvasPosition.x) / canvasScale;
         const y = (e.clientY - rect.top - canvasPosition.y) / canvasScale;
@@ -330,8 +344,7 @@ const Canvas = forwardRef<any, any>(
         const rect = canvasRef.current.getBoundingClientRect();
         const x = (e.clientX - rect.left - canvasPosition.x) / canvasScale;
         const y = (e.clientY - rect.top - canvasPosition.y) / canvasScale;
-        setGroupModalVisible(true);
-        // onAddGroup({ type: deviceType, x, y });
+        onAddGroup({ type: deviceType, x, y });
       }
       setIsDragging(false);
     };
@@ -382,7 +395,7 @@ const Canvas = forwardRef<any, any>(
       onAddGroup,
       onMoveGroup,
       onResizeGroup,
-      handleDrag,
+      handleDrag, // 添加handleDrag到依赖项
     ]);
 
     useEffect(() => {
@@ -423,25 +436,31 @@ const Canvas = forwardRef<any, any>(
             transformOrigin: '0 0',
           }}
         >
-          {/* 渲染机房组 - 作为纯图形展示 */}
+          {/* 渲染机房组 */}
           {groups.map((group) => (
             <Group
               key={group.id}
               group={group}
-              // 不再传递设备，组只作为图形展示
+              devices={devices.filter((d) => d.groupId === group.id)}
               isSelected={selectedItem && selectedItem.id === group.id}
               onDragStart={handleGroupDragStart}
               onResizeStart={handleGroupResizeStart}
               onSelect={() => setSelectedItem(group)}
-              deleteGroup={() => onDeleteGroup(group.id)}
-              // 移除设备相关的props
+              onDeviceSelect={setSelectedItem}
+              onDeviceDragStart={handleDeviceDragStart}
+              onDeviceMove={onMoveDevice}
+              onConnectionStart={handleConnectionStart}
+              onConnectionEnd={handleConnectionEnd}
+              onDeleteDevice={onDeleteDevice}
             />
           ))}
 
-          {/* 渲染连接线 */}
+          {/* 渲染连接线 - 使用forceRender强制重新渲染 */}
           {connections.map((connection) => {
             const sourceDevice = devices.find((d) => d.id === connection.source.deviceId);
             const targetDevice = devices.find((d) => d.id === connection.target.deviceId);
+
+            // 如果找不到设备，跳过渲染并记录错误
             if (!sourceDevice || !targetDevice) {
               console.error('无法找到连接中的设备:', {
                 connectionId: connection.id,
@@ -454,7 +473,7 @@ const Canvas = forwardRef<any, any>(
 
             return (
               <Connection
-                key={`${connection.id}-${forceRender}`}
+                key={`${connection.id}-${forceRender}`} // 使用forceRender强制重新渲染
                 connection={connection}
                 sourceDevice={sourceDevice}
                 targetDevice={targetDevice}
@@ -490,19 +509,21 @@ const Canvas = forwardRef<any, any>(
             </svg>
           )}
 
-          {/* 渲染所有设备 - 不再区分是否在组内 */}
-          {devices.map((device) => (
-            <Device
-              key={device.id}
-              device={device}
-              isSelected={selectedItem && selectedItem.id === device.id}
-              onDragStart={handleDeviceDragStart}
-              onSelect={() => setSelectedItem(device)}
-              onConnectionStart={handleConnectionStart}
-              onConnectionEnd={handleConnectionEnd}
-              onDelete={() => onDeleteDevice(device.id)}
-            />
-          ))}
+          {/* 渲染设备 */}
+          {devices
+            .filter((device) => !device.groupId)
+            .map((device) => (
+              <Device
+                key={device.id}
+                device={device}
+                isSelected={selectedItem && selectedItem.id === device.id}
+                onDragStart={handleDeviceDragStart}
+                onSelect={() => setSelectedItem(device)}
+                onConnectionStart={handleConnectionStart}
+                onConnectionEnd={handleConnectionEnd}
+                onDelete={() => onDeleteDevice(device.id)}
+              />
+            ))}
         </div>
         <DeviceSelectionModal
           visible={modalVisible}
@@ -513,8 +534,6 @@ const Canvas = forwardRef<any, any>(
           onCancel={() => setModalVisible(false)}
           roomOptions={roomOptions}
         />
-        {/* 组配置弹窗 */}
-        <GroupConfigModal visible={groupModalVisible} onOk={handleGroupConfigOk} onCancel={handleGroupConfigCancel} initialName='机房' />
       </div>
     );
   },

@@ -1,80 +1,15 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Layout } from 'antd';
 import { DatabaseOutlined } from '@ant-design/icons';
 import PageLayout from '@/components/pageLayout';
+// import TopBar from './components/TopBar';
 import Sidebar from './components/Sidebar';
 import Canvas from './components/Canvas';
 import PropertyPanel from './components/PropertyPanel';
-import { getTopology, saveTopology } from './components/services';
 import './style.less';
 
 const { Header, Sider, Content } = Layout;
-const mockTopologyData = {
-  devices: [
-    {
-      id: 'device-1',
-      type: 'net_router',
-      iconType: 'net_router',
-      deviceId: 'router-001',
-      deviceName: '核心路由器',
-      x: 200,
-      y: 150,
-      width: 80,
-      height: 60,
-      ports: [
-        { id: 'port-1-1', name: 'GigabitEthernet0/0', bandwidth: '1G', status: 'up' },
-        { id: 'port-1-2', name: 'GigabitEthernet0/1', bandwidth: '1G', status: 'up' },
-      ],
-      alarm: true,
-      status: 'up',
-    },
-    {
-      id: 'device-2',
-      type: 'net_switch_core',
-      iconType: 'net_switch_core',
-      deviceId: 'switch-001',
-      deviceName: '核心交换机',
-      x: 400,
-      y: 150,
-      width: 80,
-      height: 60,
-      ports: [
-        { id: 'port-2-1', name: 'GigabitEthernet1/0', bandwidth: '1G', status: 'up' },
-        { id: 'port-2-2', name: 'GigabitEthernet1/1', bandwidth: '1G', status: 'up' },
-      ],
-      alarm: false,
-      status: 'up',
-    },
-  ],
-  connections: [
-    {
-      id: 'conn-1',
-      source: {
-        deviceId: 'device-1',
-        portId: 'port-1-1',
-      },
-      target: {
-        deviceId: 'device-2',
-        portId: 'port-2-1',
-      },
-    },
-  ],
-  groups: [
-    {
-      id: 'group-1',
-      name: '核心机房',
-      x: 100,
-      y: 100,
-      width: 500,
-      height: 200,
-    },
-  ],
-  canvas: {
-    scale: 1,
-    position: { x: 0, y: 0 },
-  },
-  timestamp: '2024-01-01T00:00:00.000Z',
-};
+
 const Topology = () => {
   const [devices, setDevices] = useState<any[]>([]);
   const [connections, setConnections] = useState<any>([]);
@@ -84,103 +19,7 @@ const Topology = () => {
   const [canvasPosition, setCanvasPosition] = useState({ x: 0, y: 0 });
   const [history, setHistory] = useState<any>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const canvasRef = useRef();
-  useEffect(() => {
-    loadTopologyData();
-  }, []);
-  // 加载拓扑数据
-  const loadTopologyData = async () => {
-    try {
-      setIsLoading(true);
-      const topologyData = await getTopology();
-      // const topologyData = mockTopologyData;
-
-      if (topologyData) {
-        // 设置从后端获取的数据
-        setDevices(topologyData.devices || []);
-        setConnections(topologyData.connections || []);
-        setGroups(topologyData.groups || []);
-
-        // 初始化历史记录
-        const initialState = {
-          devices: JSON.parse(JSON.stringify(topologyData.devices || [])),
-          connections: JSON.parse(JSON.stringify(topologyData.connections || [])),
-          groups: JSON.parse(JSON.stringify(topologyData.groups || [])),
-        };
-        setHistory([initialState]);
-        setHistoryIndex(0);
-      }
-    } catch (error) {
-      console.error('加载拓扑数据失败:', error);
-      // 如果加载失败，初始化空状态
-      const emptyState = {
-        devices: [],
-        connections: [],
-        groups: [],
-      };
-      setHistory([emptyState]);
-      setHistoryIndex(0);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  // 保存拓扑数据
-  const saveTopologyData = async () => {
-    try {
-      setIsSaving(true);
-
-      const topologyData = {
-        devices: devices.map((device) => ({
-          id: device.id,
-          type: device.type,
-          iconType: device.iconType,
-          deviceId: device.deviceId,
-          deviceName: device.deviceName,
-          x: device.x,
-          y: device.y,
-          width: device.width,
-          height: device.height,
-          ports: device.ports,
-          alarm: device.alarm,
-          status: device.status,
-        })),
-        connections: connections.map((connection) => ({
-          id: connection.id,
-          source: {
-            deviceId: connection.source.deviceId,
-            portId: connection.source.portId,
-          },
-          target: {
-            deviceId: connection.target.deviceId,
-            portId: connection.target.portId,
-          },
-        })),
-        groups: groups.map((group) => ({
-          id: group.id,
-          name: group.name,
-          x: group.x,
-          y: group.y,
-          width: group.width,
-          height: group.height,
-        })),
-        canvas: {
-          scale: canvasScale,
-          position: canvasPosition,
-        },
-        timestamp: new Date().toISOString(),
-      };
-
-      // mockTopologyData = topologyData;
-      await saveTopology(topologyData);
-    } catch (error) {
-      console.error('保存拓扑数据失败:', error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   // 保存当前状态到历史记录
   const saveToHistory = useCallback(() => {
     const newState = {
@@ -219,12 +58,15 @@ const Topology = () => {
   // 添加设备
   const addDevice = useCallback(
     (device) => {
+      // console.log('@@@', device);
       const postList = device.ports.map((port, index) => {
+        // 解析 JSON 字符串为对象
         const portObject = JSON.parse(port);
+
         return {
-          id: portObject.metric.index,
-          name: portObject.metric.ifDescr,
-          bandwidth: portObject.value[1],
+          id: portObject.metric.index, // 提取 index
+          name: portObject.metric.ifDescr, // 提取 ifDescr
+          bandwidth: portObject.value[1], // 提取 bandwidth
         };
       });
       const newDevice = {
@@ -243,7 +85,7 @@ const Topology = () => {
     [saveToHistory],
   );
 
-  // 添加机房组 - 修改为纯图形展示
+  // 添加机房组
   const addGroup = useCallback(
     (group) => {
       const newGroup = {
@@ -253,7 +95,9 @@ const Topology = () => {
         y: group.y || 100,
         width: 300,
         height: 200,
-        name: group.name || '机房', // 组只作为图形展示，不再包含设备
+        devices: [],
+        groups: [],
+        name: '新机房',
       };
       setGroups((prev) => [...prev, newGroup]);
       saveToHistory();
@@ -298,7 +142,8 @@ const Topology = () => {
     [saveToHistory],
   );
 
-  // 添加连接
+  // 在 Topology 组件中修改 addConnection 函数
+  // 在 Topology 组件中修改 addConnection 函数
   const addConnection = useCallback(
     (connection) => {
       console.log('@@@addConnection:', connection);
@@ -319,13 +164,14 @@ const Topology = () => {
       const newConnection = {
         ...connection,
         id: `conn-${Date.now()}`,
+        // 移除设备位置信息，因为连接线会根据实时设备位置计算
       };
 
       console.log('成功添加连接:', newConnection);
       setConnections((prev) => [...prev, newConnection]);
       saveToHistory();
     },
-    [saveToHistory, devices],
+    [saveToHistory, devices], // 添加 devices 到依赖项
   );
 
   // 更新连接
@@ -355,18 +201,102 @@ const Topology = () => {
     saveToHistory();
   }, [saveToHistory]);
 
+  // 将设备添加到机房
+  const addDeviceToGroup = useCallback(
+    (deviceId, groupId) => {
+      setGroups((prev) =>
+        prev.map((group) => {
+          if (group.id === groupId) {
+            return {
+              ...group,
+              devices: [...group.devices, deviceId],
+            };
+          }
+          return group;
+        }),
+      );
+
+      setDevices((prev) =>
+        prev.map((device) => {
+          if (device.id === deviceId) {
+            return {
+              ...device,
+              groupId,
+            };
+          }
+          return device;
+        }),
+      );
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
+
+  // 从机房移除设备
+  const removeDeviceFromGroup = useCallback(
+    (deviceId, groupId) => {
+      setGroups((prev) =>
+        prev.map((group) => {
+          if (group.id === groupId) {
+            return {
+              ...group,
+              devices: group.devices.filter((id) => id !== deviceId),
+            };
+          }
+          return group;
+        }),
+      );
+
+      setDevices((prev) =>
+        prev.map((device) => {
+          if (device.id === deviceId) {
+            const { groupId, ...rest } = device;
+            return rest;
+          }
+          return device;
+        }),
+      );
+      saveToHistory();
+    },
+    [saveToHistory],
+  );
+  const onSelectConnection = useCallback((connection) => {
+    console.log('选中连接线:', connection);
+    setSelectedItem(connection);
+  }, []);
   // 移动设备
+  // 确保 moveDevice 能够触发连接线更新
   const moveDevice = useCallback((id, x, y) => {
     console.log('Moving device:', id, 'to:', x, y);
     setDevices((prev) => prev.map((device) => (device.id === id ? { ...device, x, y } : device)));
   }, []);
 
-  // 移动机房 - 修改为只移动组本身，不移动设备
-  const moveGroup = useCallback((id, x, y) => {
-    console.log('Moving group:', id, 'to:', x, y);
-    setGroups((prev) => prev.map((group) => (group.id === id ? { ...group, x, y } : group)));
-  }, []);
+  const moveGroup = useCallback(
+    (id, x, y) => {
+      console.log('Moving group:', id, 'to:', x, y);
+      const group = groups.find((g) => g.id === id);
+      if (group) {
+        const deltaX = x - group.x;
+        const deltaY = y - group.y;
 
+        setDevices((prev) =>
+          prev.map((device) => {
+            if (device.groupId === id) {
+              return {
+                ...device,
+                x: device.x + deltaX,
+                y: device.y + deltaY,
+              };
+            }
+            return device;
+          }),
+        );
+      }
+
+      setGroups((prev) => prev.map((group) => (group.id === id ? { ...group, x, y } : group)));
+    },
+    [groups],
+  );
   // 调整机房大小
   const resizeGroup = useCallback((id, width, height) => {
     setGroups((prev) => prev.map((group) => (group.id === id ? { ...group, width, height } : group)));
@@ -393,15 +323,6 @@ const Topology = () => {
     setCanvasPosition({ x: 0, y: 0 });
   }, []);
 
-  // 移除设备与组的关联相关函数 - 不再需要
-  // const addDeviceToGroup = useCallback(...)
-  // const removeDeviceFromGroup = useCallback(...)
-
-  const onSelectConnection = useCallback((connection) => {
-    console.log('选中连接线:', connection);
-    setSelectedItem(connection);
-  }, []);
-
   return (
     <PageLayout icon={<DatabaseOutlined />} title={'网络拓扑'}>
       <Layout className='net-topology'>
@@ -419,9 +340,6 @@ const Topology = () => {
             onFullscreen={toggleFullscreen}
             canUndo={historyIndex > 0}
             canRedo={historyIndex < history.length - 1}
-            onSaveTopology={saveTopologyData} // 添加保存拓扑功能
-            isSaving={isSaving}
-            isLoading={isLoading}
           />
         </Sider>
         <Content className='net-content'>
@@ -430,14 +348,12 @@ const Topology = () => {
             devices={devices}
             connections={connections}
             groups={groups}
-            deleteConnection={deleteConnection}
             selectedItem={selectedItem}
             setSelectedItem={setSelectedItem}
             canvasScale={canvasScale}
             canvasPosition={canvasPosition}
             onSelectConnection={onSelectConnection}
             setCanvasPosition={setCanvasPosition}
-            onDeleteGroup={deleteGroup}
             onAddDevice={addDevice}
             onAddConnection={addConnection}
             onUpdateDevice={updateDevice}
@@ -445,10 +361,25 @@ const Topology = () => {
             onMoveDevice={moveDevice}
             onMoveGroup={moveGroup}
             onResizeGroup={resizeGroup}
-            // 移除设备与组关联相关的props
+            onAddDeviceToGroup={addDeviceToGroup}
+            onRemoveDeviceFromGroup={removeDeviceFromGroup}
             onAddGroup={addGroup}
           />
         </Content>
+        {/* <Sider width={300} className='app-property-panel'>
+          <PropertyPanel
+            selectedItem={selectedItem}
+            devices={devices}
+            connections={connections}
+            groups={groups}
+            onUpdateDevice={updateDevice}
+            onUpdateGroup={updateGroup}
+            onUpdateConnection={updateConnection}
+            onDeleteDevice={deleteDevice}
+            onDeleteGroup={deleteGroup}
+            onDeleteConnection={deleteConnection}
+          />
+        </Sider> */}
       </Layout>
     </PageLayout>
   );

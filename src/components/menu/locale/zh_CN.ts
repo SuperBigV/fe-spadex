@@ -48,6 +48,7 @@ const zh_CN = {
   拨测状态: '拨测状态',
   Pingmesh配置: 'Pingmesh配置',
   quickJump: '快捷跳转',
+  aiKnowlage: 'AI知识库',
   quickOpenClose: '打开/关闭',
   quickSearchPlaceholder: '输入内容以检索...',
   quickMenus: '快捷菜单',

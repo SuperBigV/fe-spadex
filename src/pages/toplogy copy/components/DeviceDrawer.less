@@ -1,0 +1,136 @@
+.device-drawer {
+  .ant-drawer-body {
+    padding: 0;
+  }
+}
+
+.device-drawer-content {
+  padding: 5px;
+  background-color: #272a38;
+  height: 100%;
+  overflow-y: auto;
+
+  > div {
+    margin-bottom: 5px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  h2 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #ffffff;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h2 {
+      margin: 0;
+    }
+  }
+}
+
+.device-info-section {
+  background: #272a38;
+  padding: 5px;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+  .ant-descriptions-item-label {
+    color: #bfbfbf;
+    background-color: #333333;
+  }
+
+  .ant-descriptions-item-content {
+    color: #ffffff;
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+
+    &.online {
+      background-color: #73d13d;
+    }
+
+    &.offline {
+      background-color: #ff4d4f;
+    }
+  }
+}
+
+.monitor-section {
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+
+    .ant-card {
+      background-color: #2a2a2a;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .ant-card-head {
+      min-height: 36px;
+      padding: 0 12px;
+      background-color: #333333;
+      border-bottom: 1px solid #444444;
+
+      .ant-card-head-title {
+        padding: 8px 0;
+        font-size: 14px;
+        color: #ffffff;
+      }
+    }
+
+    .ant-card-body {
+      padding: 12px;
+      height: 120px;
+    }
+  }
+}
+
+.alarm-section {
+  background: #272a38;
+  padding: 5px;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+  .alarm-controls {
+    display: flex;
+    gap: 8px;
+  }
+
+  .ant-table {
+    background-color: #2a2a2a;
+
+    .ant-table-thead > tr > th {
+      background-color: #333333;
+      color: #ffffff;
+      border-bottom: 1px solid #444444;
+    }
+
+    .ant-table-tbody > tr > td {
+      border-bottom: 1px solid #444444;
+      color: #ffffff;
+    }
+
+    .ant-table-tbody > tr:hover > td {
+      background-color: #333333;
+    }
+  }
+
+  .ant-tag {
+    border: none;
+  }
+}

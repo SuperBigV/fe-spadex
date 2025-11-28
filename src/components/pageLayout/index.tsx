@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-import React, { ReactNode, useContext, useState, useEffect } from 'react';
+import React, { ReactNode, useContext, useState, useEffect, useRef } from 'react';
 import { useHistory, Link, useLocation } from 'react-router-dom';
 import querystring from 'query-string';
 import { useTranslation } from 'react-i18next';
@@ -64,10 +64,41 @@ const PageLayout: React.FC<IPageLayoutProps> = ({ icon, title, rightArea, introI
   const embed = localStorage.getItem('embed') === '1' && window.self !== window.top;
   const [curLanguage, setCurLanguage] = useState(i18nMap[i18n.language] || '中文');
   const [themeVisible, setThemeVisible] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const chatRef = useRef<any>(null);
   useEffect(() => {
     setCurLanguage(i18nMap[i18n.language] || '中文');
   }, [i18n.language]);
+  useEffect(() => {
+    const handleMessage = (e) => {
+      if (e.origin !== 'http://127.0.0.1') return;
 
+      if (e.data.type === 'CREATE_CHAT_WINDOW') {
+        if (document.getElementById('chat-win')) return;
+
+        const iframe = document.createElement('iframe');
+        iframe.id = 'chat-win';
+        iframe.src = e.data.src;
+        iframe.style.cssText = 'position:fixed;bottom:104px;right:24px;width:380px;height:500px;border:none;background:transparent;z-index:9998;display:none';
+        iframe.frameBorder = '0';
+        iframe.allow = 'microphone;camera';
+        document.body.appendChild(iframe);
+      } else if (e.data.type === 'TOGGLE_CHAT') {
+        const chatWindow = document.getElementById('chat-win');
+        if (chatWindow) chatWindow.style.display = e.data.isOpen ? 'block' : 'none';
+      } else if (e.data.type === 'SCROLL_PASSTHROUGH') {
+        window.scrollBy(0, e.data.deltaY);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    // 清理事件监听器
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
   const menu = (
     <Menu>
       <Menu.Item
@@ -101,7 +132,30 @@ const PageLayout: React.FC<IPageLayoutProps> = ({ icon, title, rightArea, introI
       </Menu.Item>
     </Menu>
   );
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    // 计算鼠标相对于聊天图标的偏移量
+    const offsetX = e.clientX - chatRef.current.getBoundingClientRect().left;
+    const offsetY = e.clientY - chatRef.current.getBoundingClientRect().top;
 
+    const handleMouseMove = (moveEvent) => {
+      if (!isDragging) return;
+      // 更新位置
+      setPosition({
+        x: moveEvent.clientX - offsetX,
+        y: moveEvent.clientY - offsetY,
+      });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
   return (
     <div className={'page-wrapper'}>
       {!embed && (
@@ -233,6 +287,23 @@ const PageLayout: React.FC<IPageLayoutProps> = ({ icon, title, rightArea, introI
           </div>
         </div>
       </Drawer>
+      {/* <iframe
+        src='http://127.0.0.1/next-chats/widget?shared_id=c0be2754c38111f0b3971a934f5ce897&from=chat&auth=NiNjExNWM2YzM2OTExZjA5NDM5YmVjZD&mode=master&streaming=false'
+        style={{
+          position: 'fixed',
+          bottom: '200px',
+          right: '0',
+          width: '100px',
+          height: '100px',
+          border: 'none',
+          borderRadius: '50%',
+          background: 'transparent',
+          zIndex: 9999,
+        }}
+        frameBorder='0'
+        onMouseDown={handleMouseDown}
+        allow='microphone;camera'
+      /> */}
     </div>
   );
 };

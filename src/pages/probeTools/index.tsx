@@ -41,10 +41,11 @@ const NetworkProbeTool = () => {
       setHttpResult({
         url: httpUrl,
         checkTime: new Date().toLocaleString(),
-        statusCode: res.statusCode,
-        totalTime: res.totalTime,
-        success: res.success,
+        statusCode: res.dat.statusCode,
+        totalTime: res.dat.totalTime,
+        success: res.dat.success,
       });
+      setHttpLoading(false);
     });
   };
 
@@ -91,9 +92,10 @@ const NetworkProbeTool = () => {
     postProbeTelnet({ target: telnetTarget }).then((res) => {
       setTelnetResult({
         target: telnetTarget,
-        portStatus: res.portStatus,
-        success: res.success,
+        portStatus: res.dat.portStatus,
+        success: res.dat.success,
       });
+      setTelnetLoading(false);
     });
   };
 
@@ -107,8 +109,9 @@ const NetworkProbeTool = () => {
     setTracerouteLoading(true);
     setTracerouteResult('');
     postProbeTraceroute({ target: tracerouteTarget }).then((res) => {
-      setTracerouteResult(res);
+      setTracerouteResult(res.dat.result || '');
     });
+    setTracerouteLoading(false);
   };
 
   // 渲染Tab标题

@@ -1,15 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { CloseOutlined, SwitcherOutlined, WifiOutlined } from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
 import './Group.less';
 
-const Group = ({ group, devices, isSelected, onDragStart, onResizeStart, onSelect, onDeviceSelect, onDeviceDragStart, onDeviceMove }) => {
-  const [draggingDevice, setDraggingDevice] = useState(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const groupRef = useRef<any>(null);
+const Group = ({ group, isSelected, onDragStart, onResizeStart, onSelect, deleteGroup }) => {
+  const groupRef = useRef(null);
 
   const handleMouseDown = (e) => {
     if (e.button === 0) {
-      // 左键
       onDragStart(e, group);
     }
   };
@@ -22,63 +19,9 @@ const Group = ({ group, devices, isSelected, onDragStart, onResizeStart, onSelec
   const handleDelete = (e) => {
     e.stopPropagation();
     // 删除逻辑由父组件处理
+    console.log('删除组:', group.id);
+    deleteGroup();
   };
-
-  // 处理机房内设备拖拽开始
-  const handleDeviceMouseDown = (e, device) => {
-    e.stopPropagation();
-    const rect = groupRef.current.getBoundingClientRect();
-    setDraggingDevice(device.id);
-    setDragOffset({
-      x: e.clientX - rect.left - (device.x - group.x),
-      y: e.clientY - rect.top - (device.y - group.y),
-    });
-    onDeviceSelect(device);
-  };
-
-  // 处理机房内设备拖拽
-  const handleDeviceDrag = (e) => {
-    if (!draggingDevice) return;
-
-    const rect = groupRef.current.getBoundingClientRect();
-    let x = e.clientX - rect.left - dragOffset.x + group.x;
-    let y = e.clientY - rect.top - dragOffset.y + group.y;
-
-    // 限制设备在机房范围内移动
-    x = Math.max(group.x, Math.min(x, group.x + group.width - 80));
-    y = Math.max(group.y, Math.min(y, group.y + group.height - 60));
-
-    onDeviceMove(draggingDevice, x, y);
-  };
-
-  // 处理机房内设备拖拽结束
-  const handleDeviceDragEnd = () => {
-    setDraggingDevice(null);
-    setDragOffset({ x: 0, y: 0 });
-  };
-
-  // 处理机房内设备点击
-  const handleDeviceClick = (e, device) => {
-    e.stopPropagation();
-    onDeviceSelect(device);
-  };
-
-  // 添加事件监听器
-  useEffect(() => {
-    const groupElement: any = groupRef.current;
-    if (groupElement && draggingDevice) {
-      const handleMouseMove = (e) => handleDeviceDrag(e);
-      const handleMouseUp = () => handleDeviceDragEnd();
-
-      groupElement.addEventListener('mousemove', handleMouseMove);
-      groupElement.addEventListener('mouseup', handleMouseUp);
-
-      return () => {
-        groupElement.removeEventListener('mousemove', handleMouseMove);
-        groupElement.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [draggingDevice, dragOffset, group]);
 
   return (
     <div
@@ -104,34 +47,10 @@ const Group = ({ group, devices, isSelected, onDragStart, onResizeStart, onSelec
 
       <div className='group-header'>
         <div className='group-name'>{group.name || '机房'}</div>
-        <div className='device-count'>{devices.length} 台设备</div>
+        {/* 移除设备计数，组不再包含设备 */}
       </div>
 
-      <div className='group-content'>
-        {devices.map((device) => (
-          <div
-            key={device.id}
-            className={`group-device ${device.id === draggingDevice ? 'dragging' : ''}`}
-            style={{
-              left: device.x - group.x,
-              top: device.y - group.y,
-              width: device.width,
-              height: device.height,
-            }}
-            onMouseDown={(e) => handleDeviceMouseDown(e, device)}
-            onClick={(e) => handleDeviceClick(e, device)}
-          >
-            <div className='device-icon'>
-              {device.type === 'router' && <SwitcherOutlined className='router' />}
-              {device.type === 'switch' && <SwitcherOutlined className='switch' />}
-              {device.type === 'firewall' && <SwitcherOutlined className='firewall' />}
-              {device.type === 'server' && <SwitcherOutlined className='server' />}
-              {device.type === 'wireless' && <WifiOutlined className='wireless' />}
-            </div>
-            <div className='device-name'>{device.name || device.type}</div>
-          </div>
-        ))}
-      </div>
+      {/* 移除组内容区域，不再渲染设备 */}
 
       {isSelected && <div className='resize-handle' onMouseDown={handleResizeMouseDown} />}
     </div>
