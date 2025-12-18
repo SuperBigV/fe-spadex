@@ -103,12 +103,13 @@ export default function Login() {
   return (
     <div className='login-warp'>
       <div className='banner integration'>
-        <img src={'/image/login-dashboard.svg'} style={{ margin: '0 60px', zIndex: 5, width: 632 }}></img>
+        {/* <img src={'/image/login-dashboard.svg'} style={{ margin: '0 60px', zIndex: 5, width: 632 }}></img> */}
+        <img src={'/image/bg-dashboard.png'} style={{ zIndex: 5, width: 900 }}></img>
       </div>
       <div className='login-panel'>
         <div className='login-main integration'>
           <div className='login-title'>
-            <img src={siteInfo?.login_page_logo_url || '/image/login-logo.png'} style={{ width: '120px' }} />
+            <img src={siteInfo?.login_page_logo_url || '/image/login-logo.png'} style={{ width: '200px' }} />
           </div>
 
           {showDingTalkLogin ? ( // 根据状态显示钉钉登录组件

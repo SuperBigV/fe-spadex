@@ -322,51 +322,51 @@ export default function List(props: IProps) {
     //     },
     //   });
     // }
-    // if (item.name === 'tags') {
-    //   columns.push({
-    //     title: (
-    //       <Space>
-    //         {t('common:host.tags')}
-    //         <Tooltip title={t('common:host.tags_tip')}>
-    //           <InfoCircleOutlined />
-    //         </Tooltip>
-    //       </Space>
-    //     ),
-    //     width: 120,
-    //     dataIndex: 'tags',
-    //     className: 'n9e-hosts-table-column-tags',
-    //     ellipsis: {
-    //       showTitle: false,
-    //     },
-    //     render(tagArr) {
-    //       const content =
-    //         tagArr &&
-    //         tagArr.map((item) => (
-    //           <Tag
-    //             color='purple'
-    //             key={item}
-    //             onClick={(e) => {
-    //               if (!tableQueryContent.includes(item)) {
-    //                 isAddTagToQueryInput.current = true;
-    //                 const val = tableQueryContent ? `${tableQueryContent.trim()} ${item}` : item;
-    //                 setTableQueryContent(val);
-    //                 setSearchVal(val);
-    //               }
-    //             }}
-    //           >
-    //             {item}
-    //           </Tag>
-    //         ));
-    //       return (
-    //         tagArr && (
-    //           <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body} overlayClassName='mon-manage-table-tooltip'>
-    //             {content}
-    //           </Tooltip>
-    //         )
-    //       );
-    //     },
-    //   });
-    // }
+    if (item.name === 'tags') {
+      columns.push({
+        title: (
+          <Space>
+            {t('common:host.tags')}
+            <Tooltip title={t('common:host.tags_tip')}>
+              <InfoCircleOutlined />
+            </Tooltip>
+          </Space>
+        ),
+        width: 120,
+        dataIndex: 'tags',
+        className: 'n9e-hosts-table-column-tags',
+        ellipsis: {
+          showTitle: false,
+        },
+        render(tagArr) {
+          const content =
+            tagArr &&
+            tagArr.map((item) => (
+              <Tag
+                color='purple'
+                key={item}
+                onClick={(e) => {
+                  if (!tableQueryContent.includes(item)) {
+                    isAddTagToQueryInput.current = true;
+                    const val = tableQueryContent ? `${tableQueryContent.trim()} ${item}` : item;
+                    setTableQueryContent(val);
+                    setSearchVal(val);
+                  }
+                }}
+              >
+                {item}
+              </Tag>
+            ));
+          return (
+            tagArr && (
+              <Tooltip title={content} placement='topLeft' getPopupContainer={() => document.body} overlayClassName='mon-manage-table-tooltip'>
+                {content}
+              </Tooltip>
+            )
+          );
+        },
+      });
+    }
     if (item.name === 'group_obj') {
       columns.push({
         title: t('group_obj'),

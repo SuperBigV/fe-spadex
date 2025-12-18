@@ -331,6 +331,7 @@ function App() {
         }
         // 非匿名访问，需要初始化一些公共数据
         if (!anonymous) {
+          console.log('非匿名访问');
           const { dat: profile } = await GetProfile();
           const { dat: busiGroups } = await getBusiGroups('', 5000, 'busi');
           const { dat: assetModels } = await getAssetModels('', 5000);

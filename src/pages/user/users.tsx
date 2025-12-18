@@ -60,12 +60,12 @@ const Resource: React.FC = () => {
       ellipsis: true,
       render: (text: string, record) => record.nickname || '-',
     },
-    {
-      title: t('权限'),
-      dataIndex: 'permissions',
-      ellipsis: true,
-      render: (text: string, record) => record.permissions || '-',
-    },
+    // {
+    //   title: t('权限'),
+    //   dataIndex: 'permissions',
+    //   ellipsis: true,
+    //   render: (text: string, record) => record.permissions || '-',
+    // },
     {
       title: t('account:profile.email'),
       dataIndex: 'email',
@@ -126,58 +126,89 @@ const Resource: React.FC = () => {
       },
       sorter: true,
     },
-    {
-      title: t('user.last_active_time'),
-      dataIndex: 'last_active_time',
-      render: (text) => {
-        if (!text) {
-          return '-';
-        }
-        return moment.unix(text).format('YYYY-MM-DD HH:mm:ss');
-      },
-      sorter: true,
-    },
+    // {
+    //   title: t('user.last_active_time'),
+    //   dataIndex: 'last_active_time',
+    //   render: (text) => {
+    //     if (!text) {
+    //       return '-';
+    //     }
+    //     return moment.unix(text).format('YYYY-MM-DD HH:mm:ss');
+    //   },
+    //   sorter: true,
+    // },
     {
       title: t('common:table.operations'),
-      width: i18n.language === 'en_US' ? 80 : 40,
+      width: 140,
       render: (text: string, record) => {
         return (
-          <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item onClick={() => handleClick(ActionType.EditUser, record.id)}>
-                  <Button className='p0 height-auto' type='link'>
-                    {t('common:btn.edit')}
-                  </Button>
-                </Menu.Item>
-                <Menu.Item onClick={() => handleClick(ActionType.Reset, record.id)}>
-                  <Button className='p0 height-auto' type='link'>
-                    {t('account:password.reset')}
-                  </Button>
-                </Menu.Item>
-                <Menu.Item
-                  onClick={() => {
-                    confirm({
-                      title: t('common:confirm.delete'),
-                      onOk: () => {
-                        deleteUser(record.id).then((_) => {
-                          message.success(t('common:success.delete'));
-                          handleClose();
-                        });
-                      },
-                      onCancel: () => {},
-                    });
-                  }}
-                >
-                  <Button danger type='link' className='p0 height-auto'>
-                    {t('common:btn.delete')}
-                  </Button>
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Button type='link' icon={<MoreOutlined />} />
-          </Dropdown>
+          <>
+            <Space>
+              <Button type='link' className='p0 height-auto' onClick={() => handleClick(ActionType.EditUser, record.id)}>
+                {t('common:btn.edit')}
+              </Button>
+
+              <Button type='link' className='p0 height-auto' onClick={() => handleClick(ActionType.Reset, record.id)}>
+                {t('account:password.reset')}
+              </Button>
+
+              <Button
+                danger
+                type='link'
+                className='p0 height-auto'
+                onClick={() => {
+                  confirm({
+                    title: t('common:confirm.delete'),
+                    onOk: () => {
+                      deleteUser(record.id).then((_) => {
+                        message.success(t('common:success.delete'));
+                        handleClose();
+                      });
+                    },
+                    onCancel: () => {},
+                  });
+                }}
+              >
+                {t('common:btn.delete')}
+              </Button>
+            </Space>
+          </>
+          // <Dropdown
+          //   overlay={
+          //     <Menu>
+          //       <Menu.Item onClick={() => handleClick(ActionType.EditUser, record.id)}>
+          //         <Button className='p0 height-auto' type='link'>
+          //           {t('common:btn.edit')}
+          //         </Button>
+          //       </Menu.Item>
+          //       <Menu.Item onClick={() => handleClick(ActionType.Reset, record.id)}>
+          //         <Button className='p0 height-auto' type='link'>
+          //           {t('account:password.reset')}
+          //         </Button>
+          //       </Menu.Item>
+          //       <Menu.Item
+          //         onClick={() => {
+          //           confirm({
+          //             title: t('common:confirm.delete'),
+          //             onOk: () => {
+          //               deleteUser(record.id).then((_) => {
+          //                 message.success(t('common:success.delete'));
+          //                 handleClose();
+          //               });
+          //             },
+          //             onCancel: () => {},
+          //           });
+          //         }}
+          //       >
+          //         <Button danger type='link' className='p0 height-auto'>
+          //           {t('common:btn.delete')}
+          //         </Button>
+          //       </Menu.Item>
+          //     </Menu>
+          //   }
+          // >
+          //   <Button type='link' icon={<MoreOutlined />} />
+          // </Dropdown>
         );
       },
     },
@@ -249,7 +280,7 @@ const Resource: React.FC = () => {
       title={
         <Space>
           {t('user.title')}
-          <HelpLink src='https://flashcat.cloud/docs/content/flashcat-monitor/nightingale-v7/usage/personnel-permissions/user-management/' />
+          {/* <HelpLink src='https://flashcat.cloud/docs/content/flashcat-monitor/nightingale-v7/usage/personnel-permissions/user-management/' /> */}
         </Space>
       }
       icon={<UserOutlined />}
@@ -260,7 +291,7 @@ const Resource: React.FC = () => {
             <div className='event-table-search-left'>
               <Space>
                 <Input className={'searchInput'} prefix={<SearchOutlined />} onPressEnter={onSearchQuery} placeholder={t('user.search_placeholder')} />
-                <TimeRangePicker
+                {/* <TimeRangePicker
                   allowClear
                   placeholder={t('user.last_active_time')}
                   value={range}
@@ -270,7 +301,7 @@ const Resource: React.FC = () => {
                   onClear={() => {
                     setRange(undefined);
                   }}
-                />
+                /> */}
               </Space>
             </div>
             <div className='event-table-search-right'>

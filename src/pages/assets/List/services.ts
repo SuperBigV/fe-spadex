@@ -113,6 +113,7 @@ export const editAsset = function (id, data) {
     ident: data.data.name,
     host_ip: data.data.ip,
     group_ids: data.data.busi,
+    tags: data.data.tags.split(','),
     asset_id: id,
     attr: {
       device_model_id: data.data.model,

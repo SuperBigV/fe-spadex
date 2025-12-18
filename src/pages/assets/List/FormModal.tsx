@@ -155,9 +155,9 @@ function FormModal(props: Props & ModalWrapProps) {
   };
   const handleSubmit = () => {
     form.validateFields().then((values) => {
-      if (values.data.password !== undefined) {
-        values.data.password = Encrypt(values.data.password);
-      }
+      // if (values.data.password !== undefined) {
+      //   values.data.password = Encrypt(values.data.password);
+      // }
       onOk(values).then(() => {
         destroy();
       });
@@ -255,7 +255,7 @@ function FormModal(props: Props & ModalWrapProps) {
                       }
                       break;
                     default:
-                      inputComponent = <Input />;
+                      inputComponent = <Input placeholder={tip} />;
                   }
 
                   return (

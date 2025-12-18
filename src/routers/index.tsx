@@ -56,7 +56,6 @@ import TaskTplDetail from '@/pages/taskTpl/detail';
 import TaskTplModify from '@/pages/taskTpl/modify';
 import TaskTplClone from '@/pages/taskTpl/clone';
 import Room from '@/pages/room';
-import RoomAdd from '@/pages/room/add';
 import Task from '@/pages/task';
 import TaskAdd from '@/pages/task/add';
 import TaskResult from '@/pages/task/result';

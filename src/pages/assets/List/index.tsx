@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { Table, Spin, message, Dropdown, Menu, Modal, Tag, Popconfirm, Checkbox, Button, Row, Col, Input, Image, Tooltip, Space } from 'antd';
 import { MoreOutlined, CodeOutlined, DesktopOutlined, SearchOutlined, DownOutlined, InfoCircleOutlined, LinkOutlined, ReloadOutlined, PoweroffOutlined } from '@ant-design/icons';
 
@@ -12,6 +12,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { ActionType, ControlType } from '@/store/manageInterface';
 import FormModal from './FormModal';
 import ControlModal from './ControlModal';
+import { CommonStateContext } from '@/App';
 import TargetMetaDrawer from './TargetMetaDrawer';
 import { json } from 'd3';
 import { fromTheme } from 'tailwind-merge';
@@ -54,6 +55,7 @@ export interface IAsset {
   name: string;
 }
 export interface Field {
+  column: boolean | undefined;
   id: number;
   fieldName: string;
   uniqueIdentifier: string;
@@ -77,6 +79,7 @@ export interface ColumnType {
 }
 export const pageSizeOptions = ['10', '20', '50', '100'];
 const LOST_COLOR_DARK = '#929090';
+const LOST_COLOR_LIGHT = '#CCCCCC';
 export default function AssetList(props: IProps) {
   const { t } = useTranslation('asset');
   const { isLeaf, gids, setOperateType, setSelectedRows, refreshFlag, selectedRows, isShowOperator } = props;
@@ -84,6 +87,7 @@ export default function AssetList(props: IProps) {
   const [formFields, setFormFields] = useState<any[]>([]);
   // const [data, setData] = useState<any[]>([]);
   const history = useHistory();
+  const { darkMode } = useContext(CommonStateContext);
   const [loading, setLoading] = useState(true);
   const isAddTagToQueryInput = useRef(false);
   const [targetPassword, setTargetPassword] = useState('');
@@ -108,6 +112,7 @@ export default function AssetList(props: IProps) {
   const RED_COLOR = '#FF656B';
   const GRAY_COLOR = '#929090';
   const isShowOperatorRef = useRef(isShowOperator);
+  const LOST_COLOR = darkMode ? LOST_COLOR_DARK : LOST_COLOR_LIGHT;
   const Unknown = () => {
     const { t } = useTranslation('asset');
     return (
@@ -157,10 +162,12 @@ export default function AssetList(props: IProps) {
         item.data.id = item.id;
         item.data.status = item.status;
         item.data.belong_room = item.belong_room;
-        item.data.tags = item.tags;
+        item.data.tags = item.data.tags.split(',');
         item.data.mem_util = item.mem_util;
         item.data.cpu_util = item.cpu_util;
         item.data.offset = item.offset;
+        item.data.unixtime = item.unixtime;
+        item.data.target_up = item.target_up;
         assetList.push(item.data);
       });
       return {
@@ -312,18 +319,38 @@ export default function AssetList(props: IProps) {
             width: 160,
           };
         }
-        if (item.uniqueIdentifier === 'offset') {
+
+        if (item.uniqueIdentifier === 'unixtime') {
           return {
             title: '监控状态',
-            dataIndex: 'offset',
+            dataIndex: 'unixtime',
             width: 100,
             render(text, reocrd) {
               if (reocrd.cpu_num === -1) return <Unknown />;
-              let result = '异常';
+              let result = '失联';
               let backgroundColor = RED_COLOR;
-              if (Math.abs(text) > 1) {
-                result = '正常';
+              // if (Math.abs(text) > 1) {
+              //   result = '正常';
+              //   backgroundColor = GREEN_COLOR;
+              // }
+              // 获取当前时间的毫秒时间戳
+              const currentTime = Date.now();
+
+              console.log('text-unixtime::', text);
+              // 计算时间差（毫秒）
+              const timeDiff = currentTime - text;
+              // 根据时间差返回对应的颜色
+              if (timeDiff < 60 * 1000) {
+                // 小于60秒（60000毫秒）
                 backgroundColor = GREEN_COLOR;
+                result = '正常';
+              } else if (timeDiff < 180 * 1000) {
+                // 小于180秒（180000毫秒）
+                backgroundColor = YELLOW_COLOR;
+                result = '异常';
+              } else {
+                backgroundColor = GRAY_COLOR;
+                result = '失联';
               }
               return (
                 <div
@@ -690,7 +717,7 @@ export default function AssetList(props: IProps) {
         allFields.splice(
           2,
           0,
-          { name: '监控状态', uniqueIdentifier: 'offset', isShow: true },
+          { name: '监控状态', uniqueIdentifier: 'unixtime', isShow: true },
           {
             name: 'CPU使用率',
             uniqueIdentifier: 'cpu_util',
@@ -707,16 +734,18 @@ export default function AssetList(props: IProps) {
         allFields.splice(
           2,
           0,
-          { name: '监控状态', uniqueIdentifier: 'offset', isShow: true },
+          { name: '监控状态', uniqueIdentifier: 'unixtime', isShow: true, column: true },
           {
             name: 'CPU使用率',
             uniqueIdentifier: 'cpu_util',
             isShow: true,
+            column: true,
           },
           {
             name: '内存使用率',
             uniqueIdentifier: 'mem_util',
             isShow: true,
+            column: true,
           },
         );
       }
@@ -771,14 +800,14 @@ export default function AssetList(props: IProps) {
                     <Tag
                       color='purple'
                       key={item}
-                      onClick={(e) => {
-                        if (!tableQueryContent.includes(item)) {
-                          isAddTagToQueryInput.current = true;
-                          const val = tableQueryContent ? `${tableQueryContent.trim()} ${item}` : item;
-                          setTableQueryContent(val);
-                          setSearchVal(val);
-                        }
-                      }}
+                      // onClick={(e) => {
+                      //   if (!tableQueryContent.includes(item)) {
+                      //     isAddTagToQueryInput.current = true;
+                      //     const val = tableQueryContent ? `${tableQueryContent.trim()} ${item}` : item;
+                      //     setTableQueryContent(val);
+                      //     setSearchVal(val);
+                      //   }
+                      // }}
                     >
                       {item}
                     </Tag>
@@ -902,18 +931,36 @@ export default function AssetList(props: IProps) {
               width: 140,
             };
           }
-          if (item.uniqueIdentifier === 'offset') {
+          if (item.uniqueIdentifier === 'unixtime') {
             return {
               title: '监控状态',
-              dataIndex: 'offset',
+              dataIndex: 'unixtime',
               width: 100,
               render(text, reocrd) {
                 if (reocrd.cpu_num === -1) return <Unknown />;
-                let result = '异常';
+                let result = '失联';
                 let backgroundColor = RED_COLOR;
-                if (Math.abs(text) > 1) {
-                  result = '正常';
+                // if (Math.abs(text) > 1) {
+                //   result = '正常';
+                //   backgroundColor = GREEN_COLOR;
+                // }
+                // 获取当前时间的毫秒时间戳
+                const currentTime = Date.now();
+
+                // 计算时间差（毫秒）
+                const timeDiff = currentTime - text;
+                // 根据时间差返回对应的颜色
+                if (timeDiff < 60 * 1000) {
+                  // 小于60秒（60000毫秒）
                   backgroundColor = GREEN_COLOR;
+                  result = '正常';
+                } else if (timeDiff < 180 * 1000) {
+                  // 小于180秒（180000毫秒）
+                  backgroundColor = YELLOW_COLOR;
+                  result = '异常';
+                } else {
+                  backgroundColor = RED_COLOR;
+                  result = '失联';
                 }
                 return (
                   <div
@@ -936,11 +983,15 @@ export default function AssetList(props: IProps) {
               render(text, reocrd) {
                 if (reocrd.cpu_num === -1) return <Unknown />;
                 let backgroundColor = GREEN_COLOR;
+
                 if (text > 70) {
                   backgroundColor = YELLOW_COLOR;
                 }
                 if (text > 85) {
                   backgroundColor = RED_COLOR;
+                }
+                if (reocrd.target_up === 0) {
+                  backgroundColor = LOST_COLOR;
                 }
                 return (
                   <div
@@ -969,7 +1020,9 @@ export default function AssetList(props: IProps) {
                 if (text > 85) {
                   backgroundColor = RED_COLOR;
                 }
-
+                if (reocrd.target_up === 0) {
+                  backgroundColor = LOST_COLOR;
+                }
                 return (
                   <div
                     className='table-td-fullBG'
@@ -1294,7 +1347,11 @@ export default function AssetList(props: IProps) {
         <p>{targetPassword}</p>
       </Modal>
       <Modal title='设置显示字段' open={visible} onCancel={() => setVisible(false)} onOk={handleOk}>
-        <Checkbox.Group options={allFields.map((field) => ({ label: field.fieldName, value: field.uniqueIdentifier }))} value={selectedFields} onChange={handleFieldChange} />
+        <Checkbox.Group
+          options={allFields.filter((field) => field.column === undefined).map((field) => ({ label: field.fieldName, value: field.uniqueIdentifier }))}
+          value={selectedFields}
+          onChange={handleFieldChange}
+        />
       </Modal>
       {/* <CollectsDrawer visible={collectsDrawerVisible} setVisiable={setCollectsDrawerVisible} ident={collectsDrawerIdent} /> */}
     </div>

@@ -34,15 +34,15 @@ const TopologySidebar = ({
   isLoading = false,
 }) => {
   const deviceTypes = [
-    { id: 1, type: 'net_router', name: '路由器', iconType: 'net_router', icon: '/public/image/topology_router.png' },
-    { id: 2, type: 'net_switch', name: '接入交换机', iconType: 'net_switch_access', icon: '/public/image/topology_arcess_switch.png' },
-    { id: 3, type: 'net_switch', name: '汇聚交换机', iconType: 'net_switch_three', icon: '/public/image/topology_three_switch.png' },
-    { id: 4, type: 'net_switch', name: '核心交换机', iconType: 'net_switch_core', icon: '/public/image/topology_core_switch.png' },
-    { id: 5, type: 'net_firewall', name: '防火墙', iconType: 'net_firewall', icon: '/public/image/topology_fireware.png' },
-    { id: 6, type: 'host', name: '服务器', iconType: 'host', icon: '/public/image/topology_host.png' },
-    { id: 7, type: 'net_wireless', name: '无线AP', iconType: 'net_wireless', icon: '/public/image/topology_ap.png' },
-    { id: 8, type: 'net_monitor', name: '摄像头', iconType: 'net_monitor', icon: '/public/image/topology_monitor.png' },
-    { id: 9, type: 'group', name: '机房', icon: '/public/image/topology_room.png' },
+    { id: 1, type: 'net_router', name: '路由器', iconType: 'net_router', icon: '/image/topology_router.png' },
+    { id: 2, type: 'net_switch', name: '接入交换机', iconType: 'net_switch_access', icon: '/image/topology_arcess_switch.png' },
+    { id: 3, type: 'net_switch', name: '汇聚交换机', iconType: 'net_switch_three', icon: '/image/topology_three_switch.png' },
+    { id: 4, type: 'net_switch', name: '核心交换机', iconType: 'net_switch_core', icon: '/image/topology_core_switch.png' },
+    { id: 5, type: 'net_firewall', name: '防火墙', iconType: 'net_firewall', icon: '/image/topology_fireware.png' },
+    { id: 6, type: 'host', name: '服务器', iconType: 'host', icon: '/image/topology_host.png' },
+    { id: 7, type: 'net_wireless', name: '无线AP', iconType: 'net_wireless', icon: '/image/topology_ap.png' },
+    { id: 8, type: 'net_monitor', name: '摄像头', iconType: 'net_monitor', icon: '/image/topology_monitor.png' },
+    { id: 9, type: 'group', name: '机房', icon: '/image/topology_room.png' },
   ];
 
   const handleDragStart = (e, device) => {

@@ -14,19 +14,19 @@ const Device = ({ device, isSelected, onDragStart, onSelect, onConnectionStart, 
   const getDeviceIcon = (type) => {
     switch (type) {
       case 'net_router':
-        return <img src='/public/image/topology_router.png' alt='' style={{ width: '30px', height: '30px' }} />;
+        return <img src='/image/topology_router.png' alt='' style={{ width: '30px', height: '30px' }} />;
       case 'net_switch_access':
-        return <img src='/public/image/topology_arcess_switch.png' alt='' style={{ width: '30px', height: '30px' }} />;
+        return <img src='/image/topology_arcess_switch.png' alt='' style={{ width: '30px', height: '30px' }} />;
       case 'net_switch_three':
-        return <img src='/public/image/topology_three_switch.png' alt='' style={{ width: '30px', height: '30px' }} />;
+        return <img src='/image/topology_three_switch.png' alt='' style={{ width: '30px', height: '30px' }} />;
       case 'net_switch_core':
-        return <img src='/public/image/topology_core_switch.png' alt='' style={{ width: '30px', height: '30px' }} />;
+        return <img src='/image/topology_core_switch.png' alt='' style={{ width: '30px', height: '30px' }} />;
       case 'net_firewall':
-        return <img src='/public/image/topology_fireware.png' alt='' style={{ width: '20px', height: '20px' }} />;
+        return <img src='/image/topology_fireware.png' alt='' style={{ width: '20px', height: '20px' }} />;
       case 'host':
-        return <img src='/public/image/topology_host.png' alt='' style={{ width: '20px', height: '20px' }} />;
+        return <img src='/image/topology_host.png' alt='' style={{ width: '20px', height: '20px' }} />;
       case 'net_wireless':
-        return <img src='/public/image/topology_arcess_switch.png' alt='' style={{ width: '20px', height: '20px' }} />;
+        return <img src='/image/topology_arcess_switch.png' alt='' style={{ width: '20px', height: '20px' }} />;
       default:
         return <SwitcherOutlined className='device-icon' />;
     }

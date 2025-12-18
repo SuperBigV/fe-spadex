@@ -204,7 +204,7 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
             </Form.Item>
           )}
           {/* 添加进程采集开关 */}
-          <Form.Item label='进程采集开关' name={JSON.stringify(form.getFieldValue(['attr', 'auth']))}>
+          <Form.Item label='进程采集开关' name={['attr', 'is_collection_enabled']}>
             <Switch checked={isProcessCollectionEnabled} onChange={setIsProcessCollectionEnabled} />
           </Form.Item>
 

@@ -451,7 +451,7 @@ const Targets: React.FC = () => {
   // }, [assetModel.ids]);
 
   return (
-    <PageLayout icon={<DatabaseOutlined />} title={t('title')}>
+    <PageLayout icon={<DatabaseOutlined />} title={'资产管理'}>
       <div className='object-manage-page-content'>
         <BusinessGroup2
           pageKey='targets'

@@ -33,7 +33,7 @@ export const getMenuList = (t) => {
         },
         {
           key: '/embedded-dashboards',
-          label: 'AI知识库',
+          label: 'AIOps助手',
         },
       ],
     },
@@ -77,11 +77,19 @@ export const getMenuList = (t) => {
         },
         {
           key: '/busi-groups',
-          label: t('软件管理'),
+          label: '业务管理',
         },
         {
           key: '/ips',
           label: t('IP管理'),
+        },
+        {
+          key: '/rooms',
+          label: t('机房管理'),
+        },
+        {
+          key: '/partners',
+          label: t('合作单位'),
         },
       ],
     },
@@ -242,7 +250,7 @@ export const getMenuList = (t) => {
     {
       key: 'manage',
       icon: <IconFont type='icon-Menu_PersonnelOrganization' />,
-      label: t('人员组织'),
+      label: t('用户团队'),
       children: [
         {
           key: '/users',
@@ -474,7 +482,7 @@ const SideMenu = () => {
           )}
           style={{ background: sideMenuBgColor }}
         >
-          <div className='flex flex-1 flex-col justify-between gap-8 overflow-hidden'>
+          <div className='flex flex-1 flex-col justify-between gap-4 overflow-hidden'>
             <SideMenuHeader collapsed={collapsed} collapsedHover={collapsedHover} sideMenuBgMode={sideMenuBgMode} />
             <ScrollArea className='-mr-2 flex-1'>
               <MenuList

@@ -95,7 +95,7 @@ export default function List(props: IProps) {
   };
 
   const deleteGroup = (group: ModelFieldGroup) => {
-    if (group.fields.length > 0) {
+    if (group.fields?.length > 0) {
       message.error('请先删除该分组下的字段');
       return;
     }

@@ -21,7 +21,6 @@ const ConnectionLine = ({ connection, sourceDevice, targetDevice, isSelected, on
       onClick={(e) => {
         // e.stopPropagation();
         // onSelect(connection);
-        console.log('---->line:', connection, isSelected);
       }}
     >
       <svg width='100%' height='100%' className='line-svg'>
