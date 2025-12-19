@@ -1,0 +1,84 @@
+.rack-card {
+  height: 100%;
+  border: 2px solid var(--fc-border-color);
+  transition: all 0.3s;
+  user-select: none;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: var(--fc-primary-color);
+  }
+
+  &.selected {
+    border-color: var(--fc-primary-color);
+    border-width: 3px;
+    box-shadow: 0 4px 16px rgba(var(--fc-text-link-rgb), 0.3);
+  }
+
+  &.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+  }
+
+  .rack-card-header {
+    margin-bottom: 12px;
+
+    .rack-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--fc-text-1);
+      margin-bottom: 4px;
+    }
+
+    .rack-card-code {
+      font-size: 12px;
+      color: var(--fc-text-3);
+    }
+  }
+
+  .rack-card-status {
+    margin-bottom: 12px;
+  }
+
+  .rack-card-usage {
+    .usage-item {
+      margin-bottom: 12px;
+
+      .usage-label {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 4px;
+        font-size: 12px;
+        color: var(--fc-text-3);
+
+        .usage-value {
+          font-weight: 600;
+          color: var(--fc-text-1);
+        }
+      }
+    }
+
+    .rack-card-stats {
+      display: flex;
+      flex-direction: column;
+      padding-top: 12px;
+      border-top: 1px solid var(--fc-border-color);
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+
+        .stat-label {
+          color: var(--fc-text-3);
+          margin-right: 4px;
+        }
+
+        .stat-value {
+          color: var(--fc-text-1);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+.rack-detail-drawer {
+  .ant-drawer-body {
+    background: var(--fc-fill-2);
+  }
+
+  .ant-card {
+    border: 1px solid var(--fc-border-color);
+    background: var(--fc-fill-2);
+
+    .ant-card-head {
+      border-bottom: 1px solid var(--fc-border-color);
+      background: var(--fc-fill-3);
+
+      .ant-card-head-title {
+        color: var(--fc-text-1);
+        font-weight: 600;
+      }
+    }
+  }
+
+  .rack-detail-content {
+    display: flex;
+    gap: 16px;
+
+    .u-unit-section {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .device-list-section {
+      width: 300px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--fc-text-1);
+      }
+    }
+  }
+
+  .ant-list-item {
+    border-color: var(--fc-border-color);
+    color: var(--fc-text-1);
+
+    &:hover {
+      background: var(--fc-fill-3);
+    }
+  }
+
+  .device-info-text {
+    font-size: 12px;
+    color: var(--fc-text-3);
+  }
+
+  .text-secondary {
+    color: var(--fc-text-3);
+  }
+}
+
+

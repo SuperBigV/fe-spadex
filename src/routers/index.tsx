@@ -55,7 +55,13 @@ import TaskTplAdd from '@/pages/taskTpl/add';
 import TaskTplDetail from '@/pages/taskTpl/detail';
 import TaskTplModify from '@/pages/taskTpl/modify';
 import TaskTplClone from '@/pages/taskTpl/clone';
-import Room from '@/pages/room';
+import Room from '@/pages/idc';
+// import RoomDetail from '@/pages/room/Detail';
+import IDCMain from '@/pages/idc';
+import RoomList from '@/pages/idc/rooms/List';
+import RoomDetailPage from '@/pages/idc/rooms/Detail';
+import RackList from '@/pages/idc/racks/List';
+import PartnerMain from '@/pages/partner';
 import Task from '@/pages/task';
 import TaskAdd from '@/pages/task/add';
 import TaskResult from '@/pages/task/result';
@@ -205,8 +211,19 @@ export default function Content() {
         <Route exact path='/pollings' component={NetToplogy} />
         <Route exact path='/topology' component={NetToplogy} />
 
+        {/* IDC 机房管理 - 新版本 */}
+        <Route exact path='/idc' component={IDCMain} />
+        <Route exact path='/idc/rooms' component={RoomList} />
+        <Route exact path='/idc/rooms/:id' component={RoomDetailPage} />
+        <Route exact path='/idc/rooms/:id/racks/:rackId' component={RoomDetailPage} />
+        <Route exact path='/idc/racks' component={RackList} />
+        {/* IDC 机房管理 - 旧版本（保留兼容） */}
         <Route exact path='/rooms' component={Room} />
-        <Route exact path='/room-rack/add' component={RoomAdd} />
+        {/* 合作单位管理 */}
+        <Route exact path='/partners' component={PartnerMain} />
+        <Route exact path='/partner/suppliers' component={PartnerMain} />
+        <Route exact path='/partner/maintenance' component={PartnerMain} />
+        {/* <Route exact path='/rooms/:id' component={RoomDetail} /> */}
         <Route exact path='/job-tpls' component={TaskTpl} />
         <Route exact path='/job-tpls/add' component={TaskTplAdd} />
         <Route exact path='/job-tpls/add/task' component={TaskAdd} />

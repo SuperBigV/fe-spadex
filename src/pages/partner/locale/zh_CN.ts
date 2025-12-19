@@ -1,0 +1,55 @@
+const zh_CN = {
+  title: '合作单位管理',
+  suppliers: {
+    title: '采购供应商',
+    name: '供应商名称',
+    contact: '联系人',
+    phone: '联系电话',
+    email: '联系邮箱',
+    address: '地址',
+    type: '供应商类型',
+    cooperationDate: '合作日期',
+    remark: '备注',
+    types: {
+      equipment: '设备供应商',
+      service: '服务供应商',
+      comprehensive: '综合供应商',
+    },
+  },
+  maintenance: {
+    title: '维保单位',
+    name: '单位名称',
+    contact: '联系人',
+    phone: '联系电话',
+    email: '联系邮箱',
+    address: '地址',
+    type: '维保类型',
+    cooperationDate: '合作日期',
+    duration: '维保时长',
+    types: {
+      hardware: '硬件维保',
+      software: '软件维保',
+      comprehensive: '综合维保',
+      emergency: '应急响应',
+    },
+  },
+  common: {
+    create: '新建',
+    edit: '编辑',
+    delete: '删除',
+    batchDelete: '批量删除',
+    search: '搜索',
+    refresh: '刷新',
+    export: '导出',
+    cancel: '取消',
+    confirm: '确定',
+    submit: '提交',
+    success: '操作成功',
+    failed: '操作失败',
+    deleteConfirm: '确定要删除这条记录吗？',
+    batchDeleteConfirm: '确定要删除选中的记录吗？',
+  },
+};
+
+export default zh_CN;
+

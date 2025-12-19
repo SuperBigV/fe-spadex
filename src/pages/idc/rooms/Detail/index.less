@@ -1,0 +1,36 @@
+.room-detail-page {
+  background: var(--fc-fill-1);
+  min-height: calc(100vh - 64px);
+
+  .loading-state {
+    padding: 50px;
+    text-align: center;
+    color: var(--fc-text-3);
+  }
+
+  .room-detail-content {
+    display: flex;
+    height: calc(100vh - 120px);
+
+    .room-detail-left {
+      width: 150px;
+      background: var(--fc-fill-2);
+      border-right: 1px solid var(--fc-border-color);
+      overflow-y: auto;
+    }
+
+    .room-detail-center {
+      flex: 1;
+      background: var(--fc-fill-2);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .room-detail-right {
+      width: 350px;
+      background: var(--fc-fill-2);
+      border-left: 1px solid var(--fc-border-color);
+      overflow-y: auto;
+    }
+  }
+}
