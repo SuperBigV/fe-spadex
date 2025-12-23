@@ -86,28 +86,12 @@ const RackCreateModal: React.FC<RackCreateModalProps> = ({ visible, onCancel, on
   };
 
   return (
-    <Modal
-      title='新建机柜'
-      visible={visible}
-      onOk={handleSubmit}
-      onCancel={handleCancel}
-      confirmLoading={loading}
-      width={600}
-      destroyOnClose
-    >
+    <Modal title='新建机柜' visible={visible} onOk={handleSubmit} onCancel={handleCancel} confirmLoading={loading} width={600} destroyOnClose>
       <Form form={form} layout='vertical' initialValues={{ totalU: 42, status: 'active', rotation: 0 }}>
-        <Form.Item
-          label='机柜名称'
-          name='name'
-          rules={[{ required: true, message: '请输入机柜名称' }]}
-        >
+        <Form.Item label='机柜名称' name='name' rules={[{ required: true, message: '请输入机柜名称' }]}>
           <Input placeholder='请输入机柜名称，如：A01' />
         </Form.Item>
-        <Form.Item
-          label='机柜编号'
-          name='code'
-          rules={[{ required: true, message: '请输入机柜编号' }]}
-        >
+        <Form.Item label='机柜编号' name='code' rules={[{ required: true, message: '请输入机柜编号' }]}>
           <Input placeholder='请输入机柜编号，如：RACK-A01' />
         </Form.Item>
         <Form.Item label='所属机房' name='roomId'>
@@ -129,14 +113,20 @@ const RackCreateModal: React.FC<RackCreateModalProps> = ({ visible, onCancel, on
         <Form.Item
           label='总U数'
           name='totalU'
-          rules={[{ required: true, message: '请输入总U数' }, { type: 'number', min: 1, max: 100, message: 'U数范围：1-100' }]}
+          rules={[
+            { required: true, message: '请输入总U数' },
+            { type: 'number', min: 1, max: 100, message: 'U数范围：1-100' },
+          ]}
         >
           <InputNumber min={1} max={100} placeholder='标准机柜：42U' style={{ width: '100%' }} />
         </Form.Item>
         <Form.Item
           label='功率容量(KW)'
           name='powerCapacity'
-          rules={[{ required: true, message: '请输入功率容量' }, { type: 'number', min: 0.1, message: '功率容量必须大于0' }]}
+          rules={[
+            { required: true, message: '请输入功率容量' },
+            { type: 'number', min: 0.1, message: '功率容量必须大于0' },
+          ]}
         >
           <InputNumber min={0.1} placeholder='请输入功率容量' style={{ width: '100%' }} />
         </Form.Item>
@@ -168,4 +158,3 @@ const RackCreateModal: React.FC<RackCreateModalProps> = ({ visible, onCancel, on
 };
 
 export default RackCreateModal;
-

@@ -17,12 +17,13 @@
 import React, { useEffect, useState, useImperativeHandle, ReactNode, useCallback, useContext } from 'react';
 import { Form, Input, Select, Switch, Tag, Space, Button } from 'antd';
 import { MinusCircleOutlined, PlusOutlined, CaretDownOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { getBusinessTeamInfo, getTeamInfoList, getUnit, getUserInfoList } from '@/services/manage';
+import { getBusinessTeamInfo, getTeamInfoList, getUserInfoList } from '@/services/manage';
 import { TeamProps, Team, ActionType } from '@/store/manageInterface';
 import { useTranslation, Trans } from 'react-i18next';
 import { debounce } from 'lodash';
 import { CommonStateContext } from '@/App';
 import { getAuthConfigs } from '@/pages/authConfigs/services';
+import { getSuppliers, getMaintenanceList } from '@/services/partner';
 const { Option } = Select;
 const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
   const { siteInfo } = useContext(CommonStateContext);
@@ -111,18 +112,24 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
     getUserInfoList().then((res) => {
       setUsers(res.dat.list);
     });
-    // 运维单位
-    getUnit('opser').then((res) => {
-      const options = res.map((item) => ({
-        label: item.data.name,
+
+    // 供应商
+    const params = {
+      page: 1,
+      pageSize: 10000,
+      keyword: undefined,
+    };
+    getSuppliers(params).then((res) => {
+      const options = res.dat?.list.map((item) => ({
+        label: item.name,
         value: item.id,
       }));
       setOpserOptions(options);
+      // setOpserOptions(res.dat?.list || []);
     });
-    //维保单位
-    getUnit('maintener').then((res) => {
-      const options = res.map((item) => ({
-        label: item.data.name,
+    getMaintenanceList(params).then((res) => {
+      const options = res.dat?.list.map((item) => ({
+        label: item.name,
         value: item.id,
       }));
       setMaintenerOptions(options);
@@ -224,11 +231,11 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
               <Input placeholder='输入软件日志路径,自动采集软件日志，例如:/var/log/*.log' />
             </Form.Item>
           )}
-          <Form.Item label={t('运维单位')} name={['attr', 'opsUnit']}>
-            <Select placeholder={'请选择运维单位,软件告警时会带出运维单位信息'} options={opserOptions}></Select>
+          <Form.Item label={t('供应商')} name={['attr', 'opsUnit']}>
+            <Select placeholder={'请选择采购供应商,软件告警时会带出采购供应商信息'} options={opserOptions}></Select>
           </Form.Item>
           <Form.Item label={t('维保单位')} name={['attr', 'maintainUnit']}>
-            <Select placeholder={'请选择运维单位,软件告警时会带出维保单位信息'} options={maintenerOptions}></Select>
+            <Select placeholder={'请选择维保单位,软件告警时会带出维保单位信息'} options={maintenerOptions}></Select>
           </Form.Item>
         </>
       )}

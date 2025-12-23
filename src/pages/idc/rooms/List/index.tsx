@@ -124,7 +124,7 @@ const RoomListPage: React.FC = () => {
 
   const getStatusBadge = (status: RoomStatus) => {
     const statusMap = {
-      active: { status: 'success', text: '活跃' },
+      active: { status: 'success', text: '正常' },
       maintenance: { status: 'warning', text: '维护' },
       inactive: { status: 'default', text: '停用' },
     };

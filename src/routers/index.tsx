@@ -96,6 +96,8 @@ import plusLoader from 'plus:/utils/loader';
 // @ts-ignore
 import useIsPlus from 'plus:/components/useIsPlus';
 import IpManage from '@/pages/ipManage';
+import SSHBlacklist from '@/pages/sshSecurity/blacklist';
+import SSHCommandRecords from '@/pages/sshSecurity/commandRecords';
 
 const Packages = dynamicPackages();
 let lazyRoutes = Packages.reduce((result: any, module: Entry) => {
@@ -181,6 +183,10 @@ export default function Content() {
         <Route path='/asset-icons' component={AssetIcons} />
         <Route path='/asset-list' component={AssetList} />
         <Route path='/ips' component={IpManage} />
+
+        {/* SSH安全模块 */}
+        <Route path='/dangerous-commands' component={SSHBlacklist} />
+        <Route path='/command-record' component={SSHCommandRecords} />
 
         <Route exact path='/alert-rules/add/:bgid' component={AlertRuleAdd} />
         <Route exact path='/ident/:id/:ident/terminal/:category' component={IdentTerminal} />

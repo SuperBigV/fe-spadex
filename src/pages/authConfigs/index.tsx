@@ -120,10 +120,10 @@ export default function index() {
               },
             },
 
-            {
-              dataIndex: 'create_by',
-              title: '创建人',
-            },
+            // {
+            //   dataIndex: 'create_by',
+            //   title: '创建人',
+            // },
             // {
             //   dataIndex: 'username',
             //   title: '用户名',

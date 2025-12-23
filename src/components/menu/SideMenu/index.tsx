@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import Icon, { MenuUnfoldOutlined, MenuFoldOutlined, GlobalOutlined, AppstoreAddOutlined, AndroidOutlined } from '@ant-design/icons';
+import Icon, { MenuUnfoldOutlined, MenuFoldOutlined, GlobalOutlined, AppstoreAddOutlined, SecurityScanOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 import querystring from 'query-string';
 import { useTranslation } from 'react-i18next';
@@ -248,6 +248,21 @@ export const getMenuList = (t) => {
       ],
     },
     {
+      key: 'record',
+      icon: <SecurityScanOutlined />,
+      label: '记录中心',
+      children: [
+        {
+          key: '/operation-record',
+          label: t('操作记录'),
+        },
+        {
+          key: '/command-record',
+          label: '命令记录',
+        },
+      ],
+    },
+    {
       key: 'manage',
       icon: <IconFont type='icon-Menu_PersonnelOrganization' />,
       label: t('用户团队'),
@@ -323,6 +338,10 @@ export const getMenuList = (t) => {
         {
           key: '/auths',
           label: '认证管理',
+        },
+        {
+          key: '/dangerous-commands',
+          label: '危险命令',
         },
         {
           key: '/device-models',

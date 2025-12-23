@@ -265,15 +265,15 @@ const OperationModal: React.FC<OperateionModalProps> = ({ operateType, setOperat
               <Checkbox.Group onChange={onCheckboxChange}>
                 <Checkbox value='sysInit'>系统初始化</Checkbox>
                 <Checkbox value='agent'>安装监控Agent</Checkbox>
-                <Checkbox value='jump'>同步Jumpserver</Checkbox>
+                {/* <Checkbox value='jump'>同步Jumpserver</Checkbox> */}
               </Checkbox.Group>
             </Form.Item>
             {checkedValues.includes('sysInit') && (
               <>
-                <Form.Item label='初始密码' name='password' initialValue={'Ztth@246810'} rules={[{ required: true, message: '请输入默认密码' }]}>
+                <Form.Item label='初始密码' name='password' initialValue={'Admin@123!'} rules={[{ required: true, message: '请输入默认密码' }]}>
                   <Input placeholder='请输入初始密码' />
                 </Form.Item>
-                <Form.Item label='SSH端口' name='port' initialValue={'7922'} rules={[{ required: true, message: '请输入默认密码' }]}>
+                <Form.Item label='SSH端口' name='port' initialValue={'22'} rules={[{ required: true, message: '请输入默认密码' }]}>
                   <Input placeholder='请输入SSH端口' />
                 </Form.Item>
                 <Form.Item label='日志集群' name='filebeatconfig'>

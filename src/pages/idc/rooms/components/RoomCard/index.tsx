@@ -48,12 +48,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onView, onEdit, onDelete, get
         <Button type='link' icon={<EditOutlined />} onClick={() => onEdit(room)}>
           编辑
         </Button>,
-        <Popconfirm
-          title='确定要删除这个机房吗？'
-          onConfirm={() => onDelete(room)}
-          okText='确定'
-          cancelText='取消'
-        >
+        <Popconfirm title='确定要删除这个机房吗？' onConfirm={() => onDelete(room)} okText='确定' cancelText='取消'>
           <Button type='link' danger icon={<DeleteOutlined />}>
             删除
           </Button>
@@ -81,22 +76,14 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onView, onEdit, onDelete, get
             <span>U位使用率</span>
             <span className='usage-percent'>{(room.uUsageRate || 0) * 100}%</span>
           </div>
-          <Progress
-            percent={(room.uUsageRate || 0) * 100}
-            strokeColor={getUsageColor(room.uUsageRate || 0)}
-            size='small'
-          />
+          <Progress percent={(room.uUsageRate || 0) * 100} strokeColor={getUsageColor(room.uUsageRate || 0)} size='small' />
         </div>
         <div className='usage-item'>
           <div className='usage-label'>
             <span>功率使用率</span>
             <span className='usage-percent'>{(room.powerUsageRate || 0) * 100}%</span>
           </div>
-          <Progress
-            percent={(room.powerUsageRate || 0) * 100}
-            strokeColor={getUsageColor(room.powerUsageRate || 0)}
-            size='small'
-          />
+          <Progress percent={(room.powerUsageRate || 0) * 100} strokeColor={getUsageColor(room.powerUsageRate || 0)} size='small' />
         </div>
       </div>
       {room.address && (
@@ -110,4 +97,3 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onView, onEdit, onDelete, get
 };
 
 export default RoomCard;
-

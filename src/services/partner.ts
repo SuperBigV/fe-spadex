@@ -85,7 +85,7 @@ export function batchDeleteSuppliers(ids: number[]): Promise<void> {
 /**
  * 获取维保单位列表
  */
-export function getMaintenanceList(params: GetMaintenanceParams): Promise<GetMaintenanceResponse> {
+export function getMaintenanceList(params: GetMaintenanceParams) {
   return request(`/cmdb/partner/maintenance`, {
     method: RequestMethod.Get,
     params,

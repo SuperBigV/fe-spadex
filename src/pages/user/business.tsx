@@ -22,7 +22,8 @@ import PageLayout, { HelpLink } from '@/components/pageLayout';
 import { Button, Table, Input, message, Row, Col, Modal, Space, Descriptions } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined, UserOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import UserInfoModal from './component/createModal';
-import { deleteBusinessTeamMember, getBusinessTeamList, getBusinessTeamInfo, deleteBusinessTeam, getUnit, getUserInfoList } from '@/services/manage';
+import { deleteBusinessTeamMember, getBusinessTeamList, getBusinessTeamInfo, deleteBusinessTeam, getUserInfoList } from '@/services/manage';
+import { getSuppliers, getMaintenanceList } from '@/services/partner';
 import { Team, ActionType } from '@/store/manageInterface';
 import { CommonStateContext } from '@/App';
 import { ColumnsType } from 'antd/lib/table';
@@ -112,13 +113,18 @@ const Resource: React.FC = () => {
     getUserInfoList().then((res) => {
       setUsers(res.dat.list);
     });
-    // 运维单位
-    getUnit('opser').then((res) => {
-      setOpserOptions(res);
+    // 供应商
+    const params = {
+      page: 1,
+      pageSize: 10000,
+      keyword: undefined,
+    };
+    getSuppliers(params).then((res) => {
+      setOpserOptions(res.dat?.list || []);
     });
-    //维保单位
-    getUnit('maintener').then((res) => {
-      setMaintenerOptions(res);
+
+    getMaintenanceList(params).then((res) => {
+      setMaintenerOptions(res.dat?.list || []);
     });
   }, []);
 
@@ -331,19 +337,17 @@ const Resource: React.FC = () => {
                     <Descriptions.Item label='进程名称'>{teamInfo?.attr?.processName || '未配置'}</Descriptions.Item>
                     <Descriptions.Item label='日志采集'>{teamInfo?.attr?.is_log_collection_enabled ? '已开启' : '未开启'}</Descriptions.Item>
                     <Descriptions.Item label='日志位置'>{teamInfo?.attr?.logPath || '未配置'}</Descriptions.Item>
-                    <Descriptions.Item label='运维单位'>
+                    <Descriptions.Item label='供应商'>
                       {opserOptions.map((item) => {
                         if (item.id == teamInfo?.attr?.opsUnit) {
-                          return item.data.name;
-                        } else {
-                          return '未配置';
+                          return item.name;
                         }
                       })}
                     </Descriptions.Item>
                     <Descriptions.Item label='维保单位'>
                       {maintenerOptions.map((item) => {
                         if (item.id == teamInfo?.attr?.maintainUnit) {
-                          return item.data.name;
+                          return item.name;
                         }
                       })}
                     </Descriptions.Item>

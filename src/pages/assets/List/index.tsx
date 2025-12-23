@@ -162,7 +162,7 @@ export default function AssetList(props: IProps) {
         item.data.id = item.id;
         item.data.status = item.status;
         item.data.belong_room = item.belong_room;
-        item.data.tags = item.data.tags.split(',');
+        item.data.tags = item.data.tags?.split(',') || [];
         item.data.mem_util = item.mem_util;
         item.data.cpu_util = item.cpu_util;
         item.data.offset = item.offset;

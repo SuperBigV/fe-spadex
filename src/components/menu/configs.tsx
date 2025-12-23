@@ -3,6 +3,7 @@ import AlarmManagement from './icons/AlarmManagement.svg';
 import AlarmSelfhealing from './icons/AlarmSelfhealing.svg';
 import Dashboard from './icons/Dashboard.svg';
 import IndexManagement from './icons/IndexManagement.svg';
+import RecordCenter from './icons/RecordCenter.svg';
 import LinkAnalysis from './icons/LinkAnalysis.svg';
 import LogAnalysis from './icons/LogAnalysis.svg';
 import PersonnelOrganization from './icons/PersonnelOrganization.svg';
@@ -22,6 +23,7 @@ const menuIcon = {
   Dashboard,
   IndexManagement,
   LinkAnalysis,
+  RecordCenter,
   LogAnalysis,
   PersonnelOrganization,
   SystemInformation,

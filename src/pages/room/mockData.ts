@@ -51,7 +51,7 @@ export const mockRooms: Room[] = [
     rackCount: 30,
     deviceCount: 300,
     uUsageRate: 0.6,
-    powerUsageRate: 0.55,
+    powerUsageRate: 0.85,
   },
   {
     id: 3,
@@ -430,4 +430,3 @@ export const mockRackStatistics: Record<number, RackStatistics> = {
     networkPortsAvailable: 6,
   },
 };
-
