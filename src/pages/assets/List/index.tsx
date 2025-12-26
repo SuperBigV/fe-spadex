@@ -20,6 +20,7 @@ import { getAuthConfigs } from '@/pages/authConfigs/services';
 import { getModelTeamList } from '@/services/manage';
 import { getIconsByGrpId } from '@/pages/icon/services';
 import { getBusiGroups } from '@/services/common';
+import { getSuppliers, getMaintenanceList } from '@/services/partner';
 import { table } from 'console';
 import { timeFormatter } from '@/pages/dashboard/Renderer/utils/valueFormatter';
 
@@ -101,6 +102,8 @@ export default function AssetList(props: IProps) {
   const [busiOptions, setBusiOptions] = useState<any[]>([]);
   const [authOptions, setAuthOptions] = useState<any[]>([]);
   const [rackOptions, setRackOptions] = useState<any[]>([]);
+  const [supplierOptions, setSupplierOptions] = useState<any[]>([]);
+  const [maintainerOptions, setMaintainerOptions] = useState<any[]>([]);
   const [visible, setVisible] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [allFields, setAllFields] = useState<Field[]>([]);
@@ -689,7 +692,27 @@ export default function AssetList(props: IProps) {
         }));
         setBusiOptions(options2);
       }
+      // 获取采购商列表
+      const supplierParams = {
+        page: 1,
+        pageSize: 1000,
+      };
+      let supplierOptions;
+      let maintainerOptions;
 
+      supplierOptions = await getSuppliers(supplierParams);
+      const options5 = supplierOptions.dat.list.map((item) => ({
+        label: item.name,
+        value: item.id,
+      }));
+      setSupplierOptions(options5);
+      // 获取维保单位列表
+      maintainerOptions = await getMaintenanceList(supplierParams);
+      const options6 = maintainerOptions.dat.list.map((item) => ({
+        label: item.name,
+        value: item.id,
+      }));
+      setMaintainerOptions(options6);
       const authOptions = await getAuthConfigs();
       const options3 = authOptions.map((item) => ({
         label: item.name,
@@ -717,16 +740,18 @@ export default function AssetList(props: IProps) {
         allFields.splice(
           2,
           0,
-          { name: '监控状态', uniqueIdentifier: 'unixtime', isShow: true },
+          { name: '监控状态', uniqueIdentifier: 'unixtime', isShow: true, column: true },
           {
             name: 'CPU使用率',
             uniqueIdentifier: 'cpu_util',
             isShow: true,
+            column: true,
           },
           {
             name: '内存使用率',
             uniqueIdentifier: 'mem_util',
             isShow: true,
+            column: true,
           },
         );
       }
@@ -866,6 +891,43 @@ export default function AssetList(props: IProps) {
               },
             };
           }
+          if (item.uniqueIdentifier === 'auth_ssh') {
+            return {
+              title: item.fieldName,
+              dataIndex: item.uniqueIdentifier,
+              key: item.id,
+              align: 'left',
+              render: (text, record) => {
+                const model = authOptions.find((model) => model.id === record.auth_ssh);
+                return <div>{model && model.name}</div>;
+              },
+            };
+          }
+          if (item.uniqueIdentifier === 'supplier') {
+            return {
+              title: item.fieldName,
+              dataIndex: item.uniqueIdentifier,
+              key: item.id,
+              align: 'left',
+              render: (text, record) => {
+                console.log(options5, record.supplier);
+                const model = options5.find((model) => model.value === record.supplier);
+                return <div>{model && model.label}</div>;
+              },
+            };
+          }
+          if (item.uniqueIdentifier === 'maintenance') {
+            return {
+              title: item.fieldName,
+              dataIndex: item.uniqueIdentifier,
+              key: item.id,
+              align: 'left',
+              render: (text, record) => {
+                const model = options6.find((model) => model.value === record.maintenance);
+                return <div>{model && model.label}</div>;
+              },
+            };
+          }
           if (item.uniqueIdentifier === 'auth_telnet') {
             return {
               title: item.fieldName,
@@ -954,7 +1016,7 @@ export default function AssetList(props: IProps) {
                   // 小于60秒（60000毫秒）
                   backgroundColor = GREEN_COLOR;
                   result = '正常';
-                } else if (timeDiff < 180 * 1000) {
+                } else if (timeDiff < 120 * 1000) {
                   // 小于180秒（180000毫秒）
                   backgroundColor = YELLOW_COLOR;
                   result = '异常';

@@ -142,3 +142,12 @@ export function getTargetInformationByIdent(ident: string) {
     }
   });
 }
+
+export function getAssetTopology(ident: string) {
+  return request('/cmdb/asset/topology', {
+    method: RequestMethod.Get,
+    params: {
+      ident,
+    },
+  }).then((res) => res.dat);
+}

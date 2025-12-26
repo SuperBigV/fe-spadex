@@ -16,33 +16,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Table,
-  Input,
-  Select,
-  Button,
-  Space,
-  message,
-  Popconfirm,
-  Tag,
-  DatePicker,
-  Modal,
-} from 'antd';
-import {
-  SearchOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-  ExportOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons';
+import { Table, Input, Select, Button, Space, message, Popconfirm, Tag, DatePicker, Modal } from 'antd';
+import { SearchOutlined, PlusOutlined, ReloadOutlined, ExportOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
-import {
-  getMaintenanceList,
-  deleteMaintenance,
-  batchDeleteMaintenance,
-} from '@/services/partner';
+import { getMaintenanceList, deleteMaintenance, batchDeleteMaintenance } from '@/services/partner';
 import { Maintenance, MaintenanceType } from '../types';
 import MaintenanceForm from '../components/MaintenanceForm';
 import './index.less';
@@ -57,17 +35,11 @@ const MaintenanceList: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [keyword, setKeyword] = useState('');
-  const [typeFilter, setTypeFilter] = useState<MaintenanceType | undefined>(
-    undefined
-  );
-  const [dateRange, setDateRange] = useState<[string, string] | undefined>(
-    undefined
-  );
+  const [typeFilter, setTypeFilter] = useState<MaintenanceType | undefined>(undefined);
+  const [dateRange, setDateRange] = useState<[string, string] | undefined>(undefined);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [formVisible, setFormVisible] = useState(false);
-  const [editingMaintenance, setEditingMaintenance] = useState<Maintenance | null>(
-    null
-  );
+  const [editingMaintenance, setEditingMaintenance] = useState<Maintenance | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -81,8 +53,8 @@ const MaintenanceList: React.FC = () => {
         endDate: dateRange?.[1],
       };
       const response = await getMaintenanceList(params);
-      setDataSource(response.list);
-      setTotal(response.total);
+      setDataSource(response.dat.list);
+      setTotal(response.dat.total);
     } catch (error: any) {
       message.error(error.message || '获取维保单位列表失败');
     } finally {
@@ -106,10 +78,7 @@ const MaintenanceList: React.FC = () => {
 
   const handleDateRangeChange = (dates: any) => {
     if (dates && dates.length === 2) {
-      setDateRange([
-        dates[0].format('YYYY-MM-DD'),
-        dates[1].format('YYYY-MM-DD'),
-      ]);
+      setDateRange([dates[0].format('YYYY-MM-DD'), dates[1].format('YYYY-MM-DD')]);
     } else {
       setDateRange(undefined);
     }
@@ -264,20 +233,10 @@ const MaintenanceList: React.FC = () => {
       fixed: 'right',
       render: (_, record) => (
         <Space size='middle'>
-          <Button
-            type='link'
-            size='small'
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
+          <Button type='link' size='small' icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             编辑
           </Button>
-          <Popconfirm
-            title='确定要删除这条记录吗？'
-            onConfirm={() => handleDelete(record.id)}
-            okText='确定'
-            cancelText='取消'
-          >
+          <Popconfirm title='确定要删除这条记录吗？' onConfirm={() => handleDelete(record.id)} okText='确定' cancelText='取消'>
             <Button type='link' size='small' danger icon={<DeleteOutlined />}>
               删除
             </Button>
@@ -310,13 +269,7 @@ const MaintenanceList: React.FC = () => {
               }
             }}
           />
-          <Select
-            placeholder='维保类型'
-            allowClear
-            style={{ width: 150 }}
-            value={typeFilter}
-            onChange={handleTypeFilterChange}
-          >
+          <Select placeholder='维保类型' allowClear style={{ width: 150 }} value={typeFilter} onChange={handleTypeFilterChange}>
             <Option value='硬件维保'>硬件维保</Option>
             <Option value='软件维保'>软件维保</Option>
             <Option value='综合维保'>综合维保</Option>
@@ -325,21 +278,13 @@ const MaintenanceList: React.FC = () => {
           <RangePicker
             placeholder={['合作日期开始', '合作日期结束']}
             style={{ width: 240 }}
-            value={
-              dateRange
-                ? [moment(dateRange[0]), moment(dateRange[1])]
-                : undefined
-            }
+            value={dateRange ? [moment(dateRange[0]), moment(dateRange[1])] : undefined}
             onChange={handleDateRangeChange}
           />
           <Button type='primary' icon={<PlusOutlined />} onClick={handleCreate}>
             新建维保单位
           </Button>
-          <Button
-            danger
-            disabled={selectedRowKeys.length === 0}
-            onClick={handleBatchDelete}
-          >
+          <Button danger disabled={selectedRowKeys.length === 0} onClick={handleBatchDelete}>
             批量删除
           </Button>
           <Button icon={<ReloadOutlined />} onClick={fetchData}>
@@ -369,15 +314,9 @@ const MaintenanceList: React.FC = () => {
         scroll={{ x: 1200 }}
       />
 
-      <MaintenanceForm
-        visible={formVisible}
-        initialValues={editingMaintenance || undefined}
-        onCancel={handleFormCancel}
-        onOk={handleFormSuccess}
-      />
+      <MaintenanceForm visible={formVisible} initialValues={editingMaintenance || undefined} onCancel={handleFormCancel} onOk={handleFormSuccess} />
     </div>
   );
 };
 
 export default MaintenanceList;
-

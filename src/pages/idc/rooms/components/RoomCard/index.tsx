@@ -74,14 +74,16 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onView, onEdit, onDelete, get
         <div className='usage-item'>
           <div className='usage-label'>
             <span>U位使用率</span>
-            <span className='usage-percent'>{(room.uUsageRate || 0) * 100}%</span>
+            <span className='usage-percent'>{((room.uUsageRate || 0) * 100).toFixed(1)}%</span>
           </div>
-          <Progress percent={(room.uUsageRate || 0) * 100} strokeColor={getUsageColor(room.uUsageRate || 0)} size='small' />
+          {/* 显示整数 */}
+          <Progress percent={Math.round((room.uUsageRate || 0) * 100)} strokeColor={getUsageColor(room.uUsageRate || 0)} size='small' />
         </div>
         <div className='usage-item'>
           <div className='usage-label'>
             <span>功率使用率</span>
-            <span className='usage-percent'>{(room.powerUsageRate || 0) * 100}%</span>
+            {/* 保留两位小数 */}
+            <span className='usage-percent'>{((room.powerUsageRate || 0) * 100).toFixed(1)}%</span>
           </div>
           <Progress percent={(room.powerUsageRate || 0) * 100} strokeColor={getUsageColor(room.powerUsageRate || 0)} size='small' />
         </div>

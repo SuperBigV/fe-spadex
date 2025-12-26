@@ -39,7 +39,7 @@ const RackListPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<RackStatus | undefined>(undefined);
   const [roomIdFilter, setRoomIdFilter] = useState<number | undefined>(undefined);
   const [uUsageRateFilter, setUUsageRateFilter] = useState<string | undefined>(undefined);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);

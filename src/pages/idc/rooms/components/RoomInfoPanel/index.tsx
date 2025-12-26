@@ -42,7 +42,7 @@ const RoomInfoPanel: React.FC<RoomInfoPanelProps> = ({ room, selectedRackId, onR
 
   const fetchData = async () => {
     try {
-      const [stats, rackList] = await Promise.all([getRoomStatistics(room.id), getRackList({ roomId: room.id, page: 1, pageSize: 1000 })]);
+      const [stats, rackList] = await Promise.all([getRoomStatistics(room.id), getRackList({ roomId: room.id, page: 1, pageSize: 50 })]);
       setStatistics(stats);
       setRacks(rackList.list);
     } catch (error) {

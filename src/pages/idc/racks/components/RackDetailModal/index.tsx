@@ -31,17 +31,10 @@ interface RackDetailModalProps {
   onViewUUnits: () => void;
 }
 
-const RackDetailModal: React.FC<RackDetailModalProps> = ({
-  visible,
-  rack,
-  onCancel,
-  onEdit,
-  onDelete,
-  onViewUUnits,
-}) => {
+const RackDetailModal: React.FC<RackDetailModalProps> = ({ visible, rack, onCancel, onEdit, onDelete, onViewUUnits }) => {
   const [statistics, setStatistics] = useState<RackStatistics | null>(null);
   const [devices, setDevices] = useState<RackDevice[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (visible && rack) {
@@ -103,7 +96,7 @@ const RackDetailModal: React.FC<RackDetailModalProps> = ({
   return (
     <Modal
       title={`机柜详情: ${rack.name}`}
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       footer={[
         <Button key='viewUUnits' type='primary' onClick={onViewUUnits}>
@@ -120,14 +113,11 @@ const RackDetailModal: React.FC<RackDetailModalProps> = ({
         </Button>,
       ]}
       width={800}
-      loading={loading}
     >
       <Descriptions title='基本信息' bordered column={2} style={{ marginBottom: 24 }}>
         <Descriptions.Item label='机柜名称'>{rack.name}</Descriptions.Item>
         <Descriptions.Item label='机柜编号'>{rack.code}</Descriptions.Item>
-        <Descriptions.Item label='所属机房'>
-          {rack.roomName || <span className='text-secondary'>未分配</span>}
-        </Descriptions.Item>
+        <Descriptions.Item label='所属机房'>{rack.roomName || <span className='text-secondary'>未分配</span>}</Descriptions.Item>
         <Descriptions.Item label='状态'>{getStatusBadge(rack.status)}</Descriptions.Item>
         <Descriptions.Item label='总U数'>{rack.totalU}</Descriptions.Item>
         <Descriptions.Item label='已用U数'>{rack.usedU || 0}</Descriptions.Item>
@@ -135,13 +125,17 @@ const RackDetailModal: React.FC<RackDetailModalProps> = ({
         <Descriptions.Item label='已用功率'>{rack.powerUsed?.toFixed(1) || 0} KW</Descriptions.Item>
         <Descriptions.Item label='网络端口'>{rack.networkPorts || 0}</Descriptions.Item>
         <Descriptions.Item label='已用端口'>{rack.networkPortsUsed || 0}</Descriptions.Item>
-        {rack.description && <Descriptions.Item label='描述' span={2}>{rack.description}</Descriptions.Item>}
+        {rack.description && (
+          <Descriptions.Item label='描述' span={2}>
+            {rack.description}
+          </Descriptions.Item>
+        )}
       </Descriptions>
 
       {statistics && (
         <div style={{ marginBottom: 24 }}>
           <h3 style={{ color: 'var(--fc-text-1)' }}>容量信息</h3>
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 16, marginRight: 50 }}>
             <div style={{ marginBottom: 8, color: 'var(--fc-text-1)' }}>
               <span>U位使用率: </span>
               <span style={{ marginLeft: 8 }}>{(statistics.uUsageRate * 100).toFixed(1)}%</span>
@@ -152,7 +146,7 @@ const RackDetailModal: React.FC<RackDetailModalProps> = ({
               format={() => `${statistics.uUsed}/${statistics.uUsed + statistics.uAvailable}`}
             />
           </div>
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 16, marginRight: 50 }}>
             <div style={{ marginBottom: 8, color: 'var(--fc-text-1)' }}>
               <span>功率使用率: </span>
               <span style={{ marginLeft: 8 }}>{(statistics.powerUsageRate * 100).toFixed(1)}%</span>
@@ -168,17 +162,10 @@ const RackDetailModal: React.FC<RackDetailModalProps> = ({
 
       <div>
         <h3 style={{ color: 'var(--fc-text-1)' }}>设备列表 ({devices.length})</h3>
-        <Table
-          columns={deviceColumns}
-          dataSource={devices}
-          rowKey='id'
-          pagination={false}
-          size='small'
-        />
+        <Table columns={deviceColumns} dataSource={devices} rowKey='id' pagination={false} size='small' />
       </div>
     </Modal>
   );
 };
 
 export default RackDetailModal;
-

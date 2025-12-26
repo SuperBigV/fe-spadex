@@ -303,7 +303,10 @@ const Resource: React.FC = () => {
                 >
                   <Space>
                     <span>ID：{modelInfo?.id}</span>
-                    <span>设备类型：{modelInfo?.typ === 'switch' ? '交换机' : modelInfo?.typ === 'server' ? '服务器' : modelInfo?.typ === 'store' ? '存储' : '未知设备类型'}</span>
+                    <span>
+                      设备类型：
+                      {modelInfo?.typ === 'net_switch' ? '交换机' : modelInfo?.typ === 'host_server' ? '服务器' : modelInfo?.typ === 'host_storage' ? '存储' : '未知设备类型'}
+                    </span>
                     {/* <span>
                       {t('common:table.note')}：{t('model.note_content')}
                     </span> */}

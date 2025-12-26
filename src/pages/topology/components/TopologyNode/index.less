@@ -1,0 +1,83 @@
+.topology-node {
+  position: relative;
+  background: var(--fc-fill-2);
+  border: 2px solid var(--fc-border-base);
+  border-radius: 4px;
+  padding: 6px;
+  min-width: 80px;
+  max-width: 90px;
+  cursor: move;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    border-color: var(--fc-primary-color);
+    box-shadow: 0 4px 12px rgba(129, 98, 220, 0.2);
+  }
+
+  &.selected {
+    border-color: var(--fc-primary-color);
+    box-shadow: 0 0 0 3px rgba(129, 98, 220, 0.2);
+  }
+
+  .node-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+
+    .node-icon {
+      font-size: 20px;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .node-name {
+      font-weight: 500;
+      font-size: 10px;
+      text-align: center;
+      word-break: break-word;
+      max-width: 80px;
+      color: var(--fc-text-1);
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .node-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .node-ip {
+      font-size: 9px;
+      color: var(--fc-text-4);
+    }
+  }
+
+  .default-handle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--fc-fill-2);
+    background: var(--fc-primary-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    cursor: crosshair;
+    z-index: 10;
+    transition: transform 0.1s, box-shadow 0.1s;
+
+    &:hover {
+      transform: scale(1.2);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+      z-index: 11;
+    }
+  }
+}
+

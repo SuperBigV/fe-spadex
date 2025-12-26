@@ -1,0 +1,42 @@
+.topology-canvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: var(--fc-fill-1);
+
+  .react-flow {
+    width: 100%;
+    height: 100%;
+  }
+
+  // 自定义 react-flow 背景网格颜色
+  .react-flow__background {
+    color: var(--fc-border-color);
+    
+    pattern {
+      fill: none;
+      stroke: var(--fc-border-color);
+      stroke-width: 1;
+    }
+  }
+
+  // 自定义控制按钮样式
+  .react-flow__controls {
+    button {
+      background: var(--fc-fill-2);
+      border-color: var(--fc-border-color);
+      color: var(--fc-text-1);
+
+      &:hover {
+        background: var(--fc-fill-3);
+      }
+    }
+  }
+
+  // 自定义小地图样式
+  .react-flow__minimap {
+    background: var(--fc-fill-2);
+    border: 1px solid var(--fc-border-color);
+  }
+}
+

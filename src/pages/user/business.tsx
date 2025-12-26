@@ -19,7 +19,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import classNames from 'classnames';
 import PageLayout, { HelpLink } from '@/components/pageLayout';
-import { Button, Table, Input, message, Row, Col, Modal, Space, Descriptions } from 'antd';
+import { Button, Table, Input, message, Row, Col, Modal, Space, Descriptions, Tag } from 'antd';
 import { EditOutlined, DeleteOutlined, SearchOutlined, UserOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import UserInfoModal from './component/createModal';
 import { deleteBusinessTeamMember, getBusinessTeamList, getBusinessTeamInfo, deleteBusinessTeam, getUserInfoList } from '@/services/manage';
@@ -303,54 +303,27 @@ const Resource: React.FC = () => {
                   />
                 </Col>
                 <Col
+                  span={24}
                   style={{
-                    marginTop: '8px',
-                    // color: '#666',
+                    marginTop: '16px',
                   }}
                 >
-                  {/* <Space>
-                    <span>ID：{teamInfo?.id}</span>
-                    <span>
-                      {t('common:table.note')}：{t('business.note_content')}
-                    </span>
-                    <span>
-                      {t('common:table.update_by')}：{teamInfo?.update_by ? teamInfo.update_by : '-'}
-                    </span>
-                    <span>
-                      {t('common:table.update_at')}：{teamInfo?.update_at ? moment.unix(teamInfo.update_at).format('YYYY-MM-DD HH:mm:ss') : '-'}
-                    </span>
-                  </Space> */}
-                  <Descriptions bordered size='small' column={4}>
-                    <Descriptions.Item label='软件名称'>{teamInfo?.name.split('/').pop()}</Descriptions.Item>
-                    <Descriptions.Item label='负责人'>
-                      {users.find((item) => item.id == teamInfo?.attr?.manager)?.nickname || '未配置'}
-                      {/* {users.map((item) => {
-                        if (item.id == teamInfo?.attr?.manager) {
-                          return item.nickname;
-                        } else {
-                          return '未配置';
-                        }
-                      })} */}
-                    </Descriptions.Item>
+                  <Descriptions bordered size='small' column={4} style={{ width: '100%' }}>
+                    <Descriptions.Item label='软件名称'>{teamInfo?.name.split('/').pop() || '未配置'}</Descriptions.Item>
+                    <Descriptions.Item label='负责人'>{users.find((item) => item.id == teamInfo?.attr?.manager)?.nickname || '未配置'}</Descriptions.Item>
                     <Descriptions.Item label='语言'>{teamInfo?.attr?.language || '未配置'}</Descriptions.Item>
-                    <Descriptions.Item label='进程采集'>{teamInfo?.attr?.is_collection_enabled ? '已开启' : '未开启'}</Descriptions.Item>
+                    <Descriptions.Item label='进程采集'>
+                      <Tag color={teamInfo?.attr?.is_collection_enabled ? 'green' : 'default'}>{teamInfo?.attr?.is_collection_enabled ? '已开启' : '未开启'}</Tag>
+                    </Descriptions.Item>
                     <Descriptions.Item label='进程名称'>{teamInfo?.attr?.processName || '未配置'}</Descriptions.Item>
-                    <Descriptions.Item label='日志采集'>{teamInfo?.attr?.is_log_collection_enabled ? '已开启' : '未开启'}</Descriptions.Item>
-                    <Descriptions.Item label='日志位置'>{teamInfo?.attr?.logPath || '未配置'}</Descriptions.Item>
-                    <Descriptions.Item label='供应商'>
-                      {opserOptions.map((item) => {
-                        if (item.id == teamInfo?.attr?.opsUnit) {
-                          return item.name;
-                        }
-                      })}
+                    <Descriptions.Item label='日志采集'>
+                      <Tag color={teamInfo?.attr?.is_log_collection_enabled ? 'green' : 'default'}>{teamInfo?.attr?.is_log_collection_enabled ? '已开启' : '未开启'}</Tag>
                     </Descriptions.Item>
-                    <Descriptions.Item label='维保单位'>
-                      {maintenerOptions.map((item) => {
-                        if (item.id == teamInfo?.attr?.maintainUnit) {
-                          return item.name;
-                        }
-                      })}
+                    <Descriptions.Item label='日志位置' span={2}>
+                      <div style={{ wordBreak: 'break-all' }}>{teamInfo?.attr?.logPath || '未配置'}</div>
                     </Descriptions.Item>
+                    <Descriptions.Item label='供应商'>{opserOptions.find((item) => item.id == teamInfo?.attr?.opsUnit)?.name || '未配置'}</Descriptions.Item>
+                    <Descriptions.Item label='维保单位'>{maintenerOptions.find((item) => item.id == teamInfo?.attr?.maintainUnit)?.name || '未配置'}</Descriptions.Item>
                   </Descriptions>
                 </Col>
               </Row>

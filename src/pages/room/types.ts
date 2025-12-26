@@ -85,6 +85,7 @@ export interface RackDevice {
   startU: number;
   heightU: number;
   deviceType?: string;
+  target_up: number;
   status: DeviceStatus;
   installDate?: string;
   createdAt?: string;
@@ -145,6 +146,7 @@ export interface CMDBAsset {
   status: string;
   tags?: string[];
   tags_maps?: Record<string, string>;
+
   data: {
     name: string;
     ip?: string;
@@ -159,6 +161,7 @@ export interface CMDBAsset {
   asset_type?: string;
   belong_room?: string;
   belong_rack?: string;
+  target_up?: number;
   create_at?: number;
   update_at?: number;
 }
@@ -268,4 +271,3 @@ export interface RoomLayoutData {
   canvasY: number;
   rackLayouts: RackLayoutItem[];
 }
-

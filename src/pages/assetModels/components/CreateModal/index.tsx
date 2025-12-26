@@ -65,7 +65,7 @@ const CreateModal: React.FC<AssetModalProps> = (props: AssetModalProps) => {
     tip: '',
     buildIn: false,
     fieldType: 'text',
-    relatedModel: 0,
+    relatedModel: -2,
     isShow: true,
     optionList: [],
   });
@@ -159,7 +159,7 @@ const CreateModal: React.FC<AssetModalProps> = (props: AssetModalProps) => {
       uniqueIdentifier: '',
       buildIn: false,
       fieldType: 'text',
-      relatedModel: 0,
+      relatedModel: -1,
       isShow: true,
       optionList: [],
     });

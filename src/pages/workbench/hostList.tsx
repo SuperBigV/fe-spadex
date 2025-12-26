@@ -68,7 +68,7 @@ const HostList = () => {
   // 设备类型字典映射
   const deviceTypeDict = {
     host_vm: '虚拟机',
-    host_server: '物理机',
+    host_phy: '物理机',
     host_cloud: '云主机',
     net_switch: '交换机',
     net_firewall: '防火墙',

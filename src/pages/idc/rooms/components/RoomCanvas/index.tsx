@@ -38,15 +38,7 @@ export interface RoomCanvasRef {
   reset: () => void;
 }
 
-const RoomCanvas = forwardRef<RoomCanvasRef, RoomCanvasProps>(({
-  roomId,
-  layout,
-  selectedRackId,
-  onRackSelect,
-  onRackDoubleClick,
-  onLayoutChange,
-  onRefresh,
-}, ref) => {
+const RoomCanvas = forwardRef<RoomCanvasRef, RoomCanvasProps>(({ roomId, layout, selectedRackId, onRackSelect, onRackDoubleClick, onLayoutChange, onRefresh }, ref) => {
   const [racks, setRacks] = useState<Rack[]>([]);
   const [canvasScale, setCanvasScale] = useState(1);
   const [canvasX, setCanvasX] = useState(0);
@@ -132,8 +124,6 @@ const RoomCanvas = forwardRef<RoomCanvasRef, RoomCanvasProps>(({
           canvasX: 0,
           canvasY: 0,
           rackLayouts,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
         });
       }
     });
@@ -158,7 +148,7 @@ const RoomCanvas = forwardRef<RoomCanvasRef, RoomCanvasProps>(({
 
   // 当机柜列表变化时，自动调整位置让机柜显示在可见区域
   useEffect(() => {
-    if (racks.length > 0 && !layout && racks.every(rack => rack.positionX === undefined && rack.positionY === undefined)) {
+    if (racks.length > 0 && !layout && racks.every((rack) => rack.positionX === undefined && rack.positionY === undefined)) {
       // 如果没有布局数据且所有机柜都没有位置，自动排列机柜
       setTimeout(() => {
         autoArrangeRacks();
@@ -249,9 +239,7 @@ const RoomCanvas = forwardRef<RoomCanvasRef, RoomCanvasProps>(({
   };
 
   const updateRackPosition = (rackId: number, x: number, y: number) => {
-    setRacks((prevRacks) =>
-      prevRacks.map((rack) => (rack.id === rackId ? { ...rack, positionX: x, positionY: y } : rack)),
-    );
+    setRacks((prevRacks) => prevRacks.map((rack) => (rack.id === rackId ? { ...rack, positionX: x, positionY: y } : rack)));
   };
 
   const getRackPosition = (rack: Rack) => {
@@ -262,10 +250,10 @@ const RoomCanvas = forwardRef<RoomCanvasRef, RoomCanvasProps>(({
       }
     }
     // 如果没有布局数据，使用机柜的positionX/Y，如果没有则使用默认值
-    return { 
-      x: rack.positionX ?? 0.5, 
-      y: rack.positionY ?? 0.5, 
-      rotation: rack.rotation || 0 
+    return {
+      x: rack.positionX ?? 0.5,
+      y: rack.positionY ?? 0.5,
+      rotation: rack.rotation || 0,
     };
   };
 
@@ -392,4 +380,3 @@ const RoomCanvas = forwardRef<RoomCanvasRef, RoomCanvasProps>(({
 RoomCanvas.displayName = 'RoomCanvas';
 
 export default RoomCanvas;
-

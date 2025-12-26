@@ -86,6 +86,7 @@ import BusiLineQA from '@/pages/busiLine/qa';
 import IdentTerminal from '@/pages/identTerminal';
 import NetTargets from '@/pages/netTargets';
 import NetToplogy from '@/pages/toplogy';
+import TopologyPage from '@/pages/topology';
 import ProbeTools from '@/pages/probeTools';
 import AiKnowlage from '@/pages/aiKnowlage';
 import { dynamicPackages, Entry, dynamicPages } from '@/utils';
@@ -215,7 +216,7 @@ export default function Content() {
         {/* <Route exact path='/business' component={BusiLine} /> */}
         <Route exact path='/busi-topology' component={BusiLineQA} />
         <Route exact path='/pollings' component={NetToplogy} />
-        <Route exact path='/topology' component={NetToplogy} />
+        <Route path='/topology' component={TopologyPage} />
 
         {/* IDC 机房管理 - 新版本 */}
         <Route exact path='/idc' component={IDCMain} />

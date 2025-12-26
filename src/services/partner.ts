@@ -25,7 +25,7 @@ import { Maintenance, GetMaintenanceParams, GetMaintenanceResponse } from '@/pag
 /**
  * 获取供应商列表
  */
-export function getSuppliers(params: GetSuppliersParams) {
+export function getSuppliers(params: any) {
   return request(`/cmdb/partner/suppliers`, {
     method: RequestMethod.Get,
     params,
@@ -85,7 +85,7 @@ export function batchDeleteSuppliers(ids: number[]): Promise<void> {
 /**
  * 获取维保单位列表
  */
-export function getMaintenanceList(params: GetMaintenanceParams) {
+export function getMaintenanceList(params: any) {
   return request(`/cmdb/partner/maintenance`, {
     method: RequestMethod.Get,
     params,
