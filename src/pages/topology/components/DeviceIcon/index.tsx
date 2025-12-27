@@ -22,8 +22,8 @@ const DeviceIcon: React.FC<DeviceIconProps> = ({ type, size = 20 }) => {
     if (type.includes('switch_access')) {
       return '/image/topology_arcess_switch.png';
     }
-    if (type.includes('switch_three')) {
-      return '/image/topology_three_switch.png';
+    if (type.includes('switch_aggr')) {
+      return '/image/topology_aggr_switch.png';
     }
     if (type.includes('fireware') || type.includes('firewall')) {
       return '/image/topology_fireware.png';

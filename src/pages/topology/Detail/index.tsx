@@ -2,10 +2,10 @@
  * 拓扑视图详情页面
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { Layout, message, Button } from 'antd';
-import { ArrowLeftOutlined, DatabaseOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, DatabaseOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import PageLayout from '@/components/pageLayout';
 import { TopologyProvider, useTopology } from '../context/TopologyContext';
 import TopologyCanvas from '../components/TopologyCanvas';
@@ -21,6 +21,11 @@ const TopologyViewContent: React.FC = () => {
   const { nodes, currentView, refreshTopology } = useTopology();
   const history = useHistory();
   const reactFlowInstance = React.useRef<any>(null);
+
+  // 左侧设备面板折叠状态（默认展开）
+  const [leftSiderCollapsed, setLeftSiderCollapsed] = useState(false);
+  // 右侧属性面板折叠状态（默认折叠）
+  const [rightSiderCollapsed, setRightSiderCollapsed] = useState(true);
 
   // 已添加的设备ID列表
   const addedDeviceIds = useMemo(() => nodes.map((n) => n.assetId), [nodes]);
@@ -96,12 +101,38 @@ const TopologyViewContent: React.FC = () => {
 
         <Layout style={{ height: 'calc(100vh - 64px)' }}>
           {/* 左侧设备选择面板 */}
-          <Sider width={100} className='topology-sider-left'>
+          <Sider width={100} collapsedWidth={0} collapsible collapsed={leftSiderCollapsed} onCollapse={setLeftSiderCollapsed} className='topology-sider-left' trigger={null}>
             <DeviceSelectPanel addedDeviceIds={addedDeviceIds} />
           </Sider>
 
           {/* 中间拓扑画布 */}
-          <Content className='topology-content'>
+          <Content className='topology-content' style={{ position: 'relative' }}>
+            {/* 左侧面板折叠/展开按钮 - 始终跟随画布左侧边框 */}
+            <Button
+              type='text'
+              icon={leftSiderCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setLeftSiderCollapsed(!leftSiderCollapsed)}
+              className='topology-toggle-btn-left'
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 16,
+                zIndex: 10,
+              }}
+            />
+            {/* 右侧面板折叠/展开按钮 - 始终跟随画布右侧边框 */}
+            <Button
+              type='text'
+              icon={rightSiderCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setRightSiderCollapsed(!rightSiderCollapsed)}
+              className='topology-toggle-btn-right'
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: 16,
+                zIndex: 10,
+              }}
+            />
             <TopologyCanvas
               onInit={(instance) => {
                 reactFlowInstance.current = instance;
@@ -110,7 +141,16 @@ const TopologyViewContent: React.FC = () => {
           </Content>
 
           {/* 右侧属性面板 */}
-          <Sider width={350} className='topology-sider-right'>
+          <Sider
+            width={250}
+            collapsedWidth={0}
+            collapsible
+            collapsed={rightSiderCollapsed}
+            onCollapse={setRightSiderCollapsed}
+            className='topology-sider-right'
+            trigger={null}
+            reverseArrow
+          >
             <PropertyPanel />
           </Sider>
         </Layout>

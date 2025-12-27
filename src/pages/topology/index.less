@@ -17,4 +17,32 @@
     background: var(--fc-fill-2);
     border-left: 1px solid var(--fc-border-color);
   }
+
+  // 左侧折叠按钮样式 - 跟随画布左侧边框
+  .topology-toggle-btn-left {
+    background: var(--fc-fill-2) !important;
+    border: 1px solid var(--fc-border-color) !important;
+    border-left: none !important;
+    border-radius: 0 4px 4px 0 !important;
+    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.06);
+    
+    &:hover {
+      background: var(--fc-fill-3) !important;
+      color: var(--fc-text-1) !important;
+    }
+  }
+
+  // 右侧折叠按钮样式
+  .topology-toggle-btn-right {
+    background: var(--fc-fill-2) !important;
+    border: 1px solid var(--fc-border-color) !important;
+    border-right: none !important;
+    border-radius: 4px 0 0 4px !important;
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.06);
+    
+    &:hover {
+      background: var(--fc-fill-3) !important;
+      color: var(--fc-text-1) !important;
+    }
+  }
 }

@@ -14,6 +14,18 @@ import './index.less';
 const PropertyPanel: React.FC = () => {
   const { selectedItem, nodes, connections, deleteNode, deleteConnection } = useTopology();
 
+  // 设备类型映射到中文名称
+  const getDeviceTypeName = (deviceType: string): string => {
+    const typeMap: Record<string, string> = {
+      net_switch: '交换机',
+      net_fireware: '防火墙',
+      net_router: '路由器',
+      host_phy: '物理机',
+      host_storage: '存储设备',
+    };
+    return typeMap[deviceType] || deviceType;
+  };
+
   // 统计信息
   const statistics = useMemo(() => {
     const onlineCount = nodes.filter((n) => n.status === 'online').length;
@@ -145,27 +157,17 @@ const PropertyPanel: React.FC = () => {
           <Card
             size='small'
             extra={
-              <Space>
-                <Button
-                  type='link'
-                  icon={<EditOutlined />}
-                  size='small'
-                  onClick={() => {
-                    // TODO: 实现编辑功能
-                  }}
-                >
-                  编辑
-                </Button>
+              <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                 <Button type='link' danger icon={<DeleteOutlined />} size='small' onClick={handleDelete}>
                   删除
                 </Button>
-              </Space>
+              </div>
             }
           >
             <Descriptions column={1} size='small'>
               <Descriptions.Item label='节点名称'>{node.name}</Descriptions.Item>
               <Descriptions.Item label='关联资产ID'>{node.assetId}</Descriptions.Item>
-              <Descriptions.Item label='设备类型'>{node.deviceType}</Descriptions.Item>
+              <Descriptions.Item label='设备类型'>{getDeviceTypeName(node.deviceType)}</Descriptions.Item>
               <Descriptions.Item label='设备IP'>{node.ip}</Descriptions.Item>
               <Descriptions.Item label='所属机房'>{node.roomName || '-'}</Descriptions.Item>
               <Descriptions.Item label='所属机柜'>{node.rackName || '-'}</Descriptions.Item>
