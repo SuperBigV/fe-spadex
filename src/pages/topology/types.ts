@@ -167,9 +167,9 @@ export interface AssetListParams {
   page?: number;
   pageSize?: number;
   keyword?: string;
-  gids?: string;
   roomId?: number;
   rackId?: number;
+  deviceType?: string;
   status?: string;
 }
 
@@ -183,4 +183,3 @@ export interface PositionUpdate {
   x: number;
   y: number;
 }
-

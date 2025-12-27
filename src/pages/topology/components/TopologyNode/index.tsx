@@ -32,7 +32,7 @@ const TopologyNodeComponent: React.FC<NodeProps<CustomNodeData>> = ({ data, sele
     <div className={`topology-node ${selected ? 'selected' : ''}`} onClick={handleClick}>
       <div className='node-content'>
         <div className='node-icon'>
-          <DeviceIcon type={node.deviceType} />
+          <DeviceIcon type={node.deviceIcon} />
         </div>
         <div className='node-name'>{node.name}</div>
         <div className='node-info'>

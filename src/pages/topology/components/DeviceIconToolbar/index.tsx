@@ -16,10 +16,11 @@ const deviceTypes: DeviceType[] = [
   { type: 'net_router', name: '路由器', icon: '/image/topology_router.png' },
   { type: 'net_switch_core', name: '核心交换机', icon: '/image/topology_core_switch.png' },
   { type: 'net_switch_access', name: '接入交换机', icon: '/image/topology_arcess_switch.png' },
-  { type: 'net_switch_three', name: '三层交换机', icon: '/image/topology_three_switch.png' },
+  { type: 'net_switch_aggr', name: '汇聚交换机', icon: '/image/topology_aggr_switch.png' },
   { type: 'net_fireware', name: '防火墙', icon: '/image/topology_fireware.png' },
   { type: 'net_ap', name: '无线AP', icon: '/image/topology_ap.png' },
-  // { type: 'server', name: '服务器', icon: '/image/topology_host.png' },
+  { type: 'host_phy', name: '服务器', icon: '/image/topology_host.png' },
+  // { type: 'host_storage', name: '存储设备', icon: '/image/topology_storage.png' },
   { type: 'topology_room', name: '机房', icon: '/image/topology_room.png' },
   { type: 'topology_cloud', name: '互联网', icon: '/image/topology_cloud.png' },
 ];

@@ -47,7 +47,7 @@ const PropertyPanel: React.FC = () => {
   const connection = selectedItem && !('assetId' in selectedItem) ? (selectedItem as TopologyConnection) : null;
   const sourceNode = connection ? nodes.find((n) => n.id === connection.sourceNodeId) : null;
   const targetNode = connection ? nodes.find((n) => n.id === connection.targetNodeId) : null;
-  
+
   // 加载端口信息以显示端口名称
   const [sourcePortInfo, setSourcePortInfo] = useState<Port | null>(null);
   const [targetPortInfo, setTargetPortInfo] = useState<Port | null>(null);
@@ -98,57 +98,35 @@ const PropertyPanel: React.FC = () => {
 
   if (!selectedItem) {
     return (
-      <div className="property-panel">
-        <div className="panel-header">
+      <div className='property-panel'>
+        <div className='panel-header'>
           <h3>状态监控</h3>
         </div>
-        <div className="panel-content">
-          <Card title="设备状态统计" size="small" style={{ marginBottom: 16 }}>
+        <div className='panel-content'>
+          <Card title='设备状态统计' size='small' style={{ marginBottom: 16 }}>
             <Row gutter={16}>
               <Col span={12}>
-                <Statistic
-                  title="在线设备"
-                  value={statistics.onlineCount}
-                  suffix={`/ ${statistics.totalDevices}`}
-                  valueStyle={{ color: '#52c41a' }}
-                />
+                <Statistic title='在线设备' value={statistics.onlineCount} suffix={`/ ${statistics.totalDevices}`} valueStyle={{ color: '#52c41a' }} />
               </Col>
               <Col span={12}>
-                <Statistic
-                  title="离线设备"
-                  value={statistics.offlineCount}
-                  valueStyle={{ color: '#ff4d4f' }}
-                />
+                <Statistic title='离线设备' value={statistics.offlineCount} valueStyle={{ color: '#ff4d4f' }} />
               </Col>
             </Row>
           </Card>
 
-          <Card title="连接状态统计" size="small" style={{ marginBottom: 16 }}>
+          <Card title='连接状态统计' size='small' style={{ marginBottom: 16 }}>
             <Row gutter={16}>
               <Col span={12}>
-                <Statistic
-                  title="正常连接"
-                  value={statistics.upConnections}
-                  suffix={`/ ${statistics.totalConnections}`}
-                  valueStyle={{ color: '#52c41a' }}
-                />
+                <Statistic title='正常连接' value={statistics.upConnections} suffix={`/ ${statistics.totalConnections}`} valueStyle={{ color: '#52c41a' }} />
               </Col>
               <Col span={12}>
-                <Statistic
-                  title="故障连接"
-                  value={statistics.downConnections}
-                  valueStyle={{ color: '#ff4d4f' }}
-                />
+                <Statistic title='故障连接' value={statistics.downConnections} valueStyle={{ color: '#ff4d4f' }} />
               </Col>
             </Row>
           </Card>
 
-          <Card title="告警统计" size="small">
-            <Statistic
-              title="设备告警数"
-              value={statistics.alarmCount}
-              valueStyle={{ color: '#faad14' }}
-            />
+          <Card title='告警统计' size='small'>
+            <Statistic title='设备告警数' value={statistics.alarmCount} valueStyle={{ color: '#faad14' }} />
           </Card>
         </div>
       </div>
@@ -159,55 +137,47 @@ const PropertyPanel: React.FC = () => {
   if ('assetId' in selectedItem) {
     const node = selectedItem as TopologyNode;
     return (
-      <div className="property-panel">
-        <div className="panel-header">
+      <div className='property-panel'>
+        <div className='panel-header'>
           <h3>节点属性</h3>
         </div>
-        <div className="panel-content">
+        <div className='panel-content'>
           <Card
-            size="small"
+            size='small'
             extra={
               <Space>
                 <Button
-                  type="link"
+                  type='link'
                   icon={<EditOutlined />}
-                  size="small"
+                  size='small'
                   onClick={() => {
                     // TODO: 实现编辑功能
                   }}
                 >
                   编辑
                 </Button>
-                <Button
-                  type="link"
-                  danger
-                  icon={<DeleteOutlined />}
-                  size="small"
-                  onClick={handleDelete}
-                >
+                <Button type='link' danger icon={<DeleteOutlined />} size='small' onClick={handleDelete}>
                   删除
                 </Button>
               </Space>
             }
           >
-            <Descriptions column={1} size="small">
-              <Descriptions.Item label="节点名称">{node.name}</Descriptions.Item>
-              <Descriptions.Item label="关联资产ID">{node.assetId}</Descriptions.Item>
-              <Descriptions.Item label="设备类型">{node.deviceType}</Descriptions.Item>
-              <Descriptions.Item label="设备IP">{node.ip}</Descriptions.Item>
-              <Descriptions.Item label="所属机房">{node.roomName || '-'}</Descriptions.Item>
-              <Descriptions.Item label="所属机柜">{node.rackName || '-'}</Descriptions.Item>
-              <Descriptions.Item label="状态">
+            <Descriptions column={1} size='small'>
+              <Descriptions.Item label='节点名称'>{node.name}</Descriptions.Item>
+              <Descriptions.Item label='关联资产ID'>{node.assetId}</Descriptions.Item>
+              <Descriptions.Item label='设备类型'>{node.deviceType}</Descriptions.Item>
+              <Descriptions.Item label='设备IP'>{node.ip}</Descriptions.Item>
+              <Descriptions.Item label='所属机房'>{node.roomName || '-'}</Descriptions.Item>
+              <Descriptions.Item label='所属机柜'>{node.rackName || '-'}</Descriptions.Item>
+              <Descriptions.Item label='状态'>
                 <Space>
-                  <StatusIndicator status={node.status} type="device" />
-                  <span>
-                    {node.status === 'online' ? '在线' : node.status === 'offline' ? '离线' : '未知'}
-                  </span>
+                  <StatusIndicator status={node.status} type='device' />
+                  <span>{node.status === 'online' ? '在线' : node.status === 'offline' ? '离线' : '未知'}</span>
                 </Space>
               </Descriptions.Item>
-              <Descriptions.Item label="告警数量">{node.alarmCount}</Descriptions.Item>
-              <Descriptions.Item label="X坐标">{Math.round(node.position.x)}</Descriptions.Item>
-              <Descriptions.Item label="Y坐标">{Math.round(node.position.y)}</Descriptions.Item>
+              <Descriptions.Item label='告警数量'>{node.alarmCount}</Descriptions.Item>
+              <Descriptions.Item label='X坐标'>{Math.round(node.position.x)}</Descriptions.Item>
+              <Descriptions.Item label='Y坐标'>{Math.round(node.position.y)}</Descriptions.Item>
             </Descriptions>
           </Card>
         </div>
@@ -218,54 +188,38 @@ const PropertyPanel: React.FC = () => {
   // 连接属性（connection 已经在上面定义了）
 
   return (
-    <div className="property-panel">
-      <div className="panel-header">
+    <div className='property-panel'>
+      <div className='panel-header'>
         <h3>连接属性</h3>
       </div>
-      <div className="panel-content">
+      <div className='panel-content'>
         <Card
-          size="small"
+          size='small'
           extra={
-            <Button
-              type="link"
-              danger
-              icon={<DeleteOutlined />}
-              size="small"
-              onClick={handleDelete}
-            >
+            <Button type='link' danger icon={<DeleteOutlined />} size='small' onClick={handleDelete}>
               删除
             </Button>
           }
         >
-          <Descriptions column={1} size="small">
-            <Descriptions.Item label="源设备">
-              {sourceNode?.name || connection.sourceNodeId}
-            </Descriptions.Item>
-            <Descriptions.Item label="源端口">
+          <Descriptions column={1} size='small'>
+            <Descriptions.Item label='源设备'>{sourceNode?.name || connection?.sourceNodeId}</Descriptions.Item>
+            <Descriptions.Item label='源端口'>
               <Space>
-                <span>{sourcePortInfo ? `${sourcePortInfo.portName} (${connection.sourcePort})` : connection.sourcePort}</span>
-                {sourcePortInfo && (
-                  <StatusIndicator status={sourcePortInfo.status} type="port" size="small" />
-                )}
+                <span>{sourcePortInfo ? `${sourcePortInfo.portName} (${connection?.sourcePort})` : connection?.sourcePort}</span>
+                {sourcePortInfo && <StatusIndicator status={sourcePortInfo.status} type='port' size='small' />}
               </Space>
             </Descriptions.Item>
-            <Descriptions.Item label="目标设备">
-              {targetNode?.name || connection.targetNodeId}
-            </Descriptions.Item>
-            <Descriptions.Item label="目标端口">
+            <Descriptions.Item label='目标设备'>{targetNode?.name || connection?.targetNodeId}</Descriptions.Item>
+            <Descriptions.Item label='目标端口'>
               <Space>
-                <span>{targetPortInfo ? `${targetPortInfo.portName} (${connection.targetPort})` : connection.targetPort}</span>
-                {targetPortInfo && (
-                  <StatusIndicator status={targetPortInfo.status} type="port" size="small" />
-                )}
+                <span>{targetPortInfo ? `${targetPortInfo.portName} (${connection?.targetPort})` : connection?.targetPort}</span>
+                {targetPortInfo && <StatusIndicator status={targetPortInfo.status} type='port' size='small' />}
               </Space>
             </Descriptions.Item>
-            <Descriptions.Item label="连接状态">
+            <Descriptions.Item label='连接状态'>
               <Space>
-                <StatusIndicator status={connection.status} type="connection" />
-                <span>
-                  {connection.status === 'up' ? '正常' : connection.status === 'down' ? '故障' : '未知'}
-                </span>
+                <StatusIndicator status={connection?.status || 'unknown'} type='connection' />
+                <span>{connection?.status === 'up' ? '正常' : connection?.status === 'down' ? '故障' : '未知'}</span>
               </Space>
             </Descriptions.Item>
           </Descriptions>
@@ -276,4 +230,3 @@ const PropertyPanel: React.FC = () => {
 };
 
 export default PropertyPanel;
-

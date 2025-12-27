@@ -35,17 +35,18 @@ const DeviceListModal: React.FC<DeviceListModalProps> = ({ visible, deviceType, 
     if (type === 'topology_room' || type === 'topology_cloud') {
       return undefined;
     }
-
-    const typeToGidMap: { [key: string]: string } = {
-      net_router: '30',
-      net_switch_core: '4',
-      net_switch_access: '4',
-      net_switch_three: '4',
-      net_fireware: '35',
-      net_ap: '14',
-      server: '1',
-    };
-    return typeToGidMap[type];
+    // 直接返回设备类型
+    return type;
+    // const typeToGidMap: { [key: string]: string } = {
+    //   net_router: '30',
+    //   net_switch_core: '4',
+    //   net_switch_access: '4',
+    //   net_switch_three: '4',
+    //   net_fireware: '35',
+    //   net_ap: '14',
+    //   server: '1',
+    // };
+    // return typeToGidMap[type];
   };
 
   // 加载设备列表
@@ -54,9 +55,9 @@ const DeviceListModal: React.FC<DeviceListModalProps> = ({ visible, deviceType, 
 
     setLoading(true);
     try {
-      const gid = getGidByDeviceType(deviceType);
+      const type = getGidByDeviceType(deviceType);
       // 如果是机房或云，不需要从资产列表加载
-      if (!gid) {
+      if (!type) {
         setDevices([]);
         setLoading(false);
         return;
@@ -64,7 +65,7 @@ const DeviceListModal: React.FC<DeviceListModalProps> = ({ visible, deviceType, 
 
       const params: AssetListParams = {
         ...filters,
-        gids: gid,
+        deviceType: type,
       };
       const response = await getMonitoredAssets(params);
       setDevices(response.list);
@@ -115,10 +116,11 @@ const DeviceListModal: React.FC<DeviceListModalProps> = ({ visible, deviceType, 
       net_router: '路由器',
       net_switch_core: '核心交换机',
       net_switch_access: '接入交换机',
-      net_switch_three: '三层交换机',
+      net_switch_three: '汇聚交换机',
       net_fireware: '防火墙',
       net_ap: '无线AP',
-      server: '服务器',
+      host_phy: '服务器',
+      host_storage: '存储设备',
       topology_room: '机房',
       topology_cloud: '互联网',
     };

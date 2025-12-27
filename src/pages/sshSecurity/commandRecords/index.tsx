@@ -25,12 +25,7 @@ import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import { DatePicker } from 'antd';
 import PageLayout from '@/components/pageLayout';
-import {
-  getCommandRecordsList,
-  getCommandRecordsBySession,
-  getCommandRecordsByAsset,
-  getCommandRecordsStatistics,
-} from './services';
+import { getCommandRecordsList, getCommandRecordsBySession, getCommandRecordsByAsset, getCommandRecordsStatistics } from './services';
 import './locale';
 
 const { Option } = Select;
@@ -143,9 +138,7 @@ export default function CommandRecordsPage() {
                   title: t('status'),
                   dataIndex: 'blocked',
                   width: 100,
-                  render: (blocked: boolean) => (
-                    <Tag color={blocked ? 'red' : 'green'}>{blocked ? t('blocked') : t('allowed')}</Tag>
-                  ),
+                  render: (blocked: boolean) => <Tag color={blocked ? 'red' : 'green'}>{blocked ? t('blocked') : t('allowed')}</Tag>,
                 },
                 {
                   title: t('create_at'),
@@ -191,9 +184,7 @@ export default function CommandRecordsPage() {
                   title: t('status'),
                   dataIndex: 'blocked',
                   width: 100,
-                  render: (blocked: boolean) => (
-                    <Tag color={blocked ? 'red' : 'green'}>{blocked ? t('blocked') : t('allowed')}</Tag>
-                  ),
+                  render: (blocked: boolean) => <Tag color={blocked ? 'red' : 'green'}>{blocked ? t('blocked') : t('allowed')}</Tag>,
                 },
                 {
                   title: t('create_at'),
@@ -246,12 +237,7 @@ export default function CommandRecordsPage() {
       width: 150,
       ellipsis: true,
       render: (text: string) => (
-        <Button
-          type='link'
-          size='small'
-          style={{ padding: 0 }}
-          onClick={() => handleViewSession(text)}
-        >
+        <Button type='link' size='small' style={{ padding: 0 }} onClick={() => handleViewSession(text)}>
           {text}
         </Button>
       ),
@@ -263,12 +249,7 @@ export default function CommandRecordsPage() {
       width: 150,
       ellipsis: true,
       render: (text: string, record: CommandRecord) => (
-        <Button
-          type='link'
-          size='small'
-          style={{ padding: 0 }}
-          onClick={() => handleViewAsset(record.asset_id)}
-        >
+        <Button type='link' size='small' style={{ padding: 0 }} onClick={() => handleViewAsset(record.asset_id)}>
           {text}
         </Button>
       ),
@@ -287,10 +268,7 @@ export default function CommandRecordsPage() {
             <span style={{ color: record.blocked ? '#ff4d4f' : 'inherit' }}>{text}</span>
           </Tooltip>
           <Tooltip title={t('copy_command')}>
-            <CopyOutlined
-              onClick={() => handleCopyCommand(text)}
-              style={{ cursor: 'pointer', color: '#1890ff' }}
-            />
+            <CopyOutlined onClick={() => handleCopyCommand(text)} style={{ cursor: 'pointer', color: '#1890ff' }} />
           </Tooltip>
         </Space>
       ),
@@ -312,9 +290,7 @@ export default function CommandRecordsPage() {
       dataIndex: 'blocked',
       key: 'blocked',
       width: 100,
-      render: (blocked: boolean) => (
-        <Tag color={blocked ? 'red' : 'green'}>{blocked ? t('blocked') : t('allowed')}</Tag>
-      ),
+      render: (blocked: boolean) => <Tag color={blocked ? 'red' : 'green'}>{blocked ? t('blocked') : t('allowed')}</Tag>,
     },
     {
       title: t('block_reason'),
@@ -357,42 +333,19 @@ export default function CommandRecordsPage() {
               />
             </Col>
             <Col span={4}>
-              <Input
-                placeholder={t('session_id')}
-                allowClear
-                value={sessionId}
-                onChange={(e) => setSessionId(e.target.value)}
-              />
+              <Input placeholder={t('session_id')} allowClear value={sessionId} onChange={(e) => setSessionId(e.target.value)} />
             </Col>
             <Col span={4}>
-              <Input
-                placeholder={t('asset_id')}
-                allowClear
-                type='number'
-                value={assetId}
-                onChange={(e) => setAssetId(e.target.value ? Number(e.target.value) : undefined)}
-              />
+              <Input placeholder={t('asset_id')} allowClear type='number' value={assetId} onChange={(e) => setAssetId(e.target.value ? Number(e.target.value) : undefined)} />
             </Col>
             <Col span={4}>
-              <Select
-                placeholder={t('blocked_filter')}
-                allowClear
-                style={{ width: '100%' }}
-                value={blockedFilter}
-                onChange={(value) => setBlockedFilter(value)}
-              >
+              <Select placeholder={t('blocked_filter')} allowClear style={{ width: '100%' }} value={blockedFilter} onChange={(value) => setBlockedFilter(value)}>
                 <Option value='true'>{t('blocked')}</Option>
                 <Option value='false'>{t('allowed')}</Option>
               </Select>
             </Col>
             <Col span={6}>
-              <RangePicker
-                showTime
-                format='YYYY-MM-DD HH:mm:ss'
-                style={{ width: '100%' }}
-                value={dateRange}
-                onChange={(dates) => setDateRange(dates as any)}
-              />
+              <RangePicker showTime format='YYYY-MM-DD HH:mm:ss' style={{ width: '100%' }} value={dateRange} onChange={(dates) => setDateRange(dates as any)} />
             </Col>
           </Row>
           <Row style={{ marginTop: 16 }}>
@@ -451,18 +404,10 @@ export default function CommandRecordsPage() {
                   <Statistic title={t('total_commands')} value={statisticsData.total} />
                 </Col>
                 <Col span={8}>
-                  <Statistic
-                    title={t('blocked_commands')}
-                    value={statisticsData.blocked}
-                    valueStyle={{ color: '#ff4d4f' }}
-                  />
+                  <Statistic title={t('blocked_commands')} value={statisticsData.blocked} valueStyle={{ color: '#ff4d4f' }} />
                 </Col>
                 <Col span={8}>
-                  <Statistic
-                    title={t('allowed_commands')}
-                    value={statisticsData.allowed}
-                    valueStyle={{ color: '#52c41a' }}
-                  />
+                  <Statistic title={t('allowed_commands')} value={statisticsData.allowed} valueStyle={{ color: '#52c41a' }} />
                 </Col>
               </Row>
               {statisticsData.userStats && Object.keys(statisticsData.userStats).length > 0 && (
@@ -507,10 +452,9 @@ export default function CommandRecordsPage() {
       </div>
       <style>{`
         .blocked-row {
-          background-color: #fff1f0;
+          background-color: #313340;
         }
       `}</style>
     </PageLayout>
   );
 }
-

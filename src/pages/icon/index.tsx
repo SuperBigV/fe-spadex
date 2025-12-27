@@ -49,6 +49,7 @@ const Resource: React.FC = () => {
 
   useEffect(() => {
     // getTeamList();
+    console.log(assetModel);
     setIconGroupId(assetModel?.id);
   }, []);
 

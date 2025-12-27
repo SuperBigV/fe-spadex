@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { Button, Input, Table, Space, message, Popconfirm, Drawer, Descriptions, Avatar, Tooltip } from 'antd';
+import { Button, Input, Table, Space, message, Popconfirm, Drawer, Descriptions, Avatar, Tooltip, Tag } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import PageLayout from '@/components/pageLayout';
 import { postSubnet, deleteSubnet, putSubnet, getSubnets, getSubnetDetail } from './services';
@@ -103,71 +103,85 @@ export default function index() {
             className='mt8'
             rowKey='id'
             size='small'
+            scroll={{ x: 'max-content' }}
             columns={[
               {
                 dataIndex: 'addr',
                 title: t('子网地址'),
-                width: 120,
+                width: 150,
+                fixed: 'left',
               },
               {
                 dataIndex: 'mask',
-                width: 80,
+                width: 90,
                 title: t('掩码位数'),
+                align: 'center',
               },
               {
                 dataIndex: 'netmask',
-                width: 120,
+                width: 140,
                 title: t('子网掩码'),
               },
               {
                 dataIndex: 'ips',
                 title: '有效IP数量',
-                width: 100,
+                width: 110,
+                align: 'center',
                 render: (text, record) => {
-                  // return <span style={{ color: 'green' }}>{record.ips.length}</span>;
-                  return <div className='table-td-fullBG'>{record.ips?.length}</div>;
+                  return <div className='table-td-fullBG'>{record.ips?.length || 0}</div>;
                 },
               },
               {
                 dataIndex: 'ips',
                 title: '已用IP数量',
-                width: 100,
+                width: 110,
+                align: 'center',
                 render: (text, record) => {
-                  // return <span style={{ color: 'green' }}>{record.ips.length}</span>;
-                  return <div className='table-td-fullBG'>{record?.ips?.filter((ip) => ip.status === 'used').length || 0}</div>;
+                  const count = record?.ips?.filter((ip) => ip.status === 'used').length || 0;
+                  return <Tag color='purple'>{count}</Tag>;
                 },
               },
               {
                 dataIndex: 'ips',
                 title: '可用IP数量',
-                width: 100,
+                width: 110,
+                align: 'center',
                 render: (text, record) => {
-                  // return <span style={{ color: 'green' }}>{record.ips.length}</span>;
-                  return <div className='table-td-fullBG'>{record?.ips?.filter((ip) => ip.status === 'unused').length || 0}</div>;
+                  const count = record?.ips?.filter((ip) => ip.status === 'unused').length || 0;
+                  return <Tag color='green'>{count}</Tag>;
                 },
               },
               {
                 dataIndex: 'ips',
                 title: '游离IP数量',
-                width: 100,
+                width: 110,
+                align: 'center',
                 render: (text, record) => {
-                  // return <span style={{ color: 'green' }}>{record.ips.length}</span>;
-                  return <div className='table-td-fullBG'>{record?.ips?.filter((ip) => ip.status === 'free').length || 0}</div>;
+                  const count = record?.ips?.filter((ip) => ip.status === 'free').length || 0;
+                  return <Tag color='red'>{count}</Tag>;
                 },
               },
               {
                 title: t('创建人'),
                 dataIndex: 'create_by',
-                width: 60,
+                width: 100,
               },
               {
                 title: t('描述'),
                 dataIndex: 'note',
+                ellipsis: {
+                  showTitle: false,
+                },
+                render: (text) => (
+                  <Tooltip placement='topLeft' title={text}>
+                    {text || '-'}
+                  </Tooltip>
+                ),
               },
               {
                 title: t('common:table.operations'),
-                width: 160,
-
+                width: 180,
+                fixed: 'right',
                 render: (record) => {
                   return (
                     <Space>

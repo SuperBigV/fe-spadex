@@ -337,7 +337,7 @@ export function getMonitoredAssets(params: AssetListParams = {}): Promise<Monito
       page: params.page || 1,
       pageSize: params.pageSize || 20,
       keyword: params.keyword,
-      gids: params.gids,
+      deviceType: params.deviceType,
       roomId: params.roomId,
       rackId: params.rackId,
       status: params.status,
