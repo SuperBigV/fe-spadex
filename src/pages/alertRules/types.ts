@@ -1,3 +1,21 @@
+// "notify_groups_obj": [
+//   {
+//       "id": 2,
+//       "name": "出行团队",
+//       "note": "",
+//       "create_at": 1759975634,
+//       "create_by": "root",
+//       "update_at": 1765949555,
+//       "update_by": "root",
+//       "users": null
+//   }
+// ],
+
+export interface NotifyGroupType {
+  id: number;
+  name: string;
+  note: string;
+}
 export interface AlertRuleType<T> {
   id: number;
   group_id: number;
@@ -15,7 +33,7 @@ export interface AlertRuleType<T> {
   enable_days_of_weekss: number[][];
   enable_stimes: number[];
   enable_etimes: number[];
-
+  notify_groups_obj: NotifyGroupType[];
   notify_channels: string[];
   notify_groups: string[];
   notify_recovered: number;
@@ -24,6 +42,7 @@ export interface AlertRuleType<T> {
   notify_max_number: number;
   callbacks: string[];
   annotations: any;
+  cron_pattern: string; // 执行频率 "@every 15s"
   prod: string;
   severities: number[];
   update_at: number;

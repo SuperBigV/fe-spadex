@@ -55,7 +55,6 @@ const RoomDetailPage: React.FC = () => {
     setLoading(true);
     try {
       const [roomData, layoutData] = await Promise.all([getRoomDetail(roomId), getRoomLayout(roomId)]);
-      console.log('layoutData', layoutData);
       setRoom(roomData);
       setLayout(layoutData);
     } catch (error) {

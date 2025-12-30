@@ -40,6 +40,21 @@ export const defaultColumnsConfigs = [
     visible: true,
   },
   {
+    name: 'notify_channels',
+    i18nKey: '通知方式',
+    visible: true,
+  },
+  {
+    name: 'notify_groups_obj',
+    i18nKey: '通知团队',
+    visible: true,
+  },
+  {
+    name: 'cron_pattern',
+    i18nKey: '执行频率',
+    visible: true,
+  },
+  {
     name: 'severities',
     i18nKey: 'table.severity',
     visible: false,
@@ -47,11 +62,6 @@ export const defaultColumnsConfigs = [
   {
     name: 'append_tags',
     i18nKey: 'table.append_tags',
-    visible: false,
-  },
-  {
-    name: 'notify_groups_obj',
-    i18nKey: 'table.notify_groups_obj',
     visible: false,
   },
   {

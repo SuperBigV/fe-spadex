@@ -31,7 +31,7 @@ import { CommonStateContext } from '@/App';
 import Tags from '@/components/Tags';
 import { DatasourceSelect, ProdSelect } from '@/components/DatasourceSelect';
 import localeCompare from '@/pages/dashboard/Renderer/utils/localeCompare';
-import { AlertRuleType, AlertRuleStatus } from '../types';
+import { AlertRuleType, AlertRuleStatus, NotifyGroupType } from '../types';
 import MoreOperations from './MoreOperations';
 import Import from './Import';
 import { allCates } from '@/components/AdvancedWrap/utils';
@@ -139,11 +139,18 @@ export default function List(props: ListProps) {
         title: t('table.cate'),
         dataIndex: 'cate',
         render: (val) => {
-          let logoSrc = _.find(allCates, { value: val })?.logo;
+          // let logoSrc = _.find(allCates, { value: val })?.logo;
+          let desc = _.find(allCates, { value: val })?.desc;
           if (val === 'host') {
-            logoSrc = '/image/logos/host.png';
+            // logoSrc = '/image/logos/host.png';
+            desc = '主机';
           }
-          return <img alt={val} src={logoSrc} height={20} />;
+          // return <img alt={val} src={logoSrc} height={20} />;
+          return (
+            <Tag color='blue' style={{ marginRight: 0 }}>
+              {desc}
+            </Tag>
+          );
         },
       },
       {
@@ -183,6 +190,93 @@ export default function List(props: ListProps) {
               {data}
             </Link>
           );
+        },
+      },
+      {
+        title: '通知方式',
+        dataIndex: 'notify_channels',
+        render: (channels: string[]) => {
+          if (!channels || channels.length === 0) return '-';
+          const channelMap: Record<string, string> = {
+            email: '邮件',
+            dingtalk: '钉钉',
+            feishu: '飞书',
+            dmcall: '电话',
+          };
+          return (
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 4,
+              }}
+            >
+              {channels.map((channel) => {
+                const displayName = channelMap[channel] || channel;
+                return (
+                  <Tag key={channel} color='blue' style={{ marginRight: 0 }}>
+                    {displayName}
+                  </Tag>
+                );
+              })}
+            </div>
+          );
+        },
+      },
+      {
+        title: '通知团队',
+        dataIndex: 'notify_groups_obj',
+        render: (groups: NotifyGroupType[]) => {
+          if (!groups || groups.length === 0) return '-';
+          return (
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 4,
+              }}
+            >
+              {groups.map((group) => {
+                return (
+                  <Tooltip key={group.id} title={group.name}>
+                    <Tag color='purple' style={{ maxWidth: '100%', marginRight: 0 }}>
+                      <div
+                        style={{
+                          maxWidth: 'max-content',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {group.name}
+                      </div>
+                    </Tag>
+                  </Tooltip>
+                );
+              })}
+            </div>
+          );
+        },
+      },
+      {
+        title: '执行频率',
+        dataIndex: 'cron_pattern',
+        render: (pattern: string) => {
+          if (!pattern) return '-';
+          // 解析 @every 60s 格式，显示为"每60s"
+          const everyMatch = pattern.match(/@every\s+(\d+)([smhd])?/i);
+          if (everyMatch) {
+            const value = everyMatch[1];
+            const unit = everyMatch[2]?.toLowerCase() || 's';
+            const unitMap: Record<string, string> = {
+              s: '秒',
+              m: '分钟',
+              h: '小时',
+              d: '天',
+            };
+            return `每${value}${unitMap[unit] || unit}`;
+          }
+          // 如果不是 @every 格式，直接显示原值
+          return pattern;
         },
       },
       {
@@ -248,40 +342,6 @@ export default function List(props: ListProps) {
         },
       },
       {
-        title: t('table.notify_groups_obj'),
-        dataIndex: 'notify_groups_obj',
-        render: (data) => {
-          return (
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 4,
-              }}
-            >
-              {_.map(data, (user) => {
-                const val = user.nickname || user.username || user.name;
-                return (
-                  <Tooltip key={val} title={val}>
-                    <Tag color='purple' style={{ maxWidth: '100%', marginRight: 0 }}>
-                      <div
-                        style={{
-                          maxWidth: 'max-content',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        {val}
-                      </div>
-                    </Tag>
-                  </Tooltip>
-                );
-              })}
-            </div>
-          );
-        },
-      },
-      {
         title: t('table.update_at'),
         dataIndex: 'update_at',
         sorter: (a, b) => {
@@ -328,7 +388,7 @@ export default function List(props: ListProps) {
         render: (record: any) => {
           return (
             <Space>
-              <Link
+              {/* <Link
                 className='table-operator-area-normal'
                 to={{
                   pathname: `/alert-rules/edit/${record.id}?mode=clone`,
@@ -336,7 +396,7 @@ export default function List(props: ListProps) {
                 target='_blank'
               >
                 {t('common:btn.clone')}
-              </Link>
+              </Link> */}
               <Button
                 size='small'
                 type='link'
@@ -429,7 +489,6 @@ export default function List(props: ListProps) {
   );
 
   const filteredData = filterData();
-
   return (
     <div className='n9e-border-base alert-rules-list-container' style={{ height: '100%', overflowY: 'auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>

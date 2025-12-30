@@ -15,7 +15,7 @@ export interface AlertRuleType<T> {
   enable_days_of_weekss: number[][];
   enable_stimes: number[];
   enable_etimes: number[];
-
+  notify_groups_obj: NotifyGroupType[];
   notify_channels: string[];
   notify_groups: string[];
   notify_recovered: number;
@@ -29,7 +29,11 @@ export interface AlertRuleType<T> {
   update_at: number;
   update_by: number;
 }
-
+export interface NotifyGroupType {
+  id: number;
+  name: string;
+  note: string;
+}
 export enum AlertRuleStatus {
   Enable = 0,
   UnEnable = 1,

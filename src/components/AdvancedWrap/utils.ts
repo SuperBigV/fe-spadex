@@ -6,6 +6,7 @@ import { advancedCates } from 'plus:/constants';
 export interface Cate {
   value: string;
   label: string;
+  desc: string;
   type: string[];
   alertRule: boolean; // 是否支持告警规则
   dashboard: boolean; // 是否支持仪表盘
@@ -25,12 +26,14 @@ export const baseCates: Cate[] = [
     dashboardVariable: true,
     graphPro: false,
     alertPro: false,
+    desc: '指标',
     logo: '/image/logos/prometheus.png',
   },
   {
     value: 'elasticsearch',
     label: 'Elasticsearch',
     type: ['logging'],
+    desc: '日志',
     alertRule: true,
     dashboard: true,
     dashboardVariable: true,
@@ -43,6 +46,7 @@ export const baseCates: Cate[] = [
     label: 'TDengine',
     type: ['metric'],
     alertRule: true,
+    desc: 'tdengine',
     dashboard: true,
     dashboardVariable: false,
     graphPro: false,
@@ -54,6 +58,7 @@ export const baseCates: Cate[] = [
     label: 'sls',
     type: ['sls', 'logging'],
     alertRule: true,
+    desc: '日志',
     dashboard: false,
     dashboardVariable: false,
     graphPro: false,
@@ -66,6 +71,7 @@ export const baseCates: Cate[] = [
     type: ['loki', 'logging'], // loki 是历史版本里一个过度的分类，后续会废弃
     alertRule: true,
     dashboard: false,
+    desc: '日志',
     dashboardVariable: false,
     graphPro: false,
     alertPro: false,
@@ -78,6 +84,7 @@ export const baseCates: Cate[] = [
     alertRule: false,
     dashboard: false,
     dashboardVariable: false,
+    desc: '链路追踪',
     graphPro: false,
     alertPro: false,
     logo: '/image/logos/jaeger.png',
@@ -88,6 +95,7 @@ export const baseCates: Cate[] = [
     type: ['metric', 'logging'],
     alertRule: true,
     dashboard: true,
+    desc: 'ClickHouse',
     dashboardVariable: false,
     graphPro: false,
     alertPro: false,
