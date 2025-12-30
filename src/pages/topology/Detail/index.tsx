@@ -66,9 +66,109 @@ const TopologyViewContent: React.FC = () => {
     }
   };
 
-  const handleExport = () => {
-    // TODO: 实现导出逻辑
-    message.info('导出功能开发中');
+  const handleExport = async () => {
+    if (!reactFlowInstance.current) {
+      message.warning('画布未初始化');
+      return;
+    }
+
+    try {
+      // 获取所有节点
+      const nodes = reactFlowInstance.current.getNodes();
+
+      if (nodes.length === 0) {
+        message.warning('画布为空，无法导出');
+        return;
+      }
+
+      // 计算所有节点的边界框
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+
+      nodes.forEach((node) => {
+        const width = node.width || 150;
+        const height = node.height || 50;
+        minX = Math.min(minX, node.position.x);
+        minY = Math.min(minY, node.position.y);
+        maxX = Math.max(maxX, node.position.x + width);
+        maxY = Math.max(maxY, node.position.y + height);
+      });
+
+      // 添加边距
+      const padding = 50;
+      minX -= padding;
+      minY -= padding;
+      maxX += padding;
+      maxY += padding;
+
+      const width = maxX - minX;
+      const height = maxY - minY;
+
+      // 获取ReactFlow的DOM元素
+      const reactFlowElement = document.querySelector('.topology-canvas .react-flow') as HTMLElement;
+      if (!reactFlowElement) {
+        message.error('未找到画布元素');
+        return;
+      }
+
+      // 保存原始视口
+      const originalViewport = reactFlowInstance.current.getViewport();
+
+      // 使用fitView确保所有节点可见，并保持合适的缩放
+      // 设置合适的padding和maxZoom，确保节点大小合适
+      reactFlowInstance.current.fitView({
+        padding: padding,
+        duration: 0,
+        maxZoom: 2, // 增加最大缩放，确保节点不会太小
+        minZoom: 0.5,
+      });
+
+      // 等待视图更新，确保所有元素都已渲染
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      // 动态导入html2canvas
+      const html2canvasModule = await import('html2canvas');
+      const html2canvas = html2canvasModule.default || html2canvasModule;
+
+      // 直接截取整个reactFlowElement，确保包含所有内容（节点、边、背景等）
+      const canvas = await html2canvas(reactFlowElement, {
+        backgroundColor: null, // 使用透明背景，保持原有背景
+        scale: 3, // 提高导出图片的清晰度，使用更高的scale确保节点清晰可见
+        useCORS: true, // 允许跨域图片
+        logging: false, // 关闭日志
+        allowTaint: true, // 允许跨域图片
+        removeContainer: false, // 不移除容器
+        ignoreElements: (element) => {
+          // 忽略控制按钮和小地图，只保留主要内容
+          return element.classList?.contains('react-flow__controls') || element.classList?.contains('react-flow__minimap');
+        },
+      });
+
+      // 恢复原始视口
+      reactFlowInstance.current.setViewport(originalViewport);
+
+      // 将canvas转换为blob并下载
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          message.error('导出失败');
+          return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const fileName = `${currentView?.name || 'topology'}_${new Date().getTime()}.png`;
+        link.download = fileName;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+        message.success('导出成功');
+      }, 'image/png');
+    } catch (error) {
+      console.error('导出失败:', error);
+      message.error('导出失败: ' + (error instanceof Error ? error.message : '未知错误'));
+    }
   };
 
   const handleBack = () => {

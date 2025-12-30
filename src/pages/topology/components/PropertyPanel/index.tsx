@@ -18,7 +18,7 @@ const PropertyPanel: React.FC = () => {
   const getDeviceTypeName = (deviceType: string): string => {
     const typeMap: Record<string, string> = {
       net_switch: '交换机',
-      net_fireware: '防火墙',
+      net_firewall: '防火墙',
       net_router: '路由器',
       host_phy: '物理机',
       host_storage: '存储设备',
@@ -207,14 +207,14 @@ const PropertyPanel: React.FC = () => {
             <Descriptions.Item label='源设备'>{sourceNode?.name || connection?.sourceNodeId}</Descriptions.Item>
             <Descriptions.Item label='源端口'>
               <Space>
-                <span>{sourcePortInfo ? `${sourcePortInfo.portName} (${connection?.sourcePort})` : connection?.sourcePort}</span>
+                <span>{sourcePortInfo ? `${sourcePortInfo.portName} ` : connection?.sourcePort}</span>
                 {sourcePortInfo && <StatusIndicator status={sourcePortInfo.status} type='port' size='small' />}
               </Space>
             </Descriptions.Item>
             <Descriptions.Item label='目标设备'>{targetNode?.name || connection?.targetNodeId}</Descriptions.Item>
             <Descriptions.Item label='目标端口'>
               <Space>
-                <span>{targetPortInfo ? `${targetPortInfo.portName} (${connection?.targetPort})` : connection?.targetPort}</span>
+                <span>{targetPortInfo ? `${targetPortInfo.portName} ` : connection?.targetPort}</span>
                 {targetPortInfo && <StatusIndicator status={targetPortInfo.status} type='port' size='small' />}
               </Space>
             </Descriptions.Item>

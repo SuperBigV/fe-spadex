@@ -50,8 +50,12 @@ export interface TopologyConnection {
   viewId: number;
   sourceNodeId: string;
   sourcePort: string; // 端口编号
+  sourcePortIfIn: number; // 端口入流量 单位：Mbps
+  sourcePortIfOut: number; // 端口出流量 单位：Mbps
   targetNodeId: string;
   targetPort: string; // 端口编号
+  targetPortIfIn: number; // 端口入流量 单位：Mbps
+  targetPortIfOut: number; // 端口出流量 单位：Mbps
   status: 'up' | 'down' | 'unknown';
   createdAt: string;
   updatedAt: string;

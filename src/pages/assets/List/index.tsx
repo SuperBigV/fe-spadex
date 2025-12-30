@@ -342,6 +342,7 @@ export default function AssetList(props: IProps) {
               console.log('text-unixtime::', text);
               // 计算时间差（毫秒）
               const timeDiff = currentTime - text;
+              console.log('timeDiff-unixtime::', timeDiff);
               // 根据时间差返回对应的颜色
               if (timeDiff < 60 * 1000) {
                 // 小于60秒（60000毫秒）
@@ -910,7 +911,6 @@ export default function AssetList(props: IProps) {
               key: item.id,
               align: 'left',
               render: (text, record) => {
-                console.log(options5, record.supplier);
                 const model = options5.find((model) => model.value === record.supplier);
                 return <div>{model && model.label}</div>;
               },
@@ -1012,11 +1012,11 @@ export default function AssetList(props: IProps) {
                 // 计算时间差（毫秒）
                 const timeDiff = currentTime - text;
                 // 根据时间差返回对应的颜色
-                if (timeDiff < 60 * 1000) {
+                if (timeDiff < 100 * 1000) {
                   // 小于60秒（60000毫秒）
                   backgroundColor = GREEN_COLOR;
                   result = '正常';
-                } else if (timeDiff < 120 * 1000) {
+                } else if (timeDiff < 180 * 1000) {
                   // 小于180秒（180000毫秒）
                   backgroundColor = YELLOW_COLOR;
                   result = '异常';

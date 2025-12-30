@@ -58,7 +58,9 @@ const RackSelectModal: React.FC<RackSelectModalProps> = ({ visible, roomId, onCa
         roomId: undefined, // 不限制机房
       });
       // 过滤掉已分配到其他机房的机柜（可选：也可以显示，但需要提示）
-      const filtered = response.list.filter((rack) => !rack.roomId || rack.roomId === roomId);
+      // const filtered = response.list.filter((rack) => !rack.roomId || rack.roomId === roomId);
+      // 只显示未分配机房的机柜
+      const filtered = response.list.filter((rack) => !rack.roomId);
       setRacks(filtered);
       setTotal(filtered.length);
     } catch (error) {

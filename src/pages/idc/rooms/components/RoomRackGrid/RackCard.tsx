@@ -23,8 +23,8 @@ import './RackCard.less';
 interface RackCardProps {
   rack: Rack;
   selected: boolean;
-  onClick: () => void;
-  onDoubleClick: () => void;
+  onClick?: () => void;
+  onDoubleClick?: () => void;
   isDragging?: boolean;
 }
 
@@ -53,14 +53,14 @@ const RackCard: React.FC<RackCardProps> = ({ rack, selected, onClick, onDoubleCl
   const handleClick = (e: React.MouseEvent) => {
     // 如果正在拖拽，不触发点击事件
     if (!isDragging) {
-      onClick();
+      onClick?.();
     }
   };
 
   const handleDoubleClick = (e: React.MouseEvent) => {
     // 如果正在拖拽，不触发双击事件
     if (!isDragging) {
-      onDoubleClick();
+      onDoubleClick?.();
     }
   };
 

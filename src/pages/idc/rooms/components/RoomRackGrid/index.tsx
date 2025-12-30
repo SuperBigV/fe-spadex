@@ -15,24 +15,10 @@
  *
  */
 
-import React, { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle, useMemo } from 'react';
 import { Row, Col } from 'antd';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragOverlay,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  rectSortingStrategy,
-  useSortable,
-} from '@dnd-kit/sortable';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { getRackList, updateRoomLayout } from '@/pages/room/services';
 import { RoomLayout, Rack, RoomLayoutData } from '@/pages/room/types';
@@ -53,24 +39,50 @@ export interface RoomRackGridRef {
   refresh: () => void;
 }
 
-const RoomRackGrid = forwardRef<RoomRackGridRef, RoomRackGridProps>(({
-  roomId,
-  layout,
-  selectedRackId,
-  onRackSelect,
-  onRackDoubleClick,
-  onLayoutChange,
-  onRefresh,
-}, ref) => {
+const RoomRackGrid = forwardRef<RoomRackGridRef, RoomRackGridProps>(({ roomId, layout, selectedRackId, onRackSelect, onRackDoubleClick, onLayoutChange, onRefresh }, ref) => {
   const [racks, setRacks] = useState<Rack[]>([]);
   const [activeId, setActiveId] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // 根据布局数据排序机柜列表（按坐标排序：先按 y，再按 x）
+  const sortRacksByLayout = useCallback((racksToSort: Rack[], layoutData: RoomLayout | null): Rack[] => {
+    if (!layoutData?.rackLayouts || layoutData.rackLayouts.length === 0) {
+      return racksToSort;
+    }
+
+    // 创建 rackId 到坐标的映射
+    const rackLayoutMap = new Map<number, { x: number; y: number }>();
+    layoutData.rackLayouts.forEach((item) => {
+      rackLayoutMap.set(item.rackId, { x: item.x, y: item.y });
+    });
+
+    // 按照坐标排序：先按 y 坐标（从上到下），再按 x 坐标（从左到右）
+    return [...racksToSort].sort((a, b) => {
+      const layoutA = rackLayoutMap.get(a.id);
+      const layoutB = rackLayoutMap.get(b.id);
+
+      // 如果布局中没有，放到最后
+      if (!layoutA && !layoutB) return 0;
+      if (!layoutA) return 1;
+      if (!layoutB) return -1;
+
+      // 先按 y 坐标排序（从上到下）
+      if (layoutA.y !== layoutB.y) {
+        return layoutA.y - layoutB.y;
+      }
+      // y 坐标相同，按 x 坐标排序（从左到右）
+      return layoutA.x - layoutB.x;
+    });
+  }, []);
+
+  // 原始机柜列表（未排序）
+  const [rawRacks, setRawRacks] = useState<Rack[]>([]);
 
   // 获取机柜列表
   const fetchRacks = useCallback(async () => {
     try {
       const response = await getRackList({ roomId, page: 1, pageSize: 1000 });
-      setRacks(response.list);
+      setRawRacks(response.list);
     } catch (error) {
       console.error('获取机柜列表失败', error);
     }
@@ -79,6 +91,35 @@ const RoomRackGrid = forwardRef<RoomRackGridRef, RoomRackGridProps>(({
   useEffect(() => {
     fetchRacks();
   }, [fetchRacks]);
+
+  // 根据布局坐标排序机柜列表（使用 useMemo 确保排序逻辑正确执行）
+  const sortedRacks = useMemo(() => {
+    if (rawRacks.length === 0) {
+      return rawRacks;
+    }
+    const sorted = sortRacksByLayout(rawRacks, layout);
+    // 调试日志：验证排序是否生效
+    if (layout?.rackLayouts && layout.rackLayouts.length > 0) {
+      console.log(
+        '机柜排序结果:',
+        sorted.map((r) => ({ id: r.id, name: r.name })),
+      );
+      console.log(
+        '布局坐标:',
+        layout.rackLayouts.map((l) => ({ rackId: l.rackId, x: l.x, y: l.y })),
+      );
+    }
+    return sorted;
+  }, [rawRacks, layout, sortRacksByLayout]);
+
+  // 同步排序后的结果到 racks 状态（用于拖拽操作）
+  useEffect(() => {
+    setRacks((currentRacks) => {
+      // 只有当排序后的结果与当前 racks 不同时才更新
+      const isOrderDifferent = sortedRacks.some((rack, index) => rack.id !== currentRacks[index]?.id);
+      return isOrderDifferent ? sortedRacks : currentRacks;
+    });
+  }, [sortedRacks]);
 
   // 暴露刷新方法给父组件
   useImperativeHandle(ref, () => ({
@@ -94,7 +135,7 @@ const RoomRackGrid = forwardRef<RoomRackGridRef, RoomRackGridProps>(({
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   // 拖拽开始
@@ -111,7 +152,9 @@ const RoomRackGrid = forwardRef<RoomRackGridRef, RoomRackGridProps>(({
       const oldIndex = racks.findIndex((rack) => rack.id === active.id);
       const newIndex = racks.findIndex((rack) => rack.id === over.id);
       const newRacks = arrayMove(racks, oldIndex, newIndex);
+      // 同时更新 racks 和 rawRacks，确保排序逻辑正确
       setRacks(newRacks);
+      setRawRacks(newRacks);
 
       // 保存新的顺序到布局
       await saveRackOrder(newRacks);
@@ -122,18 +165,19 @@ const RoomRackGrid = forwardRef<RoomRackGridRef, RoomRackGridProps>(({
   const saveRackOrder = async (orderedRacks: Rack[]) => {
     try {
       // 更新布局中的机柜顺序（通过更新 rackLayouts）
+      // 根据拖拽后的新位置更新坐标，而不是保持原有坐标
       const rackLayouts = orderedRacks.map((rack, index) => {
-        // 如果已有布局数据，保持原有位置信息
-        const existingLayout = layout?.rackLayouts.find((item) => item.rackId === rack.id);
-        if (existingLayout) {
-          return existingLayout;
-        }
-        // 否则创建新的布局信息（使用索引作为位置）
+        // 查找原有布局数据，保留 rotation 信息
+        const existingLayout = layout?.rackLayouts?.find((item) => item.rackId === rack.id);
+        // 根据新的索引位置计算新的坐标（网格布局：每行6个）
+        const newX = (index % 6) * 1.5;
+        const newY = Math.floor(index / 6) * 1.5;
+
         return {
           rackId: rack.id,
-          x: (index % 6) * 1.5, // 简单的网格布局
-          y: Math.floor(index / 6) * 1.5,
-          rotation: 0,
+          x: newX,
+          y: newY,
+          rotation: existingLayout?.rotation ?? 0, // 保留原有的旋转角度
         };
       });
 
@@ -159,8 +203,8 @@ const RoomRackGrid = forwardRef<RoomRackGridRef, RoomRackGridProps>(({
           canvasX: 0,
           canvasY: 0,
           rackLayouts,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          // createdAt: new Date().toISOString(),
+          // updatedAt: new Date().toISOString(),
         });
       }
     } catch (error) {
@@ -172,12 +216,7 @@ const RoomRackGrid = forwardRef<RoomRackGridRef, RoomRackGridProps>(({
 
   return (
     <div className='room-rack-grid' ref={containerRef}>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <SortableContext items={racks.map((r) => r.id)} strategy={rectSortingStrategy}>
           <Row gutter={[16, 16]}>
             {racks.map((rack) => (
@@ -233,13 +272,7 @@ const SortableRackCard: React.FC<SortableRackCardProps> = ({ rack, selected, onC
     <Col xs={24} sm={12} md={8} lg={6} xl={4}>
       <div ref={setNodeRef} style={style} {...attributes}>
         <div {...listeners} style={{ cursor: isDragging ? 'grabbing' : 'grab' }}>
-          <RackCard
-            rack={rack}
-            selected={selected}
-            onClick={onClick}
-            onDoubleClick={onDoubleClick}
-            isDragging={isDragging}
-          />
+          <RackCard rack={rack} selected={selected} onClick={onClick} onDoubleClick={onDoubleClick} isDragging={isDragging} />
         </div>
       </div>
     </Col>
@@ -247,4 +280,3 @@ const SortableRackCard: React.FC<SortableRackCardProps> = ({ rack, selected, onC
 };
 
 export default RoomRackGrid;
-

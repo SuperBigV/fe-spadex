@@ -4,7 +4,8 @@
 
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
-import { Input } from 'antd';
+import { Input, Button } from 'antd';
+import { ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons';
 import { TopologyNode as TopologyNodeType } from '../../types';
 import { useTopology } from '../../context/TopologyContext';
 import './index.less';
@@ -18,8 +19,6 @@ const RoomNodeComponent: React.FC<NodeProps<CustomNodeData>> = ({ data, selected
   const { setSelectedItem, updateNode } = useTopology();
   const [isEditing, setIsEditing] = useState(false);
   const [nodeName, setNodeName] = useState(node.name || '机房');
-  const [isResizing, setIsResizing] = useState(false);
-  const resizeRef = useRef<HTMLDivElement>(null);
   const nodeRef = useRef<HTMLDivElement>(null);
 
   // 同步节点名称
@@ -74,36 +73,34 @@ const RoomNodeComponent: React.FC<NodeProps<CustomNodeData>> = ({ data, selected
     [handleNameBlur, node.name],
   );
 
-  // 开始调整大小
-  const handleResizeStart = useCallback(
+  // 放大节点
+  const handleZoomIn = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      setIsResizing(true);
-      const startX = e.clientX;
-      const startY = e.clientY;
-      const startWidth = node.width || 200;
-      const startHeight = node.height || 150;
+      const currentWidth = node.width || 200;
+      const currentHeight = node.height || 150;
+      const newWidth = Math.min(2000, currentWidth + 50);
+      const newHeight = Math.min(1500, currentHeight + 37.5); // 保持宽高比
 
-      const handleMouseMove = (moveEvent: MouseEvent) => {
-        const deltaX = moveEvent.clientX - startX;
-        const deltaY = moveEvent.clientY - startY;
-        const newWidth = Math.max(150, startWidth + deltaX);
-        const newHeight = Math.max(100, startHeight + deltaY);
+      updateNode(node.id, { width: newWidth, height: newHeight }).catch((error) => {
+        console.error('放大节点失败:', error);
+      });
+    },
+    [node.id, node.width, node.height, updateNode],
+  );
 
-        // 更新节点大小
-        updateNode(node.id, { width: newWidth, height: newHeight }).catch((error) => {
-          console.error('更新节点大小失败:', error);
-        });
-      };
+  // 缩小节点
+  const handleZoomOut = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const currentWidth = node.width || 200;
+      const currentHeight = node.height || 150;
+      const newWidth = Math.max(150, currentWidth - 50);
+      const newHeight = Math.max(100, currentHeight - 37.5); // 保持宽高比
 
-      const handleMouseUp = () => {
-        setIsResizing(false);
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      updateNode(node.id, { width: newWidth, height: newHeight }).catch((error) => {
+        console.error('缩小节点失败:', error);
+      });
     },
     [node.id, node.width, node.height, updateNode],
   );
@@ -133,20 +130,12 @@ const RoomNodeComponent: React.FC<NodeProps<CustomNodeData>> = ({ data, selected
       </div>
 
       {/* 矩形框 */}
-      <div
-        ref={nodeRef}
-        className={`room-node ${selected ? 'selected' : ''} ${isResizing ? 'resizing' : ''}`}
-        onClick={handleClick}
-        style={{ width, height }}
-      >
-        {/* 调整大小手柄 */}
-        {selected && (
-          <div
-            ref={resizeRef}
-            className='room-node-resize-handle'
-            onMouseDown={handleResizeStart}
-          />
-        )}
+      <div ref={nodeRef} className={`room-node ${selected ? 'selected' : ''}`} onClick={handleClick} style={{ width, height }}>
+        {/* 右上角放大缩小按钮 */}
+        <div className='room-node-zoom-controls'>
+          <Button type='text' size='small' icon={<ZoomInOutlined />} onClick={handleZoomIn} className='room-node-zoom-btn' title='放大' />
+          <Button type='text' size='small' icon={<ZoomOutOutlined />} onClick={handleZoomOut} className='room-node-zoom-btn' title='缩小' />
+        </div>
 
         {/* 连接点 - 机房节点不需要连接点，但保留以兼容 */}
         <Handle type='source' position={Position.Right} className='room-node-handle' style={{ display: 'none' }} />
@@ -157,4 +146,3 @@ const RoomNodeComponent: React.FC<NodeProps<CustomNodeData>> = ({ data, selected
 };
 
 export default RoomNodeComponent;
-

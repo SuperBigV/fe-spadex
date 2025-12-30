@@ -55,6 +55,7 @@ const RoomDetailPage: React.FC = () => {
     setLoading(true);
     try {
       const [roomData, layoutData] = await Promise.all([getRoomDetail(roomId), getRoomLayout(roomId)]);
+      console.log('layoutData', layoutData);
       setRoom(roomData);
       setLayout(layoutData);
     } catch (error) {
@@ -100,17 +101,17 @@ const RoomDetailPage: React.FC = () => {
         <PageHeader
           title={room.name}
           onBack={() => history.push('/rooms')}
-          extra={[
-            <Button key='edit' icon={<EditOutlined />}>
-              编辑
-            </Button>,
-            <Button key='statistics' icon={<BarChartOutlined />}>
-              统计
-            </Button>,
-            <Button key='settings' icon={<SettingOutlined />}>
-              设置
-            </Button>,
-          ]}
+          // extra={[
+          //   <Button key='edit' icon={<EditOutlined />}>
+          //     编辑
+          //   </Button>,
+          //   <Button key='statistics' icon={<BarChartOutlined />}>
+          //     统计
+          //   </Button>,
+          //   <Button key='settings' icon={<SettingOutlined />}>
+          //     设置
+          //   </Button>,
+          // ]}
         />
 
         <div className='room-detail-content'>

@@ -109,17 +109,18 @@ export const targetControlPost = function (data) {
   });
 };
 export const editAsset = function (id, data) {
+  console.log('data:', data);
   const n9eData = {
     ident: data.data.name,
     host_ip: data.data.ip,
     group_ids: data.data.busi,
+    ident_type: data.data.ident_type,
     tags: data.data.tags?.split(','),
     asset_id: id,
     attr: {
       device_model_id: data.data.model,
     },
   };
-  console.log('n9eData:', n9eData, 'data:', data);
   editTarget(n9eData);
   return request(`/cmdb/asset/${id}`, {
     method: RequestMethod.Put,

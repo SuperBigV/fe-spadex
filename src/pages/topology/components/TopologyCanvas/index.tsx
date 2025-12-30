@@ -18,6 +18,9 @@ import ReactFlow, {
   applyEdgeChanges,
   NodeChange,
   EdgeChange,
+  EdgeLabelRenderer,
+  getBezierPath,
+  Position,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { useTopology } from '../../context/TopologyContext';
@@ -30,6 +33,139 @@ import './index.less';
 const nodeTypes: NodeTypes = {
   topologyNode: TopologyNode,
   roomNode: RoomNode,
+};
+
+/**
+ * 简化端口名称
+ * 例如: GigabitEthernet0/0/5 -> G0/0/5
+ * 只保留第一个字母和后面的接口编号
+ */
+const simplifyPortName = (portName: string): string => {
+  if (!portName) return portName;
+  // 匹配第一个字母和后面的数字/斜杠部分
+  // 支持多种格式：GigabitEthernet0/0/5, FastEthernet0/1, Ethernet1, etc.
+  const match = portName.match(/^([A-Za-z])[A-Za-z]*([0-9/.:-]+.*)$/);
+  if (match) {
+    return `${match[1]}${match[2]}`;
+  }
+  // 如果无法匹配，返回原名称
+  return portName;
+};
+
+/**
+ * 格式化流量显示，保留2位小数
+ */
+const formatTraffic = (traffic: number): string => {
+  if (traffic === undefined || traffic === null) return '0.00Mbps';
+  return `${traffic.toFixed(2)}Mbps`;
+};
+
+/**
+ * 源端口标签组件
+ */
+interface SourcePortLabelProps {
+  port: string;
+  portIfIn: number;
+  portIfOut: number;
+  edgeColor: string;
+  labelX: number;
+  labelY: number;
+}
+
+const SourcePortLabel: React.FC<SourcePortLabelProps> = ({ port, portIfIn, portIfOut, edgeColor, labelX, labelY }) => {
+  const simplifiedPort = simplifyPortName(port);
+
+  return (
+    <div
+      className='edge-label source-port-label'
+      style={{
+        position: 'absolute',
+        left: labelX,
+        top: labelY,
+        transform: 'translate(0, -50%)',
+        marginLeft: '8px',
+        pointerEvents: 'all',
+        background: 'var(--fc-fill-2)', //透明背景
+        padding: '6px 10px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        fontWeight: 500,
+        color: edgeColor,
+        textAlign: 'center',
+        lineHeight: '1.5',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        zIndex: 10,
+      }}
+    >
+      <div style={{ marginBottom: '4px', fontWeight: 600, fontSize: '11px' }}>{simplifiedPort}</div>
+      <div
+        style={{
+          fontSize: '10px',
+          color: 'var(--fc-text-2)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2px',
+        }}
+      >
+        <div>入: {formatTraffic(portIfIn)}</div>
+        <div>出: {formatTraffic(portIfOut)}</div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * 目标端口标签组件
+ */
+interface TargetPortLabelProps {
+  port: string;
+  portIfIn: number;
+  portIfOut: number;
+  edgeColor: string;
+  labelX: number;
+  labelY: number;
+}
+
+const TargetPortLabel: React.FC<TargetPortLabelProps> = ({ port, portIfIn, portIfOut, edgeColor, labelX, labelY }) => {
+  const simplifiedPort = simplifyPortName(port);
+
+  return (
+    <div
+      className='edge-label target-port-label'
+      style={{
+        position: 'absolute',
+        left: labelX,
+        top: labelY,
+        transform: 'translate(-100%, -50%)',
+        marginRight: '8px',
+        pointerEvents: 'all',
+        background: 'var(--fc-fill-2)', //透明背景
+        padding: '6px 10px',
+        borderRadius: '4px',
+        fontSize: '12px',
+        fontWeight: 500,
+        color: edgeColor,
+        textAlign: 'center',
+        lineHeight: '1.5',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        zIndex: 10,
+      }}
+    >
+      <div style={{ marginBottom: '4px', fontWeight: 600, fontSize: '11px' }}>{simplifiedPort}</div>
+      <div
+        style={{
+          fontSize: '10px',
+          color: 'var(--fc-text-2)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2px',
+        }}
+      >
+        <div>入: {formatTraffic(portIfIn)}</div>
+        <div>出: {formatTraffic(portIfOut)}</div>
+      </div>
+    </div>
+  );
 };
 
 interface TopologyCanvasInnerProps {
@@ -102,16 +238,10 @@ const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onIni
           type: MarkerType.ArrowClosed,
           color: edgeColor,
         },
-        // 在连接线上显示端口信息
-        label: `${conn.sourcePort} → ${conn.targetPort}`,
-        labelStyle: {
-          fill: edgeColor,
-          fontWeight: 500,
-          fontSize: 12,
-        },
-        labelBgStyle: {
-          fill: 'rgba(255, 255, 255, 0.9)',
-          fillOpacity: 0.9,
+        // 存储连接数据，用于 EdgeLabelRenderer 渲染
+        data: {
+          connection: conn,
+          edgeColor,
         },
         selected: isSelected ? true : undefined,
       };
@@ -266,6 +396,71 @@ const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onIni
           }}
           maskColor='rgba(0, 0, 0, 0.1)'
         />
+        <EdgeLabelRenderer>
+          {reactFlowEdges.map((edge) => {
+            const connection = edge.data?.connection;
+            const edgeColor = edge.data?.edgeColor || 'var(--fc-text-4)';
+            if (!connection) return null;
+
+            const sourceNode = reactFlowInstance.getNode(edge.source);
+            const targetNode = reactFlowInstance.getNode(edge.target);
+
+            if (!sourceNode || !targetNode) return null;
+
+            // 获取节点尺寸，使用默认值
+            const sourceWidth = sourceNode.width || 150;
+            const sourceHeight = sourceNode.height || 50;
+            const targetWidth = targetNode.width || 150;
+            const targetHeight = targetNode.height || 50;
+
+            // 计算节点中心点位置
+            const sourceCenterX = sourceNode.position.x + sourceWidth / 2;
+            const sourceCenterY = sourceNode.position.y + sourceHeight / 2;
+            const targetCenterX = targetNode.position.x + targetWidth / 2;
+            const targetCenterY = targetNode.position.y + targetHeight / 2;
+
+            // 计算连接线的起点和终点（节点边缘位置）
+            // 源端口在节点右侧边缘，标签显示在连接线起点附近
+            const sourceX = sourceNode.position.x + sourceWidth;
+            const sourceY = sourceCenterY;
+            // 目标端口在节点左侧边缘，标签显示在连接线终点附近
+            const targetX = targetNode.position.x;
+            const targetY = targetCenterY;
+
+            // 计算连接线路径（用于获取中间点，虽然这里不需要）
+            const [edgePath] = getBezierPath({
+              sourceX: sourceCenterX,
+              sourceY: sourceCenterY,
+              targetX: targetCenterX,
+              targetY: targetCenterY,
+              sourcePosition: Position.Right,
+              targetPosition: Position.Left,
+            });
+
+            return (
+              <React.Fragment key={edge.id}>
+                {/* 源端口标签 - 显示在源节点右侧，端口位置右侧 */}
+                <SourcePortLabel
+                  port={connection.sourcePort}
+                  portIfIn={connection.sourcePortIfIn}
+                  portIfOut={connection.sourcePortIfOut}
+                  edgeColor={edgeColor}
+                  labelX={sourceX}
+                  labelY={sourceY}
+                />
+                {/* 目标端口标签 - 显示在目标节点左侧，端口位置左侧 */}
+                <TargetPortLabel
+                  port={connection.targetPort}
+                  portIfIn={connection.targetPortIfIn}
+                  portIfOut={connection.targetPortIfOut}
+                  edgeColor={edgeColor}
+                  labelX={targetX}
+                  labelY={targetY}
+                />
+              </React.Fragment>
+            );
+          })}
+        </EdgeLabelRenderer>
       </ReactFlow>
 
       {/* 端口选择模态框 */}
