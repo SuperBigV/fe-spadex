@@ -15,7 +15,7 @@
  *
  */
 import React, { useEffect, useState, useCallback, useContext } from 'react';
-import { Modal, Form, Input, Alert, Select, Table } from 'antd';
+import { Modal, Form, Input, Alert, Select, Table, Tabs } from 'antd';
 import { DatabaseOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
@@ -26,9 +26,14 @@ import { CommonStateContext } from '@/App';
 import List from './List';
 import BusinessGroup from './BusinessGroup';
 import BusinessGroup2, { getCleanNetGroupIds } from '@/components/BusinessNetGroup';
+import AlertRuleList from '@/pages/alertRules/List';
+import HistoryEvents from '@/pages/historyEvents/busiEvents';
+import BusiDetail from '@/pages/dashboard/Detail/BusiDetail';
+import { IDashboard } from '@/pages/dashboard/types';
+import { getBusiGroupsDashboards } from '@/services/dashboardV2';
 import './locale';
 import './index.less';
-
+const { TabPane } = Tabs;
 export { BusinessGroup }; // TODO 部分页面使用的老的业务组组件，后续逐步替换
 export interface ITargetProps {
   id: number;
@@ -47,10 +52,27 @@ const Targets: React.FC = () => {
   const [gids, setGids] = useState<string | undefined>(netGroup.ids);
   const [refreshFlag, setRefreshFlag] = useState(_.uniqueId('refreshFlag_'));
   const [selectedRows, setSelectedRows] = useState<ITargetProps[]>([]);
+  const [activeKey, setActiveKey] = useState('2');
+  const [dashboardId, setDashboardId] = useState<number>(0);
+  const [dashboardList, setDashboardList] = useState<IDashboard[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     setGids(netGroup.ids);
   }, [netGroup.ids]);
-
+  const onChange = (key) => {
+    switch (key) {
+      case '3':
+        getBusiGroupsDashboards(gids).then((res) => {
+          setDashboardList(res);
+        });
+        if (dashboardList.length > 0) {
+          const id = dashboardList[0].id;
+          setDashboardId(id);
+          setIsLoading(true);
+        }
+    }
+    setActiveKey(key);
+  };
   return (
     <PageLayout icon={<DatabaseOutlined />} title={t('网络设备')}>
       <div className='object-manage-page-content'>
@@ -62,7 +84,37 @@ const Targets: React.FC = () => {
             setGids(ids);
           }}
         />
-        <div
+        <Tabs activeKey={activeKey} onChange={onChange}>
+          {/* <TabPane tab='软件概览' key='1'>
+            </TabPane> */}
+          <TabPane tab='主机列表' key='2'>
+            <List
+              gids={gids}
+              selectedRows={selectedRows}
+              setSelectedRows={setSelectedRows}
+              // targetType={labelValue}
+              refreshFlag={refreshFlag}
+              setRefreshFlag={setRefreshFlag}
+              //setOperateType={setOperateType}
+            />
+          </TabPane>
+          <TabPane tab='监控态势' key='3'>
+            {/* <MonitoringStatus /> */}
+            {isLoading && <BusiDetail dashboardId={_.toString(dashboardId)} />}
+          </TabPane>
+          <TabPane tab='告警规则' key='4'>
+            {/* <AlarmRules /> */}
+            <AlertRuleList gids={gids} />
+          </TabPane>
+          {/* <TabPane tab='正在告警' key='5'>
+              <ActiveAlerts />
+            </TabPane> */}
+          <TabPane tab='告警记录' key='6'>
+            {/* <AlarmHistory /> */}
+            <HistoryEvents></HistoryEvents>
+          </TabPane>
+        </Tabs>
+        {/* <div
           className='table-area n9e-border-base'
           style={{
             height: '100%',
@@ -78,7 +130,7 @@ const Targets: React.FC = () => {
             setRefreshFlag={setRefreshFlag}
             // setOperateType={setOperateType}
           />
-        </div>
+        </div> */}
       </div>
     </PageLayout>
   );

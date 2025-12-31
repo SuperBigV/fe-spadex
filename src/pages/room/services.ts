@@ -361,7 +361,6 @@ export const getRackList = async (params: RackListParams = {}): Promise<RackList
       updatedAt: formatTime(rack.updatedAt),
     }));
   }
-
   return data;
 };
 

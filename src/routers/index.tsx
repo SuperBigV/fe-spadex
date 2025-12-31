@@ -99,7 +99,9 @@ import useIsPlus from 'plus:/components/useIsPlus';
 import IpManage from '@/pages/ipManage';
 import SSHBlacklist from '@/pages/sshSecurity/blacklist';
 import SSHCommandRecords from '@/pages/sshSecurity/commandRecords';
-
+import RoomDashboard from '@/pages/operation/roomDashboard';
+// import NetworkDashboard from '@/pages/operation/networkDashboard';
+// import SoftwareDashboard from '@/pages/operation/softwareDashboard';
 const Packages = dynamicPackages();
 let lazyRoutes = Packages.reduce((result: any, module: Entry) => {
   return (result = result.concat(module.routes));
@@ -206,7 +208,7 @@ export default function Content() {
           <Route key='recording-rules-add' exact path='/recording-rules/add/:group_id' component={RecordingRuleAdd} />,
           <Route key='recording-rules-edit' exact path='/recording-rules/edit/:id' component={RecordingRuleEdit} />,
         ]}
-
+        <Route exact path='/room-dashboard' component={RoomDashboard} />
         <Route exact path='/alert-cur-events' component={Event} />
         <Route exact path='/alert-his-events' component={historyEvents} />
         <Route exact path='/alert-cur-events/:eventId' component={EventDetail} />

@@ -26,7 +26,7 @@ import { ColumnType } from 'antd/lib/table';
 import { EyeOutlined, InfoCircleOutlined, SearchOutlined, WarningFilled, CheckCircleFilled } from '@ant-design/icons';
 import RefreshIcon from '@/components/RefreshIcon';
 import usePagination from '@/components/usePagination';
-import { getBusiGroupsAlertRules, updateAlertRules, deleteStrategy } from '@/services/warning';
+import { getBusiGroupsAlertRules, updateAlertRules, deleteStrategy, getWarningStrategy } from '@/services/warning';
 import { CommonStateContext } from '@/App';
 import Tags from '@/components/Tags';
 import { DatasourceSelect, ProdSelect } from '@/components/DatasourceSelect';
@@ -40,6 +40,9 @@ import { defaultColumnsConfigs, LOCAL_STORAGE_KEY } from './constants';
 import { priorityColor } from '@/utils/constant';
 import EventsDrawer, { Props as EventsDrawerProps } from './EventsDrawer';
 import { useLocation, useParams } from 'react-router-dom';
+import Form from '../Form';
+import { defaultValues } from '../Form/constants';
+import { generateQueryNameByIndex } from '@/components/QueryName';
 interface ListProps {
   gids?: string;
 }
@@ -85,6 +88,11 @@ export default function List(props: ListProps) {
       });
     },
   });
+  const [formModalVisible, setFormModalVisible] = useState(false);
+  const [formModalType, setFormModalType] = useState<number | undefined>(undefined); // undefined: 新增, 1: 编辑
+  const [formInitialValues, setFormInitialValues] = useState<any>(undefined);
+  const [formEditable, setFormEditable] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
   const columns: ColumnType<AlertRuleType<any>>[] = _.concat(
     [
       {
@@ -181,14 +189,15 @@ export default function List(props: ListProps) {
         },
         render: (data, record) => {
           return (
-            <Link
+            <a
               className='table-text'
-              to={{
-                pathname: `/alert-rules/edit/${record.id}`,
+              onClick={() => {
+                handleEditRule(record.id);
               }}
+              style={{ cursor: 'pointer' }}
             >
               {data}
-            </Link>
+            </a>
           );
         },
       },
@@ -488,6 +497,79 @@ export default function List(props: ListProps) {
     },
   );
 
+  const handleAddRule = () => {
+    setFormModalType(undefined);
+    let initialValues: any = undefined;
+
+    // 支持从采集测试里快速创建告警规则，目前只支持 prometheus 数据源，会携带 promql 参数
+    if (query.promql) {
+      const promqls = _.isArray(query.promql) ? query.promql : [query.promql];
+      initialValues = {
+        ...defaultValues,
+        group_id: Number(businessGroup.id),
+        rule_config: {
+          version: 'v2',
+          queries: _.map(promqls, (promql, idx) => {
+            return {
+              query: promql,
+              ref: generateQueryNameByIndex(idx),
+            };
+          }),
+          triggers: [
+            {
+              mode: 0,
+              expressions: [
+                {
+                  ref: 'A',
+                  comparisonOperator: '>',
+                  value: 0,
+                  logicalOperator: '&&',
+                },
+              ],
+              severity: 2,
+            },
+          ],
+        },
+      };
+    }
+
+    setFormInitialValues(initialValues);
+    setFormEditable(true);
+    setFormModalVisible(true);
+  };
+
+  const handleEditRule = async (id: number) => {
+    setFormLoading(true);
+    setFormModalVisible(true);
+    setFormModalType(1);
+    try {
+      const res = await getWarningStrategy(id);
+      const data = res.dat || {};
+      // 兼容 <= v6.2.x 版本 loki prod
+      if (data.prod === 'loki') {
+        data.prod = 'logging';
+      }
+      setFormInitialValues(data);
+      setFormEditable(true);
+    } catch (error) {
+      message.error('加载告警规则失败');
+      setFormModalVisible(false);
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleFormSuccess = () => {
+    setFormModalVisible(false);
+    setFormInitialValues(undefined);
+    fetchData();
+  };
+
+  const handleFormCancel = () => {
+    setFormModalVisible(false);
+    setFormInitialValues(undefined);
+  };
+
   const filteredData = filterData();
   return (
     <div className='n9e-border-base alert-rules-list-container' style={{ height: '100%', overflowY: 'auto' }}>
@@ -582,7 +664,7 @@ export default function List(props: ListProps) {
             <Button
               type='primary'
               onClick={() => {
-                history.push(`/alert-rules/add/${businessGroup.id}?busiType=${query.busiType}`);
+                handleAddRule();
               }}
               className='strategy-table-search-right-create'
             >
@@ -641,6 +723,20 @@ export default function List(props: ListProps) {
         columns={ajustColumns(columns, columnsConfigs)}
       />
       <EventsDrawer {...eventsDrawerProps} />
+      <Modal title={formModalType === 1 ? t('title') : t('title')} open={formModalVisible} onCancel={handleFormCancel} footer={null} width='90%' style={{ top: 20 }} destroyOnClose>
+        {formLoading ? (
+          <div style={{ textAlign: 'center', padding: '50px 0' }}>加载中...</div>
+        ) : (
+          <Form
+            type={formModalType}
+            initialValues={formInitialValues}
+            editable={formEditable}
+            bgid={formModalType === 1 ? formInitialValues?.group_id : businessGroup.id}
+            onSuccess={handleFormSuccess}
+            onCancel={handleFormCancel}
+          />
+        )}
+      </Modal>
     </div>
   );
 }

@@ -46,7 +46,7 @@ export const getMenuList = (t) => {
     {
       key: 'dashboard',
       icon: <IconFont type='icon-Menu_Dashboard' />,
-      label: t('态势大屏'),
+      label: t('运维态势'),
       children: [
         {
           key: '/dashboards/3',
@@ -154,6 +154,26 @@ export const getMenuList = (t) => {
         //   key: '/recording-rules',
         //   label: t('记录规则'),
         // },
+      ],
+    },
+    // 运维大屏
+    {
+      key: 'operation',
+      icon: <IconFont type='icon-Menu_LogAnalysis' />,
+      label: t('运维大屏'),
+      children: [
+        {
+          key: '/room-dashboard',
+          label: t('机房大屏'),
+        },
+        {
+          key: '/network-dashboard',
+          label: t('网络大屏'),
+        },
+        {
+          key: '/software-dashboard',
+          label: t('软件大屏'),
+        },
       ],
     },
     // {

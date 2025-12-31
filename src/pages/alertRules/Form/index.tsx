@@ -36,6 +36,8 @@ interface IProps {
   initialValues?: any;
   editable?: boolean;
   bgid?: any;
+  onSuccess?: () => void; // 成功回调，用于弹窗模式
+  onCancel?: () => void; // 取消回调，用于弹窗模式
 }
 
 export const FormStateContext = createContext({
@@ -43,7 +45,7 @@ export const FormStateContext = createContext({
 });
 
 export default function index(props: IProps) {
-  const { type, initialValues, editable = true, bgid } = props;
+  const { type, initialValues, editable = true, bgid, onSuccess, onCancel } = props;
   const history = useHistory();
   // const { bgid } = useParams<{ bgid: string }>();
   const { t } = useTranslation('alertRules');
@@ -70,7 +72,11 @@ export default function index(props: IProps) {
         message.error(res.error);
       } else {
         message.success(t('common:success.modify'));
-        history.push('/alert-rules');
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          history.push('/alert-rules');
+        }
       }
     } else {
       const { dat } = res;
@@ -82,7 +88,11 @@ export default function index(props: IProps) {
 
       if (!errorNum) {
         message.success(`${type === 2 ? t('common:success.clone') : t('common:success.add')}`);
-        history.push('/alert-rules');
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          history.push('/alert-rules');
+        }
       } else {
         message.error(t(msg));
       }
@@ -170,9 +180,13 @@ export default function index(props: IProps) {
                     >
                       {t('common:btn.save')}
                     </Button>
-                    <Link to={`/alert-rules?busiType=${query.busiType}`}>
-                      <Button>{t('common:btn.cancel')}</Button>
-                    </Link>
+                    {onCancel ? (
+                      <Button onClick={onCancel}>{t('common:btn.cancel')}</Button>
+                    ) : (
+                      <Link to={`/alert-rules?busiType=${query.busiType}`}>
+                        <Button>{t('common:btn.cancel')}</Button>
+                      </Link>
+                    )}
                   </Space>
                 )}
               </Card>

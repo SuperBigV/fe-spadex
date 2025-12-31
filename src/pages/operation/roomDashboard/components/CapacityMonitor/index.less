@@ -1,0 +1,46 @@
+.capacity-monitor-card {
+  .card-header {
+    margin-bottom: 20px;
+  }
+
+  .capsules-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .capsule-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .capsule-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .capsule-label {
+        font-size: 14px;
+        color: #a0aec0;
+        font-weight: 500;
+      }
+
+      .capsule-value {
+        font-size: 14px;
+        color: #4fd1c7;
+        font-weight: 500;
+      }
+    }
+
+    .capsule-chart {
+      width: 100%;
+      height: 50px;
+    }
+  }
+
+  .empty-placeholder {
+    color: #a0aec0;
+    text-align: center;
+    padding: 40px 0;
+  }
+}

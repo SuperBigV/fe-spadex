@@ -34,6 +34,7 @@ import { BusinessGroupSelectWithAll } from '@/components/BusinessGroup';
 import exportEvents, { downloadFile } from './exportEvents';
 import { getEvents, getEventsByIds } from './services';
 import { SeverityColor } from '../event';
+import EventDetailModal from './EventDetailModal';
 import '../event/index.less';
 import './locale';
 const GREEN_COLOR = '#3FC453';
@@ -62,6 +63,8 @@ const Event: React.FC = () => {
   const query = queryString.parse(location.search);
   const { feats, datasourceList } = useContext(CommonStateContext);
   const [refreshFlag, setRefreshFlag] = useState<string>(_.uniqueId('refresh_'));
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<string | number>();
   const history = useHistory();
   const filter = getFilter(query);
   const setFilter = (newFilter) => {
@@ -134,14 +137,17 @@ const Event: React.FC = () => {
         return (
           <>
             <div className='mb1'>
-              <Link
-                to={{
-                  pathname: `/alert-his-events/${id}`,
+              <a
+                href='#'
+                onClick={(e) => {
+                  e.preventDefault();
+                  setSelectedEventId(id);
+                  setDetailModalVisible(true);
                 }}
-                target='_blank'
+                style={{ color: '#8162DC' }}
               >
                 {title}
-              </Link>
+              </a>
             </div>
             {/* <div>
               <span
@@ -158,7 +164,24 @@ const Event: React.FC = () => {
         );
       },
     },
-
+    {
+      title: '告警对象',
+      dataIndex: 'tags',
+      width: 150,
+      render: (tags) => {
+        if (!tags || !Array.isArray(tags)) {
+          return '-';
+        }
+        // 查找 ident 标签
+        const identTag = tags.find((tag) => typeof tag === 'string' && tag.startsWith('ident='));
+        if (identTag) {
+          // 提取 ident 的值
+          const identValue = identTag.split('=').slice(1).join('=');
+          return identValue || '-';
+        }
+        return '-';
+      },
+    },
     {
       title: t('first_trigger_time'),
       dataIndex: 'first_trigger_time',
@@ -383,6 +406,16 @@ const Event: React.FC = () => {
           pageSizeOptions: ['30', '100', '200', '500'],
         }}
       />
+      {selectedEventId && (
+        <EventDetailModal
+          eventId={selectedEventId}
+          visible={detailModalVisible}
+          onCancel={() => {
+            setDetailModalVisible(false);
+            setSelectedEventId(undefined);
+          }}
+        />
+      )}
     </div>
   );
 };
