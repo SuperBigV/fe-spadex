@@ -116,7 +116,7 @@ const DeviceEditModal: React.FC<DeviceEditModalProps> = ({ visible, device, rack
   return (
     <Modal
       title={`编辑设备: ${device.deviceName}`}
-      visible={visible}
+      open={visible}
       onCancel={onCancel}
       footer={[
         <Popconfirm
@@ -124,9 +124,7 @@ const DeviceEditModal: React.FC<DeviceEditModalProps> = ({ visible, device, rack
           title={
             <div>
               <div>确定要删除此设备吗？</div>
-              <div style={{ fontSize: '12px', color: 'var(--fc-text-3)', marginTop: 4 }}>
-                删除后设备将从机柜中移除
-              </div>
+              <div style={{ fontSize: '12px', color: 'var(--fc-text-3)', marginTop: 4 }}>删除后设备将从机柜中移除</div>
             </div>
           }
           onConfirm={handleDelete}
@@ -207,4 +205,3 @@ const DeviceEditModal: React.FC<DeviceEditModalProps> = ({ visible, device, rack
 };
 
 export default DeviceEditModal;
-

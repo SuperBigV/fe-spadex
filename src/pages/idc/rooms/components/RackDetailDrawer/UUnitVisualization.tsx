@@ -138,9 +138,9 @@ const UUnitVisualization: React.FC<UUnitVisualizationProps> = ({ rack, devices, 
                     <Dropdown
                       overlay={getDeviceMenu(device)}
                       trigger={['contextMenu']}
-                      visible={contextMenuDeviceId === device.id}
-                      onVisibleChange={(visible) => {
-                        if (!visible) {
+                      open={contextMenuDeviceId === device.id}
+                      onOpenChange={(open) => {
+                        if (!open) {
                           setContextMenuVisible(null);
                           setContextMenuDeviceId(null);
                         } else {

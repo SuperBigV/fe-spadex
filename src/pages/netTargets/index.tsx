@@ -81,56 +81,49 @@ const Targets: React.FC = () => {
           showSelected={gids !== '0' && gids !== undefined}
           onSelect={(key) => {
             const ids = getCleanNetGroupIds(key);
+            console.log('ids--->', ids);
+            setActiveKey('2');
             setGids(ids);
           }}
         />
-        <Tabs activeKey={activeKey} onChange={onChange}>
-          {/* <TabPane tab='软件概览' key='1'>
-            </TabPane> */}
-          <TabPane tab='主机列表' key='2'>
-            <List
-              gids={gids}
-              selectedRows={selectedRows}
-              setSelectedRows={setSelectedRows}
-              // targetType={labelValue}
-              refreshFlag={refreshFlag}
-              setRefreshFlag={setRefreshFlag}
-              //setOperateType={setOperateType}
-            />
-          </TabPane>
-          <TabPane tab='监控态势' key='3'>
-            {/* <MonitoringStatus /> */}
-            {isLoading && <BusiDetail dashboardId={_.toString(dashboardId)} />}
-          </TabPane>
-          <TabPane tab='告警规则' key='4'>
-            {/* <AlarmRules /> */}
-            <AlertRuleList gids={gids} />
-          </TabPane>
-          {/* <TabPane tab='正在告警' key='5'>
-              <ActiveAlerts />
-            </TabPane> */}
-          <TabPane tab='告警记录' key='6'>
-            {/* <AlarmHistory /> */}
-            <HistoryEvents></HistoryEvents>
-          </TabPane>
-        </Tabs>
-        {/* <div
+        <div
           className='table-area n9e-border-base'
           style={{
             height: '100%',
             overflowY: 'auto',
           }}
         >
-          <List
-            gids={gids}
-            selectedRows={selectedRows}
-            setSelectedRows={setSelectedRows}
-            // targetType={labelValue}
-            refreshFlag={refreshFlag}
-            setRefreshFlag={setRefreshFlag}
-            // setOperateType={setOperateType}
-          />
-        </div> */}
+          <Tabs activeKey={activeKey} onChange={onChange}>
+            {/* <TabPane tab='软件概览' key='1'>
+            </TabPane> */}
+            <TabPane tab='主机列表' key='2'>
+              <List
+                gids={gids}
+                selectedRows={selectedRows}
+                setSelectedRows={setSelectedRows}
+                // targetType={labelValue}
+                refreshFlag={refreshFlag}
+                setRefreshFlag={setRefreshFlag}
+                //setOperateType={setOperateType}
+              />
+            </TabPane>
+            <TabPane tab='监控态势' key='3'>
+              {/* <MonitoringStatus /> */}
+              {isLoading && <BusiDetail dashboardId={_.toString(dashboardId)} />}
+            </TabPane>
+            <TabPane tab='告警规则' key='4'>
+              {/* <AlarmRules /> */}
+              <AlertRuleList gids={gids} />
+            </TabPane>
+            {/* <TabPane tab='正在告警' key='5'>
+              <ActiveAlerts />
+            </TabPane> */}
+            <TabPane tab='告警记录' key='6'>
+              {/* <AlarmHistory /> */}
+              <HistoryEvents></HistoryEvents>
+            </TabPane>
+          </Tabs>
+        </div>
       </div>
     </PageLayout>
   );

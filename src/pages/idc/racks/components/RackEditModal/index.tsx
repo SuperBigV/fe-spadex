@@ -97,28 +97,12 @@ const RackEditModal: React.FC<RackEditModalProps> = ({ visible, rack, onCancel, 
   };
 
   return (
-    <Modal
-      title='编辑机柜'
-      visible={visible}
-      onOk={handleSubmit}
-      onCancel={handleCancel}
-      confirmLoading={loading}
-      width={600}
-      destroyOnClose
-    >
+    <Modal title='编辑机柜' open={visible} onOk={handleSubmit} onCancel={handleCancel} confirmLoading={loading} width={600} destroyOnClose>
       <Form form={form} layout='vertical'>
-        <Form.Item
-          label='机柜名称'
-          name='name'
-          rules={[{ required: true, message: '请输入机柜名称' }]}
-        >
+        <Form.Item label='机柜名称' name='name' rules={[{ required: true, message: '请输入机柜名称' }]}>
           <Input placeholder='请输入机柜名称' />
         </Form.Item>
-        <Form.Item
-          label='机柜编号'
-          name='code'
-          rules={[{ required: true, message: '请输入机柜编号' }]}
-        >
+        <Form.Item label='机柜编号' name='code' rules={[{ required: true, message: '请输入机柜编号' }]}>
           <Input placeholder='请输入机柜编号' />
         </Form.Item>
         <Form.Item label='所属机房' name='roomId'>
@@ -140,14 +124,20 @@ const RackEditModal: React.FC<RackEditModalProps> = ({ visible, rack, onCancel, 
         <Form.Item
           label='总U数'
           name='totalU'
-          rules={[{ required: true, message: '请输入总U数' }, { type: 'number', min: 1, max: 100, message: 'U数范围：1-100' }]}
+          rules={[
+            { required: true, message: '请输入总U数' },
+            { type: 'number', min: 1, max: 100, message: 'U数范围：1-100' },
+          ]}
         >
           <InputNumber min={1} max={100} style={{ width: '100%' }} />
         </Form.Item>
         <Form.Item
           label='功率容量(KW)'
           name='powerCapacity'
-          rules={[{ required: true, message: '请输入功率容量' }, { type: 'number', min: 0.1, message: '功率容量必须大于0' }]}
+          rules={[
+            { required: true, message: '请输入功率容量' },
+            { type: 'number', min: 0.1, message: '功率容量必须大于0' },
+          ]}
         >
           <InputNumber min={0.1} style={{ width: '100%' }} />
         </Form.Item>
@@ -179,4 +169,3 @@ const RackEditModal: React.FC<RackEditModalProps> = ({ visible, rack, onCancel, 
 };
 
 export default RackEditModal;
-

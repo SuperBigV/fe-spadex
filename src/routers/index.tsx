@@ -181,7 +181,7 @@ export default function Content() {
         <Route path='/dashboards/:id' exact component={DashboardDetail} />
         <Route path='/dashboards/share/:id' component={DashboardShare} />
         <Route path='/dashboards' component={Dashboard} />
-        <Route path='/dashboards-net/' component={DashboardNet} />
+        <Route path='/dashboards-net' component={DashboardNet} exact />
         <Route path='/dashboards-net/:id' exact component={DashboardDetailNet} />
         <Route path='/dashboards-net/share/:id' component={DashboardShareNet} />
         <Route path='/chart/:ids' component={Chart} />

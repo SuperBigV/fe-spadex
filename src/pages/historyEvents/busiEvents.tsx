@@ -43,13 +43,16 @@ const YELLOW_COLOR = '#FF9919';
 const RED_COLOR = '#FF656B';
 const CACHE_KEY = 'alert_events_range';
 const getFilter = (query) => {
+  console.log('query--->', Number(query.ids));
+  // gids===NaN gids=0
+  const gids = isNaN(Number(query.ids)) ? 10000 : Number(query.ids);
   return {
     range: getDefaultValue(CACHE_KEY, {
       start: 'now-6h',
       end: 'now',
     }),
     datasource_ids: query.datasource_ids ? _.split(query.datasource_ids, ',').map(Number) : [],
-    bgid: query.ids ? Number(query.ids) : undefined,
+    bgid: gids,
     severity: query.severity ? Number(query.severity) : undefined,
     query: query.query,
     is_recovered: query.is_recovered ? Number(query.is_recovered) : undefined,
