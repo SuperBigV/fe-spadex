@@ -129,7 +129,7 @@ const RoomDashboard: React.FC = () => {
     if (refreshInterval > 0 && data.currentRoomId) {
       const timer = setInterval(() => {
         loadAllData();
-      }, refreshInterval * 1000);
+      }, refreshInterval * 60000);
       return () => clearInterval(timer);
     }
   }, [refreshInterval, data.currentRoomId]);
@@ -214,7 +214,7 @@ const RoomDashboard: React.FC = () => {
             <Button icon={isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />} onClick={handleFullscreen}>
               {isFullscreen ? '退出全屏' : '全屏'}
             </Button>
-            <Button icon={<SettingOutlined />}>设置</Button>
+            {/* <Button icon={<SettingOutlined />}>设置</Button> */}
           </Space>
         </div>
       </div>

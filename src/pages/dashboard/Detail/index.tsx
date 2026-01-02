@@ -9,6 +9,7 @@ interface URLParam {
 
 export default function index() {
   const { id } = useParams<URLParam>();
+  console.log('id--->', id);
   // 切换仪表盘是，Detail 组件需要重新加载，不然会出现数据错乱的情况
   return <Detail key={id} />;
 }

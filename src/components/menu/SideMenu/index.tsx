@@ -49,11 +49,11 @@ export const getMenuList = (t) => {
       label: t('运维态势'),
       children: [
         {
-          key: '/dashboards/3',
+          key: '/dashboards/2',
           label: t('主机态势'),
         },
         {
-          key: '/dashboards/2',
+          key: '/dashboards-net',
           label: t('网络态势'),
         },
         {

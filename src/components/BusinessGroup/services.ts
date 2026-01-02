@@ -18,12 +18,13 @@ import _ from 'lodash';
 import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 
-export function getBusiGroups(params?: { query?: string; limit?: number; all?: boolean }) {
+export function getBusiGroups(params?: { query?: string; typ: string; limit?: number; all?: boolean }) {
   return request(`/api/n9e/busi-groups`, {
     method: RequestMethod.Get,
     params: {
       ...(params || {}),
       limit: params?.limit || 5000,
+      typ: params?.typ || 'busi',
     },
   }).then((res) => {
     return _.sortBy(res.dat, 'name');

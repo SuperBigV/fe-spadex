@@ -32,6 +32,7 @@ import LoginCallbackOAuth from '@/pages/loginCallback/oauth';
 import AlertRules, { Add as AlertRuleAdd, Edit as AlertRuleEdit } from '@/pages/alertRules';
 import Profile from '@/pages/account/profile';
 import { List as Dashboard, Detail as DashboardDetail, Share as DashboardShare } from '@/pages/dashboard';
+import { List as DashboardNet, Detail as DashboardDetailNet, Share as DashboardShareNet } from '@/pages/dashboardNet';
 import { getDefaultThemeMode } from '@/pages/dashboard/Detail/utils';
 import Chart from '@/pages/chart';
 import Groups from '@/pages/user/groups';
@@ -180,6 +181,9 @@ export default function Content() {
         <Route path='/dashboards/:id' exact component={DashboardDetail} />
         <Route path='/dashboards/share/:id' component={DashboardShare} />
         <Route path='/dashboards' component={Dashboard} />
+        <Route path='/dashboards-net/' component={DashboardNet} />
+        <Route path='/dashboards-net/:id' exact component={DashboardDetailNet} />
+        <Route path='/dashboards-net/share/:id' component={DashboardShareNet} />
         <Route path='/chart/:ids' component={Chart} />
 
         <Route path='/asset-models' component={AssetModels} />

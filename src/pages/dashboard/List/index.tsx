@@ -96,7 +96,7 @@ export default function index() {
   });
 
   useEffect(() => {
-    getBusiGroups({ all: true }).then((res) => {
+    getBusiGroups({ all: true, typ: 'busi' }).then((res) => {
       setBusiGroups(res);
     });
   }, []);

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { Space, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import BusinessGroup, { getCleanBusinessGroupIds } from './';
+import { CommonStateContext } from '@/App';
 import './locale';
 
 /**
@@ -34,56 +35,59 @@ export function getDefaultGidsInDashboard(localeKey: string, businessGroup: any)
 export default function BusinessGroupSideBarWithAll(props: Props) {
   const { t } = useTranslation('BusinessGroup');
   const { gids, setGids, localeKey, showPublicOption, publicOptionLabel, allOptionLabel, allOptionTooltip } = props;
-
+  const { netGroup } = useContext(CommonStateContext);
+  useEffect(() => {
+    setGids(getDefaultGids(localeKey, netGroup));
+  }, [netGroup]);
   return (
     <BusinessGroup
-      renderHeadExtra={() => {
-        return (
-          <div>
-            <div className='n9e-biz-group-container-group-title'>{t('default_filter.title')}</div>
-            {showPublicOption && publicOptionLabel && (
-              <div
-                className={classNames({
-                  'n9e-biz-group-item': true,
-                  active: gids === '-1',
-                })}
-                onClick={() => {
-                  setGids('-1');
-                  localStorage.setItem(localeKey, '-1');
-                }}
-              >
-                {publicOptionLabel}
-              </div>
-            )}
-            <div
-              className={classNames({
-                'n9e-biz-group-item': true,
-                active: gids === '-2',
-              })}
-              onClick={() => {
-                setGids('-2');
-                localStorage.setItem(localeKey, '-2');
-              }}
-            >
-              <Space>
-                {allOptionLabel || t('default_filter.all')}
-                {allOptionTooltip && (
-                  <Tooltip title={allOptionTooltip}>
-                    <InfoCircleOutlined />
-                  </Tooltip>
-                )}
-              </Space>
-            </div>
-          </div>
-        );
-      }}
-      showSelected={gids !== '-1' && gids !== '-2'}
-      pageKey=''
-      onSelect={(key) => {
-        const ids = getCleanBusinessGroupIds(key);
-        setGids(ids);
-        localStorage.removeItem(localeKey);
-      }}
+    // renderHeadExtra={() => {
+    //   return (
+    //     <div>
+    //       <div className='n9e-biz-group-container-group-title'>{t('default_filter.title')}</div>
+    //       {showPublicOption && publicOptionLabel && (
+    //         <div
+    //           className={classNames({
+    //             'n9e-biz-group-item': true,
+    //             active: gids === '-1',
+    //           })}
+    //           onClick={() => {
+    //             setGids('-1');
+    //             localStorage.setItem(localeKey, '-1');
+    //           }}
+    //         >
+    //           {publicOptionLabel}
+    //         </div>
+    //       )}
+    //       <div
+    //         className={classNames({
+    //           'n9e-biz-group-item': true,
+    //           active: gids === '-2',
+    //         })}
+    //         onClick={() => {
+    //           setGids('-2');
+    //           localStorage.setItem(localeKey, '-2');
+    //         }}
+    //       >
+    //         <Space>
+    //           {allOptionLabel || t('default_filter.all')}
+    //           {allOptionTooltip && (
+    //             <Tooltip title={allOptionTooltip}>
+    //               <InfoCircleOutlined />
+    //             </Tooltip>
+    //           )}
+    //         </Space>
+    //       </div>
+    //     </div>
+    //   );
+    // }}
+    // showSelected={gids !== '-1' && gids !== '-2'}
+    // pageKey=''
+    // onSelect={(key) => {
+    //   const ids = getCleanBusinessGroupIds(key);
+    //   setGids(ids);
+    //   localStorage.removeItem(localeKey);
+    // }}
     />
   );
 }

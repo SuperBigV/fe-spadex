@@ -112,11 +112,11 @@ export default function index(props: IProps) {
           {renderHeadExtra && renderHeadExtra()}
           <div className='n9e-biz-group-container-group-title'>
             {title}
-            {title === t('common:business_group') && (
+            {/* {title === t('common:business_group') && (
               <Link to='/busi-groups' target='_blank'>
                 <SettingOutlined />
               </Link>
-            )}
+            )} */}
           </div>
           <Input
             className='n9e-biz-group-container-group-search'
@@ -126,6 +126,7 @@ export default function index(props: IProps) {
               const value = e.currentTarget.value;
               getBusiGroups({
                 query: value,
+                typ: 'busi',
               }).then((res) => {
                 setBusinessTreeGroupData(listToTree(res || [], siteInfo?.businessGroupSeparator));
                 setBusiGroupsListData(res || []);

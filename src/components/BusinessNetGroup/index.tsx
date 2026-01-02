@@ -36,7 +36,7 @@ export {
 interface IProps {
   onSelect?: (key: string, item: any) => void;
   title?: string;
-  pageKey: string;
+  pageKey?: string;
   renderHeadExtra?: () => React.ReactNode;
   showSelected?: boolean;
 }
@@ -149,7 +149,7 @@ export default function index(props: IProps) {
         </div>
         <div className='n9e-biz-group-container-group group-shrink'>
           {renderHeadExtra && renderHeadExtra()}
-          {pageKey === 'assetModel' && (
+          {pageKey === 'assetModel' ? (
             <div className='n9e-biz-group-container-group-title'>
               {title}
               <Button
@@ -164,6 +164,8 @@ export default function index(props: IProps) {
                 icon={<PlusSquareOutlined />}
               />
             </div>
+          ) : (
+            <div className='n9e-biz-group-container-group-title'>{title}</div>
           )}
           <Input
             className='n9e-biz-group-container-group-search'
