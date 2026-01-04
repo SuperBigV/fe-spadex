@@ -125,14 +125,14 @@ export const getMenuList = (t) => {
           key: '/topology',
           label: '网络拓扑',
         },
-        {
-          key: '/assets-analysis',
-          label: '资源分析',
-        },
-        {
-          key: '/prediction',
-          label: '趋势预测',
-        },
+        // {
+        //   key: '/assets-analysis',
+        //   label: '资源分析',
+        // },
+        // {
+        //   key: '/prediction',
+        //   label: '趋势预测',
+        // },
         {
           key: '/metric/explorer',
           label: t('指标查询'),

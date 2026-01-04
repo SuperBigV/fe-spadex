@@ -81,7 +81,6 @@ const Targets: React.FC = () => {
           showSelected={gids !== '0' && gids !== undefined}
           onSelect={(key) => {
             const ids = getCleanNetGroupIds(key);
-            console.log('ids--->', ids);
             setActiveKey('2');
             setGids(ids);
           }}

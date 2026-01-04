@@ -11,6 +11,7 @@ interface DeviceIconProps {
 }
 
 const DeviceIcon: React.FC<DeviceIconProps> = ({ type, size = 20 }) => {
+  console.log('type', type);
   // 根据设备类型返回对应图标路径
   const getIconPath = (): string => {
     if (type.includes('router')) {

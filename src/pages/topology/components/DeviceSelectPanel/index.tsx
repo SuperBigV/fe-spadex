@@ -34,6 +34,7 @@ const DeviceSelectPanel: React.FC<DeviceSelectPanelProps> = ({ addedDeviceIds })
     try {
       await addNode({
         assetId: 0, // 机房节点没有资产ID
+        deviceIcon: 'topology_room',
         position: { x: centerX + Math.random() * 200, y: centerY + Math.random() * 200 },
         deviceType: 'topology_room',
         name: roomName.trim(),
@@ -86,10 +87,11 @@ const DeviceSelectPanel: React.FC<DeviceSelectPanelProps> = ({ addedDeviceIds })
       // 在画布中心位置添加节点
       const centerX = window.innerWidth / 2 - 200;
       const centerY = window.innerHeight / 2 - 150;
-
+      console.log('deviceType:', device.deviceType);
       try {
         await addNode({
           assetId: device.id,
+          deviceIcon: device.deviceType,
           position: { x: centerX + Math.random() * 200, y: centerY + Math.random() * 200 },
           // 不传递 selectedPorts，端口在连线时选择
         });

@@ -152,6 +152,8 @@ export function addTopologyNode(viewId: number, data: NodeCreateData): Promise<T
   const requestData: any = {
     assetId: data.assetId,
     position: data.position,
+    deviceType: data.deviceType,
+    deviceIcon: data.deviceIcon,
   };
 
   // 如果是机房节点，添加特殊字段

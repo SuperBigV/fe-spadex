@@ -134,12 +134,13 @@ export interface ViewUpdateData extends ViewCreateData {}
 
 export interface NodeCreateData {
   assetId: number;
+  deviceIcon?: string;
+  deviceType?: string;
   position: {
     x: number;
     y: number;
   };
   selectedPorts?: string[]; // 选中的端口编号列表，用于连线
-  deviceType?: string; // 设备类型（用于机房等特殊节点）
   name?: string; // 节点名称（用于机房等特殊节点）
   width?: number; // 节点宽度（用于机房等可调整大小的节点）
   height?: number; // 节点高度（用于机房等可调整大小的节点）
