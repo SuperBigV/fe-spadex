@@ -3,18 +3,7 @@
  */
 
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from 'react';
-import {
-  TopologyView,
-  TopologyNode,
-  TopologyConnection,
-  MonitoredAsset,
-  Port,
-  DeviceStatus,
-  PortStatus,
-  ConnectionStatus,
-  NodeCreateData,
-  ConnectionCreateData,
-} from '../types';
+import { TopologyView, TopologyNode, TopologyConnection, MonitoredAsset, Port, DeviceStatus, PortStatus, ConnectionStatus, NodeCreateData, ConnectionCreateData } from '../types';
 import {
   getTopologyView,
   getTopologyNodes,
@@ -47,7 +36,7 @@ interface TopologyContextValue {
   addNode: (data: NodeCreateData) => Promise<void>;
   updateNode: (nodeId: string, updates: Partial<TopologyNode>) => Promise<void>;
   deleteNode: (nodeId: string) => Promise<void>;
-  updateNodesPosition: (positions: Array<{ nodeId: string; x: number; y: number }>) => Promise<void>;
+  updateNodesPosition: (positions: Array<{ nodeId: string; x: number; y: number; parentNodeId?: string }>) => Promise<void>;
   addConnection: (data: ConnectionCreateData) => Promise<void>;
   updateConnection: (connectionId: string, updates: Partial<TopologyConnection>) => Promise<void>;
   deleteConnection: (connectionId: string) => Promise<void>;
@@ -68,16 +57,16 @@ export function TopologyProvider({ children, viewId }: TopologyProviderProps) {
   const [nodes, setNodes] = useState<TopologyNode[]>([]);
   const [connections, setConnections] = useState<TopologyConnection[]>([]);
   const [selectedItem, setSelectedItem] = useState<TopologyNode | TopologyConnection | null>(null);
-  
+
   // 使用 ref 存储最新的 nodes 和 connections，避免闭包问题
   const nodesRef = useRef<TopologyNode[]>([]);
   const connectionsRef = useRef<TopologyConnection[]>([]);
-  
+
   // 同步 ref 和 state
   useEffect(() => {
     nodesRef.current = nodes;
   }, [nodes]);
-  
+
   useEffect(() => {
     connectionsRef.current = connections;
   }, [connections]);
@@ -106,11 +95,8 @@ export function TopologyProvider({ children, viewId }: TopologyProviderProps) {
     if (!viewId) return;
     setLoading(true);
     try {
-      const [nodesData, connectionsData] = await Promise.all([
-        getTopologyNodes(viewId),
-        getTopologyConnections(viewId),
-      ]);
-      
+      const [nodesData, connectionsData] = await Promise.all([getTopologyNodes(viewId), getTopologyConnections(viewId)]);
+
       // 安全地更新节点数据，确保节点不会消失
       setNodes((prevNodes) => {
         // 如果服务器返回空数组，保留现有节点（避免节点消失）
@@ -127,32 +113,37 @@ export function TopologyProvider({ children, viewId }: TopologyProviderProps) {
         if (prevNodes.length > 0) {
           const serverNodeMap = new Map(nodesData.map((n) => [n.id, n]));
           const localNodeMap = new Map(prevNodes.map((n) => [n.id, n]));
-          
+
           // 1. 先处理服务器返回的节点（更新服务器数据，但保留本地位置等信息）
           const updatedNodes = nodesData.map((serverNode) => {
             const localNode = localNodeMap.get(serverNode.id);
             if (localNode) {
-              // 保留本地节点的位置和选中端口信息
+              // 保留本地节点的位置和选中端口信息，但使用服务器的 parentNodeId（父子关系由服务器管理）
               return {
                 ...serverNode,
                 position: localNode.position || serverNode.position || { x: 0, y: 0 },
                 selectedPorts: localNode.selectedPorts || serverNode.selectedPorts,
+                parentNodeId: serverNode.parentNodeId || undefined, // 使用服务器的 parentNodeId
               };
             }
             // 新节点，确保有位置信息
             return {
               ...serverNode,
               position: serverNode.position || { x: 0, y: 0 },
+              parentNodeId: serverNode.parentNodeId || undefined,
             };
           });
-          
+
           // 2. 添加服务器数据中没有但本地存在的节点（避免节点消失）
           const missingNodes = prevNodes.filter((localNode) => !serverNodeMap.has(localNode.id));
           if (missingNodes.length > 0) {
-            console.warn(`服务器数据中缺少 ${missingNodes.length} 个本地节点，保留这些节点`, missingNodes.map(n => n.id));
+            console.warn(
+              `服务器数据中缺少 ${missingNodes.length} 个本地节点，保留这些节点`,
+              missingNodes.map((n) => n.id),
+            );
             return [...updatedNodes, ...missingNodes];
           }
-          
+
           return updatedNodes;
         }
 
@@ -160,15 +151,68 @@ export function TopologyProvider({ children, viewId }: TopologyProviderProps) {
         return nodesData.map((node) => ({
           ...node,
           position: node.position || { x: 0, y: 0 },
+          parentNodeId: node.parentNodeId || undefined,
         }));
       });
-      
-      setConnections(connectionsData || []);
+
+      // 拓扑数据加载后立即更新连接状态
+      if (connectionsData && connectionsData.length > 0) {
+        try {
+          const connectionIds = connectionsData.map((c) => c.id);
+          const connStatuses = await getConnectionStatus(connectionIds);
+          setConnectionStatusMap(connStatuses);
+
+          // 合并连接数据和状态，一次性设置
+          const connectionsWithStatus = connectionsData.map((conn) => {
+            const status = connStatuses[conn.id];
+            return status ? { ...conn, status: status.status } : conn;
+          });
+          setConnections(connectionsWithStatus);
+        } catch (error) {
+          console.error('获取连接状态失败:', error);
+          // 即使获取状态失败，也设置连接数据
+          setConnections(connectionsData || []);
+        }
+      } else {
+        setConnections([]);
+      }
     } catch (error) {
       console.error('刷新拓扑数据失败:', error);
       // 错误时不清空节点，避免节点消失
     } finally {
       setLoading(false);
+    }
+  }, [viewId]);
+
+  // 刷新拓扑连接（更新连接数据并立即更新连接状态）
+  const refreshConnections = useCallback(async () => {
+    if (!viewId) return;
+    try {
+      const connectionsData = await getTopologyConnections(viewId);
+      if (!connectionsData || connectionsData.length === 0) {
+        setConnections([]);
+        return;
+      }
+
+      // 立即获取并更新连接状态
+      try {
+        const connectionIds = connectionsData.map((c) => c.id);
+        const connStatuses = await getConnectionStatus(connectionIds);
+        setConnectionStatusMap(connStatuses);
+
+        // 合并连接数据和状态，一次性设置
+        const connectionsWithStatus = connectionsData.map((conn) => {
+          const status = connStatuses[conn.id];
+          return status ? { ...conn, status: status.status } : conn;
+        });
+        setConnections(connectionsWithStatus);
+      } catch (error) {
+        console.error('获取连接状态失败:', error);
+        // 即使获取状态失败，也设置连接数据
+        setConnections(connectionsData);
+      }
+    } catch (error) {
+      console.error('刷新拓扑连接失败:', error);
     }
   }, [viewId]);
 
@@ -241,19 +285,22 @@ export function TopologyProvider({ children, viewId }: TopologyProviderProps) {
   }, [viewId]);
 
   // 加载节点端口信息
-  const loadNodePorts = useCallback(async (assetId: number) => {
-    if (nodePortsMap[assetId]) return;
+  const loadNodePorts = useCallback(
+    async (assetId: number) => {
+      if (nodePortsMap[assetId]) return;
 
-    try {
-      const ports = await getAssetPorts(assetId);
-      setNodePortsMap((prev) => ({
-        ...prev,
-        [assetId]: ports,
-      }));
-    } catch (error) {
-      console.error(`加载端口信息失败 (assetId: ${assetId}):`, error);
-    }
-  }, [nodePortsMap]);
+      try {
+        const ports = await getAssetPorts(assetId);
+        setNodePortsMap((prev) => ({
+          ...prev,
+          [assetId]: ports,
+        }));
+      } catch (error) {
+        console.error(`加载端口信息失败 (assetId: ${assetId}):`, error);
+      }
+    },
+    [nodePortsMap],
+  );
 
   // 添加节点
   const addNode = useCallback(
@@ -275,18 +322,15 @@ export function TopologyProvider({ children, viewId }: TopologyProviderProps) {
   );
 
   // 更新节点
-  const updateNode = useCallback(
-    async (nodeId: string, updates: Partial<TopologyNode>) => {
-      try {
-        await updateTopologyNode(nodeId, updates);
-        setNodes((prev) => prev.map((n) => (n.id === nodeId ? { ...n, ...updates } : n)));
-      } catch (error) {
-        console.error('更新节点失败:', error);
-        throw error;
-      }
-    },
-    [],
-  );
+  const updateNode = useCallback(async (nodeId: string, updates: Partial<TopologyNode>) => {
+    try {
+      await updateTopologyNode(nodeId, updates);
+      setNodes((prev) => prev.map((n) => (n.id === nodeId ? { ...n, ...updates } : n)));
+    } catch (error) {
+      console.error('更新节点失败:', error);
+      throw error;
+    }
+  }, []);
 
   // 删除节点
   const deleteNode = useCallback(
@@ -308,28 +352,39 @@ export function TopologyProvider({ children, viewId }: TopologyProviderProps) {
 
   // 批量更新节点位置（先更新本地状态，再异步保存到服务器，确保状态一致）
   const updateNodesPosition = useCallback(
-    async (positions: Array<{ nodeId: string; x: number; y: number }>) => {
+    async (positions: Array<{ nodeId: string; x: number; y: number; parentNodeId?: string }>) => {
       if (!viewId) return;
-      
+
       // 1. 先立即更新本地状态（同步操作，立即反映在UI，确保 ReactFlow 和 Context 状态同步）
       setNodes((prev) =>
         prev.map((node) => {
           const pos = positions.find((p) => p.nodeId === node.id);
           if (pos) {
-            return { ...node, position: { x: pos.x, y: pos.y } };
+            // 更新位置，如果提供了 parentNodeId 也更新
+            return {
+              ...node,
+              position: { x: pos.x, y: pos.y },
+              ...(pos.parentNodeId !== undefined && { parentNodeId: pos.parentNodeId }),
+            };
           }
           return node;
         }),
       );
 
       // 2. 然后异步保存到服务器（不阻塞UI，失败也不影响本地状态）
-      updateNodePositions(viewId, positions.map((p) => ({ nodeId: p.nodeId, x: p.x, y: p.y }))).catch(
-        (error) => {
-          console.error('保存节点位置到服务器失败:', error);
-          // 注意：这里不抛出错误，因为本地状态已经更新
-          // 如果需要在失败时回滚，可以在这里实现
-        },
-      );
+      updateNodePositions(
+        viewId,
+        positions.map((p) => ({
+          nodeId: p.nodeId,
+          x: p.x,
+          y: p.y,
+          parentNodeId: p.parentNodeId,
+        })),
+      ).catch((error) => {
+        console.error('保存节点位置到服务器失败:', error);
+        // 注意：这里不抛出错误，因为本地状态已经更新
+        // 如果需要在失败时回滚，可以在这里实现
+      });
     },
     [viewId],
   );
@@ -352,18 +407,15 @@ export function TopologyProvider({ children, viewId }: TopologyProviderProps) {
   );
 
   // 更新连接
-  const updateConnection = useCallback(
-    async (connectionId: string, updates: Partial<TopologyConnection>) => {
-      try {
-        await updateTopologyConnection(connectionId, updates);
-        setConnections((prev) => prev.map((c) => (c.id === connectionId ? { ...c, ...updates } : c)));
-      } catch (error) {
-        console.error('更新连接失败:', error);
-        throw error;
-      }
-    },
-    [],
-  );
+  const updateConnection = useCallback(async (connectionId: string, updates: Partial<TopologyConnection>) => {
+    try {
+      await updateTopologyConnection(connectionId, updates);
+      setConnections((prev) => prev.map((c) => (c.id === connectionId ? { ...c, ...updates } : c)));
+    } catch (error) {
+      console.error('更新连接失败:', error);
+      throw error;
+    }
+  }, []);
 
   // 删除连接
   const deleteConnection = useCallback(
@@ -405,6 +457,18 @@ export function TopologyProvider({ children, viewId }: TopologyProviderProps) {
     return () => clearInterval(interval);
   }, [nodes.length, refreshStatus]);
 
+  // 定时刷新拓扑连接（30秒）
+  useEffect(() => {
+    if (!viewId || nodes.length === 0) return;
+
+    refreshConnections();
+    const interval = setInterval(() => {
+      refreshConnections();
+    }, 30000); // 30秒
+
+    return () => clearInterval(interval);
+  }, [viewId, nodes.length, refreshConnections]);
+
   const value: TopologyContextValue = {
     currentView,
     nodes,
@@ -439,4 +503,3 @@ export function useTopology() {
   }
   return context;
 }
-

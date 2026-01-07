@@ -173,9 +173,49 @@ interface TopologyCanvasInnerProps {
 }
 
 const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onInitCallback }) => {
-  const { nodes: topologyNodes, connections: topologyConnections, selectedItem, setSelectedItem, updateNodesPosition, addConnection } = useTopology();
+  const { nodes: topologyNodes, connections: topologyConnections, selectedItem, setSelectedItem, updateNodesPosition, addConnection, updateNode } = useTopology();
   const reactFlowInstance = useReactFlow();
   const hasInitializedFitView = useRef(false);
+
+  // 检测节点是否在机房组内（通过位置判断）
+  const isNodeInsideRoom = useCallback((node: Node, roomNodes: Node[]): string | undefined => {
+    if (!node.position) return undefined;
+
+    for (const roomNode of roomNodes) {
+      if (!roomNode.position || !roomNode.style) continue;
+
+      const roomWidth = (roomNode.style as any).width || 200;
+      const roomHeight = (roomNode.style as any).height || 150;
+
+      let nodeX: number;
+      let nodeY: number;
+      let nodeWidth = (node.width as number) || 150;
+      let nodeHeight = (node.height as number) || 50;
+
+      // 如果节点已经有 parentId，说明是子节点，位置是相对坐标
+      if (node.parentId === roomNode.id) {
+        // 相对坐标：直接使用节点位置
+        nodeX = node.position.x;
+        nodeY = node.position.y;
+      } else {
+        // 绝对坐标：需要相对于机房组计算
+        nodeX = node.position.x - roomNode.position.x;
+        nodeY = node.position.y - roomNode.position.y;
+      }
+
+      // 检查节点是否在机房组范围内（留一些边距）
+      const margin = 5;
+      const nodeRight = nodeX + nodeWidth;
+      const nodeBottom = nodeY + nodeHeight;
+
+      // 检查节点是否完全在机房组内（考虑边距）
+      if (nodeX >= margin && nodeY >= margin && nodeRight <= roomWidth - margin && nodeBottom <= roomHeight - margin) {
+        return roomNode.id;
+      }
+    }
+
+    return undefined;
+  }, []);
 
   // 端口选择模态框状态
   const [portSelectVisible, setPortSelectVisible] = useState(false);
@@ -186,19 +226,56 @@ const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onIni
   const [reactFlowNodes, setReactFlowNodes] = useState<Node[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
 
+  // 使用 ref 存储当前的 React Flow 节点状态，避免在同步时丢失位置信息
+  const reactFlowNodesRef = useRef<Node[]>([]);
+
+  // 同步 ref
+  useEffect(() => {
+    reactFlowNodesRef.current = reactFlowNodes;
+  }, [reactFlowNodes]);
+
   // 同步 Context 中的节点数据到 ReactFlow 内部状态
   useEffect(() => {
     if (!topologyNodes || topologyNodes.length === 0) {
       setReactFlowNodes([]);
       return;
     }
-    const newNodes = topologyNodes.map((node) => {
+
+    // React Flow Sub-Flows 要求：父节点必须在子节点之前
+    // 先分离出父节点（机房节点）和子节点（设备节点）
+    const parentNodes = topologyNodes.filter((node) => node.deviceType === 'topology_room');
+    const childNodes = topologyNodes.filter((node) => node.deviceType !== 'topology_room');
+    // 合并：父节点在前，子节点在后
+    const sortedNodes = [...parentNodes, ...childNodes];
+
+    const newNodes = sortedNodes.map((node) => {
+      // 先尝试从当前的 React Flow 状态中获取节点（保留位置等信息）
+      const existingNode = reactFlowNodesRef.current.find((n) => n.id === node.id);
+
       // 根据设备类型选择节点类型
       const nodeType = node.deviceType === 'topology_room' ? 'roomNode' : 'topologyNode';
-      return {
+
+      // 如果有现有节点且位置存在，优先使用现有位置（避免点击时位置丢失）
+      // 但只有在 parentId 匹配时才使用（避免使用错误的位置）
+      let nodePosition = node.position || { x: 0, y: 0 };
+      if (existingNode && existingNode.position) {
+        if (node.parentNodeId) {
+          // 对于子节点，如果现有节点有 parentId 且匹配，使用现有位置
+          if (existingNode.parentId === node.parentNodeId) {
+            nodePosition = existingNode.position;
+          }
+        } else {
+          // 对于根节点，如果现有节点也没有 parentId，使用现有位置
+          if (!existingNode.parentId) {
+            nodePosition = existingNode.position;
+          }
+        }
+      }
+
+      const reactFlowNode: Node = {
         id: node.id,
         type: nodeType,
-        position: node.position || { x: 0, y: 0 },
+        position: nodePosition,
         data: { node },
         selected: selectedItem && (selectedItem as any).id === node.id ? true : undefined,
         // 对于机房节点，设置宽度和高度
@@ -209,6 +286,53 @@ const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onIni
           },
         }),
       };
+
+      // Sub-Flows 功能：设置父子关系
+      if (node.parentNodeId) {
+        // 子节点：设置 parentId，但不设置 extent，允许节点可以拖出组
+        reactFlowNode.parentId = node.parentNodeId;
+        // 注意：不设置 extent: 'parent'，允许节点可以自由拖出机房组范围
+
+        // 确保子节点的位置是相对坐标
+        // 如果后端返回的是绝对坐标，需要转换为相对坐标
+        if (node.position) {
+          // 查找父节点
+          const parentNode = sortedNodes.find((n) => n.id === node.parentNodeId);
+          if (parentNode && parentNode.position) {
+            // 检查位置是否是相对坐标
+            // 相对坐标应该小于父节点的宽高，且通常为正值
+            const roomWidth = parentNode.width || 200;
+            const roomHeight = parentNode.height || 150;
+
+            // 判断：如果位置值明显大于父节点尺寸，或者位置值接近父节点的绝对坐标，可能是绝对坐标
+            // 使用更严格的判断：如果位置值大于父节点尺寸的 1.5 倍，或者位置值大于 1000，可能是绝对坐标
+            const isLikelyAbsolute = node.position.x > roomWidth * 1.5 || node.position.y > roomHeight * 1.5 || node.position.x > 1000 || node.position.y > 1000;
+
+            if (isLikelyAbsolute) {
+              const relativeX = node.position.x - parentNode.position.x;
+              const relativeY = node.position.y - parentNode.position.y;
+              // 确保相对坐标为正值（在父节点范围内）
+              if (relativeX >= 0 && relativeY >= 0 && relativeX < roomWidth && relativeY < roomHeight) {
+                reactFlowNode.position = { x: relativeX, y: relativeY };
+              } else {
+                // 如果转换后的坐标不合理，保持原位置（可能是数据问题）
+                reactFlowNode.position = { x: node.position.x, y: node.position.y };
+              }
+            } else {
+              // 已经是相对坐标，直接使用
+              reactFlowNode.position = { x: node.position.x, y: node.position.y };
+            }
+          } else {
+            // 找不到父节点，保持原位置
+            reactFlowNode.position = { x: node.position.x, y: node.position.y };
+          }
+        }
+      } else if (node.deviceType === 'topology_room') {
+        // 机房节点作为组节点，不需要特殊设置，但确保没有 parentId
+        reactFlowNode.parentId = undefined;
+      }
+
+      return reactFlowNode;
     });
     setReactFlowNodes(newNodes);
   }, [topologyNodes, selectedItem]);
@@ -228,7 +352,7 @@ const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onIni
         source: conn.sourceNodeId,
         target: conn.targetNodeId,
         // 使用默认 Handle，不需要指定 sourceHandle 和 targetHandle
-        type: 'smoothstep',
+        type: 'straight',
         animated: conn.status === 'up',
         style: {
           stroke: edgeColor,
@@ -244,6 +368,7 @@ const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onIni
           edgeColor,
         },
         selected: isSelected ? true : undefined,
+        selectable: true, // 允许边被点击和选择
       };
     });
     setReactFlowEdges(newEdges);
@@ -266,9 +391,34 @@ const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onIni
     }
   }, [reactFlowNodes.length, reactFlowInstance]);
 
+  // 初始化 previousNodeStates
+  useEffect(() => {
+    topologyNodes.forEach((node) => {
+      if (node.deviceType !== 'topology_room') {
+        previousNodeStates.current.set(node.id, { parentId: node.parentNodeId });
+      }
+    });
+  }, [topologyNodes]);
+
+  // 组件卸载时清理定时器
+  useEffect(() => {
+    return () => {
+      if (parentUpdateTimer.current) {
+        clearTimeout(parentUpdateTimer.current);
+      }
+    };
+  }, []);
+
+  // 使用 ref 存储待处理的 parentId 更新，避免重复调用
+  const pendingParentUpdates = useRef<Map<string, { parentId: string | undefined; position?: { x: number; y: number } }>>(new Map());
+  const parentUpdateTimer = useRef<NodeJS.Timeout | null>(null);
+  const previousNodeStates = useRef<Map<string, { parentId?: string }>>(new Map());
+
   // 节点位置变化处理
   // 使用 applyNodeChanges 来正确处理 ReactFlow 的内部状态变化
   const onNodesChange = useCallback((changes: NodeChange[]) => {
+    // 只应用变化，不在这里处理坐标转换，避免循环
+    // 坐标转换和父子关系更新在 onNodeDragStop 中处理
     setReactFlowNodes((nds) => applyNodeChanges(changes, nds));
   }, []);
 
@@ -276,19 +426,203 @@ const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onIni
   const onNodeDragStop = useCallback(
     (event: React.MouseEvent, node: Node) => {
       if (node.position) {
-        // 拖动结束后保存位置（会先更新本地状态，再异步保存到服务器）
-        updateNodesPosition([
+        // 获取当前所有节点的最新状态
+        const currentNode = reactFlowInstance.getNode(node.id);
+        if (!currentNode) return;
+
+        const topologyNode = topologyNodes.find((n) => n.id === node.id);
+        if (!topologyNode) return;
+
+        // 对于设备节点，检测是否在机房组内
+        let newParentId: string | undefined = currentNode.parentId || undefined;
+        if (topologyNode.deviceType !== 'topology_room') {
+          // 获取所有机房节点（从 React Flow 实例获取最新状态）
+          const allNodes = reactFlowInstance.getNodes();
+          const roomNodes = allNodes.filter((n) => {
+            const tn = topologyNodes.find((tn) => tn.id === n.id);
+            return tn && tn.deviceType === 'topology_room';
+          });
+
+          // 检测节点是否在机房组内（支持相对坐标和绝对坐标）
+          const detectedParentId = isNodeInsideRoom(currentNode, roomNodes);
+
+          if (detectedParentId) {
+            // 节点在机房组内
+            const wasInsideGroup = !!currentNode.parentId || !!topologyNode.parentNodeId;
+            newParentId = detectedParentId;
+
+            if (!wasInsideGroup) {
+              // 节点刚被拖入组，需要转换坐标
+              console.log(`检测到节点 ${node.id} 被拖入机房组 ${detectedParentId}`);
+
+              // 获取父节点（机房组）信息
+              const parentRoomNode = roomNodes.find((n) => n.id === detectedParentId);
+              if (parentRoomNode && parentRoomNode.position && currentNode.position) {
+                // 将绝对坐标转换为相对坐标
+                const relativeX = currentNode.position.x - parentRoomNode.position.x;
+                const relativeY = currentNode.position.y - parentRoomNode.position.y;
+
+                console.log(`节点位置转换: 绝对(${currentNode.position.x}, ${currentNode.position.y}) -> 相对(${relativeX}, ${relativeY})`);
+
+                // 更新节点位置为相对坐标
+                currentNode.position = { x: relativeX, y: relativeY };
+                node.position = { x: relativeX, y: relativeY };
+              }
+
+              // 设置 parentId（不设置 extent，允许节点可以拖出组）
+              currentNode.parentId = detectedParentId;
+              // 注意：不设置 extent: 'parent'，允许节点可以自由拖出机房组范围
+            } else if (currentNode.parentId !== detectedParentId) {
+              // 节点从一个组移动到另一个组
+              console.log(`节点 ${node.id} 从组 ${currentNode.parentId} 移动到组 ${detectedParentId}`);
+
+              const parentRoomNode = roomNodes.find((n) => n.id === detectedParentId);
+              if (parentRoomNode && parentRoomNode.position && currentNode.position) {
+                // 如果之前有 parentId，需要先转换为绝对坐标，再转换为新组的相对坐标
+                const oldParentNode = roomNodes.find((n) => n.id === currentNode.parentId);
+                let absoluteX = currentNode.position.x;
+                let absoluteY = currentNode.position.y;
+
+                if (oldParentNode && oldParentNode.position) {
+                  // 转换为绝对坐标
+                  absoluteX = currentNode.position.x + oldParentNode.position.x;
+                  absoluteY = currentNode.position.y + oldParentNode.position.y;
+                }
+
+                // 转换为新组的相对坐标
+                const relativeX = absoluteX - parentRoomNode.position.x;
+                const relativeY = absoluteY - parentRoomNode.position.y;
+
+                currentNode.position = { x: relativeX, y: relativeY };
+                node.position = { x: relativeX, y: relativeY };
+              }
+
+              currentNode.parentId = detectedParentId;
+              // 注意：不设置 extent: 'parent'，允许节点可以自由拖出机房组范围
+            } else {
+              // 节点仍在组内，只是位置更新（相对坐标）
+              // 注意：不限制位置范围，允许节点可以拖出组（在拖动结束时检测）
+              console.log(`节点 ${node.id} 在机房组 ${detectedParentId} 内移动`);
+            }
+          } else {
+            // 节点不在任何机房组内，需要解除关联
+            const hadParentId = !!currentNode.parentId || !!topologyNode.parentNodeId;
+            newParentId = undefined;
+
+            if (hadParentId) {
+              console.log(`节点 ${node.id} 被拖出机房组，解除关联关系`);
+
+              // 如果之前有 parentId，需要将相对坐标转换为绝对坐标
+              if (currentNode.parentId && currentNode.position) {
+                const oldParentNode = roomNodes.find((n) => n.id === currentNode.parentId);
+                if (oldParentNode && oldParentNode.position) {
+                  // 转换为绝对坐标
+                  const absoluteX = currentNode.position.x + oldParentNode.position.x;
+                  const absoluteY = currentNode.position.y + oldParentNode.position.y;
+
+                  console.log(`节点位置转换: 相对(${currentNode.position.x}, ${currentNode.position.y}) -> 绝对(${absoluteX}, ${absoluteY})`);
+
+                  currentNode.position = { x: absoluteX, y: absoluteY };
+                  node.position = { x: absoluteX, y: absoluteY };
+                }
+              }
+
+              // 移除 React Flow 节点的 parentId 和 extent
+              delete currentNode.parentId;
+              delete currentNode.extent;
+
+              // 更新内部状态（包含位置和 parentId 的移除）
+              setReactFlowNodes((nds) =>
+                nds.map((n) => {
+                  if (n.id === node.id) {
+                    return {
+                      ...n,
+                      position: currentNode.position || n.position,
+                      parentId: undefined,
+                      extent: undefined,
+                    };
+                  }
+                  return n;
+                }),
+              );
+            } else {
+              console.log(`节点 ${node.id} 不在任何机房组内`);
+            }
+          }
+        }
+
+        const oldParentId = topologyNode.parentNodeId;
+        const parentIdChanged = newParentId !== oldParentId;
+
+        // 如果 parentId 发生变化，需要更新节点的父子关系
+        if (parentIdChanged && topologyNode.deviceType !== 'topology_room') {
+          const action = newParentId ? '拖入' : '拖出';
+          console.log(`节点 ${node.id} 被${action}机房组:`, {
+            old: oldParentId || '无',
+            new: newParentId || '无',
+          });
+
+          // 设备节点被拖入或拖出组，需要调用更新接口
+          // 注意：
+          // 1. 当拖入组时，position 应该是相对坐标（已经在上面转换）
+          // 2. 当拖出组时，使用 null 表示解除关联，后端会将相对坐标转换为绝对坐标
+          const finalPosition = currentNode.position || node.position;
+          updateNode(node.id, {
+            parentNodeId: newParentId ? newParentId : (null as any), // 使用 null 表示从组内移除
+            position: { x: finalPosition.x, y: finalPosition.y },
+          })
+            .then(() => {
+              console.log(`节点 ${node.id} 父子关系更新成功（${action}机房组）`);
+            })
+            .catch((error) => {
+              console.error(`更新节点 ${node.id} 父子关系失败:`, error);
+            });
+        }
+
+        // 构建位置更新列表
+        // 注意：如果节点被拖入组，使用转换后的相对坐标
+        const finalNodePosition = currentNode.position || node.position;
+        const positionUpdates: Array<{ nodeId: string; x: number; y: number; parentNodeId?: string }> = [
           {
             nodeId: node.id,
-            x: node.position.x,
-            y: node.position.y,
+            x: finalNodePosition.x,
+            y: finalNodePosition.y,
+            parentNodeId: newParentId || topologyNode.parentNodeId, // 使用新的 parentId（如果变化了）
           },
-        ]).catch((error) => {
-          console.error('保存节点位置失败:', error);
-        });
+        ];
+
+        // 如果是父节点（机房组）被拖动，需要同步更新所有子节点的位置
+        if (topologyNode.deviceType === 'topology_room') {
+          // 获取所有节点的最新状态（从 React Flow 实例获取）
+          const allNodes = reactFlowInstance.getNodes();
+          const roomNode = allNodes.find((n) => n.id === node.id);
+
+          // 查找所有子节点（通过 parentId 匹配）
+          const childNodes = allNodes.filter((n) => n.parentId === node.id);
+
+          console.log(`机房组 ${node.id} 被拖动，找到 ${childNodes.length} 个子节点`);
+
+          childNodes.forEach((childNode) => {
+            if (childNode.position) {
+              positionUpdates.push({
+                nodeId: childNode.id,
+                x: childNode.position.x,
+                y: childNode.position.y,
+                parentNodeId: childNode.parentId,
+              });
+            }
+          });
+        }
+
+        // 批量更新位置（会先更新本地状态，再异步保存到服务器）
+        if (positionUpdates.length > 0) {
+          updateNodesPosition(positionUpdates).catch((error) => {
+            console.error('保存节点位置失败:', error);
+          });
+        }
       }
     },
-    [updateNodesPosition],
+    [updateNodesPosition, updateNode, reactFlowInstance, topologyNodes, reactFlowNodes, isNodeInsideRoom],
   );
 
   // 边变化处理
@@ -351,6 +685,8 @@ const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onIni
   // 边点击处理
   const onEdgeClick = useCallback(
     (event: React.MouseEvent, edge: Edge) => {
+      // 阻止事件冒泡，避免触发其他副作用
+      event.stopPropagation();
       const connection = topologyConnections.find((c) => c.id === edge.id);
       if (connection) {
         setSelectedItem(connection);
@@ -374,7 +710,7 @@ const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onIni
         nodesDraggable={true}
         nodesConnectable={true}
         elementsSelectable={true}
-        panOnDrag={[1, 2]}
+        panOnDrag={[0, 1, 2]}
         zoomOnScroll={true}
         zoomOnPinch={true}
         zoomOnDoubleClick={false}
@@ -413,18 +749,49 @@ const TopologyCanvasInner: React.FC<TopologyCanvasInnerProps> = ({ onInit: onIni
             const targetWidth = targetNode.width || 150;
             const targetHeight = targetNode.height || 50;
 
-            // 计算节点中心点位置
-            const sourceCenterX = sourceNode.position.x + sourceWidth / 2;
-            const sourceCenterY = sourceNode.position.y + sourceHeight / 2;
-            const targetCenterX = targetNode.position.x + targetWidth / 2;
-            const targetCenterY = targetNode.position.y + targetHeight / 2;
+            // 将节点的相对坐标转换为绝对坐标（如果节点有 parentId）
+            // 辅助函数：将相对坐标转换为绝对坐标
+            const getAbsolutePosition = (node: Node, visited = new Set<string>()): { x: number; y: number } => {
+              // 防止循环引用
+              if (visited.has(node.id)) {
+                return { x: node.position.x, y: node.position.y };
+              }
+              visited.add(node.id);
 
-            // 计算连接线的起点和终点（节点边缘位置）
+              let absoluteX = node.position.x;
+              let absoluteY = node.position.y;
+
+              // 如果节点有 parentId，需要将相对坐标转换为绝对坐标
+              if (node.parentId) {
+                const allNodes = reactFlowInstance.getNodes();
+                const parentNode = allNodes.find((n) => n.id === node.parentId);
+                if (parentNode) {
+                  // 递归处理：如果父节点也有父节点，需要继续向上查找
+                  const parentAbsolutePos = getAbsolutePosition(parentNode, visited);
+                  absoluteX = node.position.x + parentAbsolutePos.x;
+                  absoluteY = node.position.y + parentAbsolutePos.y;
+                }
+              }
+
+              return { x: absoluteX, y: absoluteY };
+            };
+
+            // 获取源节点和目标节点的绝对坐标
+            const sourceAbsolutePos = getAbsolutePosition(sourceNode);
+            const targetAbsolutePos = getAbsolutePosition(targetNode);
+
+            // 计算节点中心点位置（使用绝对坐标）
+            const sourceCenterX = sourceAbsolutePos.x + sourceWidth / 2;
+            const sourceCenterY = sourceAbsolutePos.y + sourceHeight / 2;
+            const targetCenterX = targetAbsolutePos.x + targetWidth / 2;
+            const targetCenterY = targetAbsolutePos.y + targetHeight / 2;
+
+            // 计算连接线的起点和终点（节点边缘位置，使用绝对坐标）
             // 源端口在节点右侧边缘，标签显示在连接线起点附近
-            const sourceX = sourceNode.position.x + sourceWidth;
+            const sourceX = sourceAbsolutePos.x + sourceWidth;
             const sourceY = sourceCenterY;
             // 目标端口在节点左侧边缘，标签显示在连接线终点附近
-            const targetX = targetNode.position.x;
+            const targetX = targetAbsolutePos.x;
             const targetY = targetCenterY;
 
             // 计算连接线路径（用于获取中间点，虽然这里不需要）

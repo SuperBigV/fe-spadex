@@ -38,5 +38,29 @@
     background: var(--fc-fill-2);
     border: 1px solid var(--fc-border-color);
   }
+
+  // 确保边可以点击，即使在机房组内
+  .react-flow__edge {
+    pointer-events: all; // 确保边可以接收点击事件
+    cursor: pointer; // 鼠标悬停时显示手型光标
+
+    // 增加边的交互区域（通过增加 stroke-width 的视觉区域）
+    path {
+      pointer-events: all;
+    }
+
+    // 选中状态的边
+    &.selected {
+      path {
+        stroke-width: 3; // 选中时稍微加粗
+      }
+    }
+  }
+
+  // 确保边的标签不会阻挡边的点击
+  .edge-label {
+    pointer-events: all;
+    z-index: 10;
+  }
 }
 

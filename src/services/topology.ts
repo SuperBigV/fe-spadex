@@ -24,6 +24,8 @@ import {
   AssetListParams,
   MonitoredAssetListResponse,
   PositionUpdate,
+  SetNodeParentData,
+  BatchSetNodeParentData,
 } from '@/pages/topology/types';
 
 // ==================== 拓扑视图相关API ====================
@@ -137,6 +139,7 @@ export function getTopologyNodes(viewId: number): Promise<TopologyNode[]> {
         position: node.position || (node.positionX !== undefined && node.positionY !== undefined ? { x: node.positionX, y: node.positionY } : { x: 0, y: 0 }),
         status: node.status || 'unknown',
         alarmCount: node.alarmCount || 0,
+        parentNodeId: node.parentNodeId || undefined, // 支持 parentNodeId
       }));
     }
     throw new Error(res.err || '获取拓扑节点列表失败');
@@ -168,6 +171,11 @@ export function addTopologyNode(viewId: number, data: NodeCreateData): Promise<T
     requestData.selectedPorts = data.selectedPorts;
   }
 
+  // 支持 parentNodeId
+  if (data.parentNodeId !== undefined) {
+    requestData.parentNodeId = data.parentNodeId;
+  }
+
   return request(`/cmdb/topology/views/${viewId}/nodes`, {
     method: RequestMethod.Post,
     data: requestData,
@@ -179,6 +187,7 @@ export function addTopologyNode(viewId: number, data: NodeCreateData): Promise<T
         position: node.position || (node.positionX !== undefined && node.positionY !== undefined ? { x: node.positionX, y: node.positionY } : { x: 0, y: 0 }),
         status: node.status || 'unknown',
         alarmCount: node.alarmCount || 0,
+        parentNodeId: node.parentNodeId || undefined,
       };
     }
     throw new Error(res.err || '添加拓扑节点失败');
@@ -208,6 +217,11 @@ export function updateTopologyNode(nodeId: string, data: NodeUpdateData): Promis
     requestData.height = (data as any).height;
   }
 
+  // 支持更新 parentNodeId
+  if (data.parentNodeId !== undefined) {
+    requestData.parentNodeId = data.parentNodeId;
+  }
+
   return request(`/cmdb/topology/nodes/${nodeId}`, {
     method: RequestMethod.Put,
     data: requestData,
@@ -231,6 +245,7 @@ export function updateNodePositions(viewId: number, positions: PositionUpdate[])
         nodeId: pos.nodeId,
         x: pos.x,
         y: pos.y,
+        parentNodeId: pos.parentNodeId, // 支持 parentNodeId
       })),
     },
   }).then((res) => {
@@ -417,5 +432,60 @@ export function getConnectionStatus(connectionIds: string[]): Promise<{ [connect
       return res.dat;
     }
     throw new Error(res.err || '获取连接状态失败');
+  });
+}
+
+// ==================== Sub-Flows 相关API ====================
+
+/**
+ * 设置节点父子关系
+ * POST /cmdb/topology/nodes/:nodeId/parent
+ */
+export function setNodeParent(nodeId: string, data: SetNodeParentData): Promise<void> {
+  return request(`/cmdb/topology/nodes/${nodeId}/parent`, {
+    method: RequestMethod.Post,
+    data,
+  }).then((res) => {
+    if (res.dat === 'ok' || res.err === '') {
+      return;
+    }
+    throw new Error(res.err || '设置节点父子关系失败');
+  });
+}
+
+/**
+ * 批量设置节点父子关系
+ * POST /cmdb/topology/views/:viewId/nodes/parents
+ */
+export function batchSetNodeParents(viewId: number, data: BatchSetNodeParentData): Promise<void> {
+  return request(`/cmdb/topology/views/${viewId}/nodes/parents`, {
+    method: RequestMethod.Post,
+    data,
+  }).then((res) => {
+    if (res.dat === 'ok' || res.err === '') {
+      return;
+    }
+    throw new Error(res.err || '批量设置节点父子关系失败');
+  });
+}
+
+/**
+ * 获取节点的子节点列表
+ * GET /cmdb/topology/nodes/:nodeId/children
+ */
+export function getNodeChildren(nodeId: string): Promise<TopologyNode[]> {
+  return request(`/cmdb/topology/nodes/${nodeId}/children`, {
+    method: RequestMethod.Get,
+  }).then((res) => {
+    if (res.dat) {
+      return res.dat.map((node: any) => ({
+        ...node,
+        position: node.position || (node.positionX !== undefined && node.positionY !== undefined ? { x: node.positionX, y: node.positionY } : { x: 0, y: 0 }),
+        status: node.status || 'unknown',
+        alarmCount: node.alarmCount || 0,
+        parentNodeId: node.parentNodeId || undefined,
+      }));
+    }
+    throw new Error(res.err || '获取子节点列表失败');
   });
 }

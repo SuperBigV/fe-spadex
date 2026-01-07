@@ -110,4 +110,9 @@ export const ruleTypeOptions = [
     value: 'logging',
     pro: false,
   },
+  // {
+  //   label: '链路追踪',
+  //   value: 'tracing',
+  //   pro: false,
+  // },
 ];

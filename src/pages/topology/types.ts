@@ -37,6 +37,7 @@ export interface TopologyNode {
   };
   width?: number; // 节点宽度（用于机房等可调整大小的节点）
   height?: number; // 节点高度（用于机房等可调整大小的节点）
+  parentNodeId?: string; // 父节点ID，用于Sub-Flows功能
   status: 'online' | 'offline' | 'unknown';
   alarmCount: number;
   selectedPorts?: string[]; // 选中的端口编号列表，用于连线
@@ -144,6 +145,7 @@ export interface NodeCreateData {
   name?: string; // 节点名称（用于机房等特殊节点）
   width?: number; // 节点宽度（用于机房等可调整大小的节点）
   height?: number; // 节点高度（用于机房等可调整大小的节点）
+  parentNodeId?: string; // 父节点ID，用于Sub-Flows功能
 }
 
 export interface NodeUpdateData {
@@ -154,6 +156,7 @@ export interface NodeUpdateData {
   };
   width?: number; // 节点宽度（用于机房等可调整大小的节点）
   height?: number; // 节点高度（用于机房等可调整大小的节点）
+  parentNodeId?: string | null; // 父节点ID，用于Sub-Flows功能，null表示从组内移除
 }
 
 export interface ConnectionCreateData {
@@ -187,4 +190,17 @@ export interface PositionUpdate {
   nodeId: string;
   x: number;
   y: number;
+  parentNodeId?: string; // 新增：用于标识父子关系
+}
+
+// Sub-Flows 相关接口类型
+export interface SetNodeParentData {
+  parentNodeId: string | null; // 父节点ID，null 表示从组内移除
+}
+
+export interface BatchSetNodeParentData {
+  relationships: Array<{
+    nodeId: string;
+    parentNodeId: string | null;
+  }>;
 }

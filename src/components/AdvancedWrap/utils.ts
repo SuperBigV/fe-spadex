@@ -106,6 +106,7 @@ export const baseCates: Cate[] = [
 export const allCates = [...baseCates, ...advancedCates];
 
 export const getAuthorizedDatasourceCates = (feats, isPlus, filter?: (cate: any) => boolean) => {
+  console.log('advancedCates:', advancedCates);
   let cates = baseCates;
   if (feats && isPlus) {
     cates = _.filter(feats.plugins, (plugin) => {

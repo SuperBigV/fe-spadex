@@ -11,6 +11,12 @@ import { getAssetPorts } from '@/services/topology';
 import StatusIndicator from '../StatusIndicator';
 import './index.less';
 
+// 格式化流量显示
+const formatTraffic = (traffic: number | undefined): string => {
+  if (traffic === undefined || traffic === null) return '0.00';
+  return traffic.toFixed(2);
+};
+
 const PropertyPanel: React.FC = () => {
   const { selectedItem, nodes, connections, deleteNode, deleteConnection } = useTopology();
 
@@ -206,17 +212,29 @@ const PropertyPanel: React.FC = () => {
           <Descriptions column={1} size='small'>
             <Descriptions.Item label='源设备'>{sourceNode?.name || connection?.sourceNodeId}</Descriptions.Item>
             <Descriptions.Item label='源端口'>
-              <Space>
-                <span>{sourcePortInfo ? `${sourcePortInfo.portName} ` : connection?.sourcePort}</span>
-                {sourcePortInfo && <StatusIndicator status={sourcePortInfo.status} type='port' size='small' />}
-              </Space>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <Space>
+                  <span>{sourcePortInfo ? `${sourcePortInfo.portName} ` : connection?.sourcePort}</span>
+                  {sourcePortInfo && <StatusIndicator status={sourcePortInfo.status} type='port' size='small' />}
+                </Space>
+                <div style={{ fontSize: '12px', color: '#8c8c8c', marginLeft: 0 }}>
+                  <div>入流量: {formatTraffic(connection?.sourcePortIfIn)} Mbps</div>
+                  <div>出流量: {formatTraffic(connection?.sourcePortIfOut)} Mbps</div>
+                </div>
+              </div>
             </Descriptions.Item>
             <Descriptions.Item label='目标设备'>{targetNode?.name || connection?.targetNodeId}</Descriptions.Item>
             <Descriptions.Item label='目标端口'>
-              <Space>
-                <span>{targetPortInfo ? `${targetPortInfo.portName} ` : connection?.targetPort}</span>
-                {targetPortInfo && <StatusIndicator status={targetPortInfo.status} type='port' size='small' />}
-              </Space>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <Space>
+                  <span>{targetPortInfo ? `${targetPortInfo.portName} ` : connection?.targetPort}</span>
+                  {targetPortInfo && <StatusIndicator status={targetPortInfo.status} type='port' size='small' />}
+                </Space>
+                <div style={{ fontSize: '12px', color: '#8c8c8c', marginLeft: 0 }}>
+                  <div>入流量: {formatTraffic(connection?.targetPortIfIn)} Mbps</div>
+                  <div>出流量: {formatTraffic(connection?.targetPortIfOut)} Mbps</div>
+                </div>
+              </div>
             </Descriptions.Item>
             <Descriptions.Item label='连接状态'>
               <Space>

@@ -156,6 +156,22 @@ export const getMenuList = (t) => {
         // },
       ],
     },
+    {
+      key: 'trace',
+      icon: <IconFont type='icon-Menu_LinkAnalysis' />,
+      activeIcon: <Icon component={menuIcon.LinkAnalysis as any} />,
+      label: t('链路追踪'),
+      children: [
+        {
+          key: '/trace/explorer',
+          label: t('即时查询'),
+        },
+        {
+          key: '/trace/dependencies',
+          label: t('拓扑分析'),
+        },
+      ],
+    },
     // 运维大屏
     {
       key: 'operation',

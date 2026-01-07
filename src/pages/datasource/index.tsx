@@ -26,6 +26,7 @@ export default function index() {
 
   useEffect(() => {
     getDataSourcePluginList().then((res) => {
+      console.log('res:', res);
       setPluginList(
         _.map(res, (item) => {
           const logoSrc = _.find(allCates, { value: item.plugin_type })?.logo;

@@ -8,6 +8,29 @@ import { Port } from '../../types';
 import { getAssetPorts } from '@/services/topology';
 import StatusIndicator from '../StatusIndicator';
 
+/**
+ * 提取端口名称的最后数字部分
+ * 例如: GigabitEthernet0/0/1 -> 1
+ *       GigabitEthernet0/0/10 -> 10
+ */
+const extractLastNumber = (portName: string): number => {
+  if (!portName) return 0;
+  // 匹配最后的数字（可能包含多位）
+  const matches = portName.match(/(\d+)(?!.*\d)/);
+  return matches ? parseInt(matches[1], 10) : 0;
+};
+
+/**
+ * 端口排序函数：按照端口名称的最后数字从小到大排序
+ */
+const sortPortsByLastNumber = (ports: Port[]): Port[] => {
+  return [...ports].sort((a, b) => {
+    const numA = extractLastNumber(a.portName);
+    const numB = extractLastNumber(b.portName);
+    return numA - numB;
+  });
+};
+
 interface PortSelectModalProps {
   visible: boolean;
   sourceNodeId: string;
@@ -51,19 +74,21 @@ const PortSelectModal: React.FC<PortSelectModalProps> = ({
   const loadPorts = async () => {
     setLoading(true);
     try {
-      const [sourcePortsData, targetPortsData] = await Promise.all([
-        getAssetPorts(sourceAssetId),
-        getAssetPorts(targetAssetId),
-      ]);
-      setSourcePorts(sourcePortsData);
-      setTargetPorts(targetPortsData);
-      
+      const [sourcePortsData, targetPortsData] = await Promise.all([getAssetPorts(sourceAssetId), getAssetPorts(targetAssetId)]);
+
+      // 对端口列表进行排序
+      const sortedSourcePorts = sortPortsByLastNumber(sourcePortsData);
+      const sortedTargetPorts = sortPortsByLastNumber(targetPortsData);
+
+      setSourcePorts(sortedSourcePorts);
+      setTargetPorts(sortedTargetPorts);
+
       // 如果有端口，默认选择第一个
-      if (sourcePortsData.length > 0) {
-        setSelectedSourcePort(sourcePortsData[0].portNumber);
+      if (sortedSourcePorts.length > 0) {
+        setSelectedSourcePort(sortedSourcePorts[0].portNumber);
       }
-      if (targetPortsData.length > 0) {
-        setSelectedTargetPort(targetPortsData[0].portNumber);
+      if (sortedTargetPorts.length > 0) {
+        setSelectedTargetPort(sortedTargetPorts[0].portNumber);
       }
     } catch (error) {
       console.error('加载端口信息失败:', error);
@@ -82,24 +107,11 @@ const PortSelectModal: React.FC<PortSelectModalProps> = ({
   };
 
   return (
-    <Modal
-      title='选择连接端口'
-      open={visible}
-      onOk={handleConfirm}
-      onCancel={onCancel}
-      okText='确认'
-      cancelText='取消'
-      width={600}
-      confirmLoading={loading}
-    >
+    <Modal title='选择连接端口' open={visible} onOk={handleConfirm} onCancel={onCancel} okText='确认' cancelText='取消' width={600} confirmLoading={loading}>
       <div style={{ marginBottom: 24 }}>
         <div style={{ marginBottom: 16 }}>
           <div style={{ fontWeight: 500, marginBottom: 8 }}>源设备: {sourceNodeName}</div>
-          <Radio.Group
-            value={selectedSourcePort}
-            onChange={(e) => setSelectedSourcePort(e.target.value)}
-            style={{ width: '100%' }}
-          >
+          <Radio.Group value={selectedSourcePort} onChange={(e) => setSelectedSourcePort(e.target.value)} style={{ width: '100%' }}>
             <Space direction='vertical' style={{ width: '100%' }}>
               {sourcePorts.map((port) => (
                 <Radio key={port.portNumber} value={port.portNumber}>
@@ -116,11 +128,7 @@ const PortSelectModal: React.FC<PortSelectModalProps> = ({
 
         <div>
           <div style={{ fontWeight: 500, marginBottom: 8 }}>目标设备: {targetNodeName}</div>
-          <Radio.Group
-            value={selectedTargetPort}
-            onChange={(e) => setSelectedTargetPort(e.target.value)}
-            style={{ width: '100%' }}
-          >
+          <Radio.Group value={selectedTargetPort} onChange={(e) => setSelectedTargetPort(e.target.value)} style={{ width: '100%' }}>
             <Space direction='vertical' style={{ width: '100%' }}>
               {targetPorts.map((port) => (
                 <Radio key={port.portNumber} value={port.portNumber}>
@@ -140,4 +148,3 @@ const PortSelectModal: React.FC<PortSelectModalProps> = ({
 };
 
 export default PortSelectModal;
-
