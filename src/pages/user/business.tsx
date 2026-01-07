@@ -317,6 +317,12 @@ const Resource: React.FC = () => {
                       <Tag color={teamInfo?.attr?.is_collection_enabled ? 'green' : 'default'}>{teamInfo?.attr?.is_collection_enabled ? '已开启' : '未开启'}</Tag>
                     </Descriptions.Item>
                     <Descriptions.Item label='进程名称'>{teamInfo?.attr?.processName || '未配置'}</Descriptions.Item>
+                    <Descriptions.Item label='指标采集'>
+                      <Tag color={teamInfo?.attr?.is_metric_collection_enabled ? 'green' : 'default'}>{teamInfo?.attr?.is_metric_collection_enabled ? '已开启' : '未开启'}</Tag>
+                    </Descriptions.Item>
+                    <Descriptions.Item label='采集接口' span={2}>
+                      <div style={{ wordBreak: 'break-all' }}>{teamInfo?.attr?.metricEndpoint || '未配置'}</div>
+                    </Descriptions.Item>
                     <Descriptions.Item label='日志采集'>
                       <Tag color={teamInfo?.attr?.is_log_collection_enabled ? 'green' : 'default'}>{teamInfo?.attr?.is_log_collection_enabled ? '已开启' : '未开启'}</Tag>
                     </Descriptions.Item>

@@ -46,6 +46,7 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
   // 状态用于控制进程采集开关
   const [isProcessCollectionEnabled, setIsProcessCollectionEnabled] = useState(false);
   const [isLogCollectionEnabled, setIsLogCollectionEnabled] = useState(false);
+  const [isMetricCollectionEnabled, setIsMetricCollectionEnabled] = useState(false);
   const [currentSoftType, setCurrentSoftType] = useState('business');
   const [authOptions, setAuthOptions] = useState<any>([]);
   useImperativeHandle(ref, () => ({
@@ -83,6 +84,7 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
         user_groups: { perm_flag: string; user_group: { id: number } }[];
       }) => {
         setIsProcessCollectionEnabled(data.attr.is_collection_enabled);
+        setIsMetricCollectionEnabled(data.attr.is_metric_collection_enabled);
         if (data.attr.auth) {
           setCurrentSoftType(data.attr.auth.soft_type);
         }
@@ -211,7 +213,7 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
             </Form.Item>
           )}
           {/* 添加进程采集开关 */}
-          <Form.Item label='进程采集开关' name={['attr', 'is_collection_enabled']}>
+          <Form.Item label='进程采集' name={['attr', 'is_collection_enabled']}>
             <Switch checked={isProcessCollectionEnabled} onChange={setIsProcessCollectionEnabled} />
           </Form.Item>
 
@@ -221,7 +223,17 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
               <Input placeholder='输入软件系统进程名称' />
             </Form.Item>
           )}
-          <Form.Item label='日志采集开关' name={['attr', 'is_log_collection_enabled']}>
+          <Form.Item label='指标采集' name={['attr', 'is_metric_collection_enabled']}>
+            <Switch checked={isMetricCollectionEnabled} onChange={setIsMetricCollectionEnabled} />
+          </Form.Item>
+
+          {/* 根据开关状态显示采集接口输入框 */}
+          {isMetricCollectionEnabled && (
+            <Form.Item label='采集接口' name={['attr', 'metricEndpoint']} rules={[{ required: true, message: '请输入采集接口' }]}>
+              <Input placeholder='http://127.0.0.1/metrics' />
+            </Form.Item>
+          )}
+          <Form.Item label='日志采集' name={['attr', 'is_log_collection_enabled']}>
             <Switch checked={isLogCollectionEnabled} onChange={setIsLogCollectionEnabled} />
           </Form.Item>
 
