@@ -19,7 +19,7 @@
  * data_source_name: string
  * data_source_id: string
  */
-import React, { useRef, useContext } from 'react';
+import React, { useRef, useContext, useEffect } from 'react';
 import { Input, Form, Select, Row, Col } from 'antd';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -66,6 +66,7 @@ const Panel = ({ type, defaultCate, panelIdx, defaultFormValuesControl }: IProps
   const defaultDatasourceCate = params.get('data_source_name') || localStorage.getItem(`explorer_datasource_cate_${type}`) || defaultCate;
   const defaultDatasourceValue = params.get('data_source_id') ? _.toNumber(params.get('data_source_id')) : getDefaultDatasourceValue(defaultDatasourceCate, groupedDatasourceList);
   const datasourceCate = Form.useWatch('datasourceCate', form);
+  // 设置表单datasourceValue字段为groupedDatasourceList[datasourceCate][0].id
   return (
     <div className='explorer-container'>
       <Form
@@ -77,7 +78,7 @@ const Panel = ({ type, defaultCate, panelIdx, defaultFormValuesControl }: IProps
       >
         <div className='explorer-content'>
           <Row gutter={8}>
-            <Col>
+            {/* <Col>
               <InputGroupWithFormItem label={t('common:datasource.type')} addonAfterWithContainer={<Help datasourceCate={datasourceCate} />}>
                 <Form.Item name='datasourceCate' noStyle>
                   <DatasourceCateSelect
@@ -109,7 +110,7 @@ const Panel = ({ type, defaultCate, panelIdx, defaultFormValuesControl }: IProps
                   />
                 </Form.Item>
               </InputGroupWithFormItem>
-            </Col>
+            </Col> */}
             <Col>
               <Form.Item shouldUpdate={(prev, curr) => prev.datasourceCate !== curr.datasourceCate} noStyle>
                 {({ getFieldValue }) => {

@@ -115,7 +115,7 @@ export const getMenuList = (t) => {
       children: [
         {
           key: '/targets',
-          label: '软件洞察',
+          label: '业务管理',
         },
         {
           key: '/net-targets',
@@ -164,11 +164,11 @@ export const getMenuList = (t) => {
       children: [
         {
           key: '/trace/explorer',
-          label: t('即时查询'),
+          label: t('数据查询'),
         },
         {
           key: '/trace/dependencies',
-          label: t('拓扑分析'),
+          label: t('链路拓扑'),
         },
       ],
     },

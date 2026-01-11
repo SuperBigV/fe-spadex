@@ -33,6 +33,7 @@ import './index.less';
 import AlertRuleList from '@/pages/alertRules/List';
 import HistoryEvents from '@/pages/historyEvents/busiEvents';
 import { getDashboard, updateDashboardConfigs, getDashboardPure, getBusiGroupsDashboards } from '@/services/dashboardV2';
+import Dependencies from '@/pages/traceCpt/Dependencies';
 export { BusinessGroup }; // TODO 部分页面使用的老的业务组组件，后续逐步替换
 interface jumpProps {
   id: string;
@@ -457,6 +458,7 @@ const Targets: React.FC = () => {
   const [activeKey, setActiveKey] = useState('2');
   const [dashboardId, setDashboardId] = useState<number>(0);
   const [dashboardList, setDashboardList] = useState<IDashboard[]>([]);
+  const [processName, setProcessName] = useState<string | undefined>(undefined);
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
@@ -464,44 +466,79 @@ const Targets: React.FC = () => {
   // 函数用于解析查询参数
 
   const onChange = (key) => {
+    setActiveKey(key);
     switch (key) {
       case '3':
-        getBusiGroupsDashboards(gids).then((res) => {
-          setDashboardList(res);
-        });
-        if (dashboardList.length > 0) {
-          const id = dashboardList[0].id;
-          setDashboardId(id);
-          setIsLoading(true);
+        setIsLoading(false);
+        getBusiGroupsDashboards(gids)
+          .then((res) => {
+            setDashboardList(res);
+            if (res && res.length > 0) {
+              const id = res[0].id;
+              setDashboardId(id);
+              setIsLoading(true);
+            }
+          })
+          .catch(() => {
+            setIsLoading(false);
+          });
+        break;
+      case '7':
+        // 切换到链路拓扑 tab 时，获取业务信息并提取 processName
+        if (gids && gids !== '0') {
+          getBusinessTeamInfo(gids)
+            .then((res) => {
+              const processNameValue = res?.attr?.processName;
+              setProcessName(processNameValue || undefined);
+            })
+            .catch(() => {
+              setProcessName(undefined);
+            });
+        } else {
+          setProcessName(undefined);
         }
+        break;
     }
-    setActiveKey(key);
   };
   useEffect(() => {
     if (did) {
       setDashboardId(Number(did));
       setActiveKey('3');
-    } else {
-      getBusiGroupsDashboards(gids).then((res) => {
-        setDashboardList(res);
-      });
-      if (dashboardList.length > 0) {
-        const id = dashboardList[0].id;
-        setDashboardId(id);
-        setIsLoading(true);
-      }
+      setIsLoading(true);
     }
+    // 注意：当 did 不存在时，由 gids 和 activeKey 的 useEffect 处理
   }, [did]);
   useEffect(() => {
-    setIsLoading(false);
-    getBusiGroupsDashboards(gids).then((res) => {
-      setDashboardList(res);
-    });
-    if (dashboardList.length > 0) {
-      const id = dashboardList[0].id;
-      setDashboardId(id);
+    // 当业务组变化时，如果当前在监控态势 tab，重新获取 dashboard 列表
+    if (activeKey === '3') {
+      setIsLoading(false);
+      getBusiGroupsDashboards(gids)
+        .then((res) => {
+          setDashboardList(res);
+          if (res && res.length > 0) {
+            const id = res[0].id;
+            setDashboardId(id);
+            setIsLoading(true);
+          }
+        })
+        .catch(() => {
+          setIsLoading(false);
+        });
     }
-  }, [gids]);
+    // 当业务组变化时，如果当前在链路拓扑 tab，重新获取 processName
+    if (activeKey === '7' && gids && gids !== '0') {
+      getBusinessTeamInfo(gids)
+        .then((res) => {
+          const processNameValue = res?.attr?.processName;
+          setProcessName(processNameValue || undefined);
+        })
+        .catch(() => {
+          setProcessName(undefined);
+        });
+    } else if (activeKey === '7' && (!gids || gids === '0')) {
+      setProcessName(undefined);
+    }
+  }, [gids, activeKey]);
   return (
     <PageLayout icon={<DatabaseOutlined />} title={t('软件洞察')}>
       <div className='object-manage-page-content'>
@@ -536,6 +573,7 @@ const Targets: React.FC = () => {
             </TabPane>
             <TabPane tab='监控态势' key='3'>
               {/* <MonitoringStatus /> */}
+
               {isLoading && <BusiDetail dashboardId={_.toString(dashboardId)} />}
             </TabPane>
             <TabPane tab='告警规则' key='4'>
@@ -548,6 +586,9 @@ const Targets: React.FC = () => {
             <TabPane tab='告警记录' key='6'>
               {/* <AlarmHistory /> */}
               <HistoryEvents></HistoryEvents>
+            </TabPane>
+            <TabPane tab='链路拓扑' key='7'>
+              <Dependencies processName={processName} hideServiceSelector={true} />
             </TabPane>
           </Tabs>
         </div>

@@ -36,7 +36,7 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
   const [users, setUsers] = useState<any>([]);
   const [initialValues, setInitialValues] = useState({
     members: [{ perm_flag: true }],
-    attr: { soft_type: 'business' },
+    attr: { soft_type: 'business', is_collection_enabled: true },
     name: '',
     // is_collection_enabled: false,
     // process_name: '',
@@ -44,7 +44,7 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState(true);
   // 状态用于控制进程采集开关
-  const [isProcessCollectionEnabled, setIsProcessCollectionEnabled] = useState(false);
+  const [isProcessCollectionEnabled, setIsProcessCollectionEnabled] = useState(true);
   const [isLogCollectionEnabled, setIsLogCollectionEnabled] = useState(false);
   const [isMetricCollectionEnabled, setIsMetricCollectionEnabled] = useState(false);
   const [currentSoftType, setCurrentSoftType] = useState('business');
@@ -65,6 +65,12 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
     if (businessId && action === ActionType.EditBusiness) {
       getTeamInfoDetail(businessId);
     } else {
+      // 新建表单时，确保 is_collection_enabled 默认为 true
+      form.setFieldsValue({
+        attr: {
+          is_collection_enabled: true,
+        },
+      });
       setLoading(false);
     }
   }, []);
@@ -83,20 +89,37 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
         attr: any;
         user_groups: { perm_flag: string; user_group: { id: number } }[];
       }) => {
-        setIsProcessCollectionEnabled(data.attr.is_collection_enabled);
+        const isCollectionEnabled = data.attr.is_collection_enabled ?? true;
+        setIsProcessCollectionEnabled(isCollectionEnabled);
         setIsMetricCollectionEnabled(data.attr.is_metric_collection_enabled);
+        setIsLogCollectionEnabled(data.attr.is_log_collection_enabled);
         if (data.attr.auth) {
           setCurrentSoftType(data.attr.auth.soft_type);
         }
         setInitialValues({
           name: data.name,
-          attr: data.attr,
+          attr: {
+            ...data.attr,
+            is_collection_enabled: isCollectionEnabled,
+          },
           members: data.user_groups.map((item) => ({
             perm_flag: item.perm_flag === 'rw',
             user_group_id: item.user_group?.id,
           })),
           // is_collection_enabled: data.is_collection_enabled,
           // process_name: data.processName,
+        });
+        // 确保表单字段值正确设置
+        form.setFieldsValue({
+          name: data.name,
+          attr: {
+            ...data.attr,
+            is_collection_enabled: isCollectionEnabled,
+          },
+          members: data.user_groups.map((item) => ({
+            perm_flag: item.perm_flag === 'rw',
+            user_group_id: item.user_group?.id,
+          })),
         });
         setLoading(false);
       },
@@ -212,11 +235,10 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
               <Select options={authOptions}></Select>
             </Form.Item>
           )}
-          {/* 添加进程采集开关 */}
-          <Form.Item label='进程采集' name={['attr', 'is_collection_enabled']}>
-            <Switch checked={isProcessCollectionEnabled} onChange={setIsProcessCollectionEnabled} />
+          {/* 进程采集默认为true，不再显示开关，但需要确保表单字段值正确 */}
+          <Form.Item name={['attr', 'is_collection_enabled']} style={{ display: 'none' }}>
+            <Input />
           </Form.Item>
-
           {/* 根据开关状态显示进程名称输入框 */}
           {isProcessCollectionEnabled && (
             <Form.Item label='进程名称' name={['attr', 'processName']} rules={[{ required: true, message: '请输入进程名称' }]}>

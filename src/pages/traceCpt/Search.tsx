@@ -178,7 +178,7 @@ export default function Index(props: IProps) {
           <Row gutter={8}>
             <Col span={24}>
               <Space style={{ width: '100%', justifyContent: 'start', marginBottom: 8 }}>
-                <InputGroupWithFormItem label={t('common:datasource.type')}>
+                {/* <InputGroupWithFormItem label={t('common:datasource.type')}>
                   <Select dropdownMatchSelectWidth={false} style={{ width: '100%' }} value='jaeger'>
                     {_.map(
                       [
@@ -205,7 +205,7 @@ export default function Index(props: IProps) {
                       ))}
                     </Select>
                   </InputGroupWithFormItem>
-                </EmptyDatasourcePopover>
+                </EmptyDatasourcePopover> */}
                 <Radio.Group optionType='button' buttonStyle='solid' value={isTraceId} onChange={handleTypeSwitch}>
                   <Radio value={false}>{t('mode.query')}</Radio>
                   <Radio value={true}>{t('mode.id')}</Radio>
@@ -216,7 +216,7 @@ export default function Index(props: IProps) {
             {!isTraceId ? (
               <>
                 <Col span={8}>
-                  <LabelField label='Service'>
+                  <LabelField label='服务'>
                     <Select
                       dropdownMatchSelectWidth={false}
                       style={{ width: '100%' }}

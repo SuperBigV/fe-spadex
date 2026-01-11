@@ -19,8 +19,8 @@
  */
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Tag, Modal, Space, Button, Dropdown, Menu, message, Tooltip } from 'antd';
-import { FundViewOutlined, EditOutlined, ShareAltOutlined, MoreOutlined } from '@ant-design/icons';
+import { Table, Tag, Modal, Space, Button, message, Tooltip } from 'antd';
+import { FundViewOutlined, EditOutlined, ShareAltOutlined, CopyOutlined, ExportOutlined, DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -297,95 +297,84 @@ export default function index() {
                   },
                   {
                     title: t('common:table.operations'),
+                    width: 300,
                     render: (text: string, record: DashboardType) => {
                       return (
-                        <Dropdown
-                          overlay={
-                            <Menu>
-                              {gids !== '-1' && (
-                                <Menu.Item>
-                                  <Button
-                                    type='link'
-                                    className='p0 height-auto'
-                                    onClick={() => {
-                                      FormModal({
-                                        action: 'edit',
-                                        initialValues: record,
-                                        busiId: businessGroup.id,
-                                        onOk: () => {
-                                          setRefreshKey(_.uniqueId('refreshKey_'));
-                                        },
-                                      });
-                                    }}
-                                  >
-                                    {t('common:btn.edit')}
-                                  </Button>
-                                </Menu.Item>
-                              )}
-                              {gids && gids !== '-1' && (
-                                <Menu.Item>
-                                  <Button
-                                    type='link'
-                                    className='p0 height-auto'
-                                    onClick={async () => {
-                                      Modal.confirm({
-                                        title: t('common:confirm.clone'),
-                                        onOk: async () => {
-                                          await cloneDashboard(record.group_id, record.id);
-                                          message.success(t('common:success.clone'));
-                                          setRefreshKey(_.uniqueId('refreshKey_'));
-                                        },
-
-                                        onCancel() {},
-                                      });
-                                    }}
-                                  >
-                                    {t('common:btn.clone')}
-                                  </Button>
-                                </Menu.Item>
-                              )}
-                              <Menu.Item>
-                                <Button
-                                  type='link'
-                                  className='p0 height-auto'
-                                  onClick={async () => {
-                                    const exportData = await getDashboard(record.id);
-                                    Export({
-                                      data: exportDataStringify(exportData),
-                                    });
-                                  }}
-                                >
-                                  {t('common:btn.export')}
-                                </Button>
-                              </Menu.Item>
-                              {gids !== '-1' && (
-                                <Menu.Item>
-                                  <Button
-                                    danger
-                                    type='link'
-                                    className='p0 height-auto'
-                                    onClick={async () => {
-                                      Modal.confirm({
-                                        title: t('common:confirm.delete'),
-                                        onOk: async () => {
-                                          await removeDashboards([record.id]);
-                                          message.success(t('common:success.delete'));
-                                          setRefreshKey(_.uniqueId('refreshKey_'));
-                                        },
-
-                                        onCancel() {},
-                                      });
-                                    }}
-                                  >
-                                    {t('common:btn.delete')}
-                                  </Button>
-                                </Menu.Item>
-                              )}
-                            </Menu>
-                          }
-                        >
-                          <Button type='link' icon={<MoreOutlined />} />
-                        </Dropdown>
+                        <Space>
+                          {gids !== '-1' && (
+                            <Button
+                              type='link'
+                              size='small'
+                              icon={<EditOutlined />}
+                              onClick={() => {
+                                FormModal({
+                                  action: 'edit',
+                                  initialValues: record,
+                                  busiId: businessGroup.id,
+                                  onOk: () => {
+                                    setRefreshKey(_.uniqueId('refreshKey_'));
+                                  },
+                                });
+                              }}
+                            >
+                              {t('common:btn.edit')}
+                            </Button>
+                          )}
+                          {gids && gids !== '-1' && (
+                            <Button
+                              type='link'
+                              size='small'
+                              icon={<CopyOutlined />}
+                              onClick={async () => {
+                                Modal.confirm({
+                                  title: t('common:confirm.clone'),
+                                  onOk: async () => {
+                                    await cloneDashboard(record.group_id, record.id);
+                                    message.success(t('common:success.clone'));
+                                    setRefreshKey(_.uniqueId('refreshKey_'));
+                                  },
+                                  onCancel() {},
+                                });
+                              }}
+                            >
+                              {t('common:btn.clone')}
+                            </Button>
+                          )}
+                          <Button
+                            type='link'
+                            size='small'
+                            icon={<ExportOutlined />}
+                            onClick={async () => {
+                              const exportData = await getDashboard(record.id);
+                              Export({
+                                data: exportDataStringify(exportData),
+                              });
+                            }}
+                          >
+                            {t('common:btn.export')}
+                          </Button>
+                          {gids !== '-1' && (
+                            <Button
+                              danger
+                              type='link'
+                              size='small'
+                              icon={<DeleteOutlined />}
+                              onClick={async () => {
+                                Modal.confirm({
+                                  title: t('common:confirm.delete'),
+                                  onOk: async () => {
+                                    await removeDashboards([record.id]);
+                                    message.success(t('common:success.delete'));
+                                    setRefreshKey(_.uniqueId('refreshKey_'));
+                                  },
+                                  onCancel() {},
+                                });
+                              }}
+                            >
+                              {t('common:btn.delete')}
+                            </Button>
+                          )}
+                        </Space>
                       );
                     },
                   },

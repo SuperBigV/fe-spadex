@@ -11,7 +11,7 @@ export default function index() {
   const { t } = useTranslation('trace');
 
   return (
-    <PageLayout title={t('title')}>
+    <PageLayout title={'链路追踪查询'}>
       <div>
         <div className='n9e-border-base p2'>
           <Trace />

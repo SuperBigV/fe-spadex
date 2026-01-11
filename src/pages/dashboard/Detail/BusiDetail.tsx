@@ -113,48 +113,60 @@ export default function DetailV2(props: IProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   let updateAtRef = useRef<number>();
   const routerPromptRef = useRef<any>();
+  const isMountedRef = useRef(true);
   const refresh = async (cbk?: () => void) => {
     fetchDashboard({
       id,
       builtinParams,
-    }).then((res) => {
-      updateAtRef.current = res.update_at;
-      const configs = _.isString(res.configs) ? JSONParse(res.configs) : res.configs;
-      if (props.onLoaded && !props.onLoaded(configs)) {
-        return;
-      }
-      if ((!configs.version || semver.lt(configs.version, '3.0.0')) && !builtinParams) {
-        setMigrationVisible(true);
-      }
-      setDashboardMeta({
-        ...(dashboardMeta || {}),
-        graphTooltip: configs.graphTooltip,
-        graphZoom: configs.graphZoom,
-      });
-      setDashboard({
-        ...res,
-        configs,
-      });
-      if (configs) {
-        // TODO: configs 中可能没有 var 属性会导致 VariableConfig 报错
-        const variableConfig = configs.var
-          ? configs
-          : {
-              ...configs,
-              var: [],
-            };
-        setVariableConfig(
-          _.map(variableConfig.var, (item) => {
-            return _.omit(item, 'options'); // 兼容性代码，去除掉已保存的 options
-          }) as IVariable[],
-        );
-        setDashboardLinks(configs.links);
-        setPanels(sortPanelsByGridLayout(ajustPanels(configs.panels)));
-        if (cbk) {
-          cbk();
+    })
+      .then((res) => {
+        // 检查组件是否已挂载，避免在卸载后更新状态
+        if (!isMountedRef.current) {
+          return;
         }
-      }
-    });
+        updateAtRef.current = res.update_at;
+        const configs = _.isString(res.configs) ? JSONParse(res.configs) : res.configs;
+        if (props.onLoaded && !props.onLoaded(configs)) {
+          return;
+        }
+        if ((!configs.version || semver.lt(configs.version, '3.0.0')) && !builtinParams) {
+          setMigrationVisible(true);
+        }
+        setDashboardMeta({
+          ...(dashboardMeta || {}),
+          graphTooltip: configs.graphTooltip,
+          graphZoom: configs.graphZoom,
+        });
+        setDashboard({
+          ...res,
+          configs,
+        });
+        if (configs) {
+          // TODO: configs 中可能没有 var 属性会导致 VariableConfig 报错
+          const variableConfig = configs.var
+            ? configs
+            : {
+                ...configs,
+                var: [],
+              };
+          setVariableConfig(
+            _.map(variableConfig.var, (item) => {
+              return _.omit(item, 'options'); // 兼容性代码，去除掉已保存的 options
+            }) as IVariable[],
+          );
+          setDashboardLinks(configs.links);
+          setPanels(sortPanelsByGridLayout(ajustPanels(configs.panels)));
+          if (cbk) {
+            cbk();
+          }
+        }
+      })
+      .catch((error) => {
+        // 错误处理：只有在组件挂载时才记录错误
+        if (isMountedRef.current) {
+          console.error('Failed to fetch dashboard:', error);
+        }
+      });
   };
   const handleUpdateDashboardConfigs = (id, updateData) => {
     if (dashboardSaveMode === 'manual') {
@@ -200,18 +212,33 @@ export default function DetailV2(props: IProps) {
   };
 
   useEffect(() => {
+    isMountedRef.current = true;
     refresh();
+    return () => {
+      isMountedRef.current = false;
+    };
   }, [id]);
 
   useInterval(() => {
-    if (import.meta.env.PROD && dashboard.id) {
-      getDashboardPure(_.toString(dashboard.id)).then((res) => {
-        if (updateAtRef.current && res.update_at > updateAtRef.current) {
-          if (editable) setEditable(false);
-        } else {
-          setEditable(true);
-        }
-      });
+    if (import.meta.env.PROD && dashboard.id && isMountedRef.current) {
+      getDashboardPure(_.toString(dashboard.id))
+        .then((res) => {
+          // 检查组件是否已挂载，避免在卸载后更新状态
+          if (!isMountedRef.current) {
+            return;
+          }
+          if (updateAtRef.current && res.update_at > updateAtRef.current) {
+            if (editable) setEditable(false);
+          } else {
+            setEditable(true);
+          }
+        })
+        .catch((error) => {
+          // 错误处理：只有在组件挂载时才记录错误
+          if (isMountedRef.current) {
+            console.error('Failed to check dashboard update:', error);
+          }
+        });
     }
   }, 2000);
 
