@@ -1,0 +1,37 @@
+.knowledge-base-list {
+  height: 100%;
+
+  .knowledge-base-list-header {
+    margin-bottom: 12px;
+  }
+
+  .knowledge-base-item {
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    transition: all 0.3s;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    &.selected {
+      background-color: rgba(108, 83, 177, 0.1);
+    }
+  }
+}
+
+.theme-dark {
+  .knowledge-base-list {
+    .knowledge-base-item {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+      }
+
+      &.selected {
+        background-color: rgba(108, 83, 177, 0.2);
+      }
+    }
+  }
+}

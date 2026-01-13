@@ -103,6 +103,7 @@ import SSHCommandRecords from '@/pages/sshSecurity/commandRecords';
 import RoomDashboard from '@/pages/operation/roomDashboard';
 // import NetworkDashboard from '@/pages/operation/networkDashboard';
 // import SoftwareDashboard from '@/pages/operation/softwareDashboard';
+import KnowledgeBasePage from '@/pages/knowledgeBase';
 const Packages = dynamicPackages();
 let lazyRoutes = Packages.reduce((result: any, module: Entry) => {
   return (result = result.concat(module.routes));
@@ -190,6 +191,7 @@ export default function Content() {
         <Route path='/asset-icons' component={AssetIcons} />
         <Route path='/asset-list' component={AssetList} />
         <Route path='/ips' component={IpManage} />
+        <Route path='/knowledge-base' component={KnowledgeBasePage} />
 
         {/* SSH安全模块 */}
         <Route path='/dangerous-commands' component={SSHBlacklist} />

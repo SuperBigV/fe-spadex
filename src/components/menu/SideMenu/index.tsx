@@ -91,6 +91,10 @@ export const getMenuList = (t) => {
           key: '/partners',
           label: t('合作单位'),
         },
+        {
+          key: '/knowledge-base',
+          label: t('知识库管理'),
+        },
       ],
     },
     // {
@@ -367,9 +371,13 @@ export const getMenuList = (t) => {
       icon: <IconFont type='icon-Menu_SystemInformation' />,
       label: t('系统配置'),
       children: [
+        // {
+        //   key: '/asset-icons',
+        //   label: '图标管理',
+        // },
         {
-          key: '/asset-icons',
-          label: '图标管理',
+          key: '/knowledge-base',
+          label: '知识库',
         },
         {
           key: '/auths',
@@ -387,10 +395,10 @@ export const getMenuList = (t) => {
           key: '/auth-configs',
           label: t('认证设置'),
         },
-        {
-          key: '/help/variable-configs',
-          label: t('变量设置'),
-        },
+        // {
+        //   key: '/help/variable-configs',
+        //   label: t('变量设置'),
+        // },
         {
           key: '/help/notification-settings',
           label: t('通知设置'),
@@ -407,18 +415,18 @@ export const getMenuList = (t) => {
           key: '/built-in-components',
           label: t('built_in_components'),
         },
-        {
-          key: '/help/sso',
-          label: t('单点登录'),
-        },
-        {
-          key: '/help/servers',
-          label: t('告警引擎'),
-        },
-        {
-          key: '/site-settings',
-          label: t('siteInfo:title'),
-        },
+        // {
+        //   key: '/help/sso',
+        //   label: t('单点登录'),
+        // },
+        // {
+        //   key: '/help/servers',
+        //   label: t('告警引擎'),
+        // },
+        // {
+        //   key: '/site-settings',
+        //   label: t('siteInfo:title'),
+        // },
         // {
         //   key: '/help/version',
         //   label: t('version:title'),
