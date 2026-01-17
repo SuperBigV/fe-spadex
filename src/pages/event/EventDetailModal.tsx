@@ -15,26 +15,25 @@
  *
  */
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useHistory } from 'react-router';
 import moment from 'moment';
 import _ from 'lodash';
 import queryString from 'query-string';
-import { Button, Card, message, Space, Spin, Tag, Typography } from 'antd';
+import { Button, Card, Modal, Space, Spin, Tag, message } from 'antd';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import PageLayout from '@/components/pageLayout';
-import { getAlertEventsById, getHistoryEventsById } from '@/services/warning';
+import { getAlertEventsById } from '@/services/warning';
 import { priorityColor } from '@/utils/constant';
-import { deleteAlertEventsModal } from '.';
 import { CommonStateContext, basePrefix } from '@/App';
 import TDengineDetail from '@/plugins/TDengine/Event';
 import { Event as ElasticsearchDetail } from '@/plugins/elasticsearch';
 
-import EventNotifyRecords from './EventNotifyRecords';
 import TaskTpls from './TaskTpls';
 import PrometheusDetail from './Detail/Prometheus';
 import Host from './Detail/Host';
 import LokiDetail from './Detail/Loki';
+import { deleteAlertEventsModal } from './index';
+import EventNotifyRecords from './EventNotifyRecords';
 
 // @ts-ignore
 import plusEventDetail from 'plus:/parcels/Event/eventDetail';
@@ -45,12 +44,20 @@ import PlusLogsDetail from 'plus:/parcels/Event/LogsDetail';
 
 import './detail.less';
 
-const { Paragraph } = Typography;
-const EventDetailPage: React.FC = () => {
+interface EventDetailModalProps {
+  eventId: string | number;
+  visible: boolean;
+  onCancel: () => void;
+  onRefresh?: () => void;
+}
+
+const EventDetailModal: React.FC<EventDetailModalProps> = ({ eventId, visible, onCancel, onRefresh }) => {
   const { t } = useTranslation('AlertCurEvents');
-  const { busiId, eventId } = useParams<{ busiId: string; eventId: string }>();
   const commonState = useContext(CommonStateContext);
   const { busiGroups, datasourceList } = commonState;
+  const history = useHistory();
+  const [eventDetail, setEventDetail] = useState<any>();
+
   const handleNavToWarningList = (id) => {
     if (busiGroups.find((item) => item.id === id)) {
       window.open(`${basePrefix}/alert-rules?ids=${id}&isLeaf=true`);
@@ -58,10 +65,9 @@ const EventDetailPage: React.FC = () => {
       message.error(t('detail.buisness_not_exist'));
     }
   };
-  const history = useHistory();
-  const isHistory = history.location.pathname.includes('alert-his-events');
-  const [eventDetail, setEventDetail] = useState<any>();
+
   if (eventDetail) eventDetail.cate = eventDetail.cate || 'prometheus'; // TODO: 兼容历史的告警事件
+
   const descriptionInfo = [
     {
       label: t('detail.rule_name'),
@@ -110,18 +116,6 @@ const EventDetailPage: React.FC = () => {
             },
           },
         ]),
-    // { label: t('detail.rule_note'), key: 'rule_note' },
-    // ...(!_.includes(['firemap', 'northstar'], eventDetail?.rule_prod)
-    //   ? [
-    //       {
-    //         label: t('detail.datasource_id'),
-    //         key: 'datasource_id',
-    //         render(content) {
-    //           return _.find(datasourceList, (item) => item.id === content)?.name;
-    //         },
-    //       },
-    //     ]
-    //   : [false]),
     {
       label: t('detail.severity'),
       key: 'severity',
@@ -145,7 +139,6 @@ const EventDetailPage: React.FC = () => {
         return <Tag color={isRecovered ? 'green' : 'red'}>{isRecovered ? '已恢复' : '正在告警'}</Tag>;
       },
     },
-
     {
       label: t('detail.tags'),
       key: 'tags',
@@ -163,7 +156,6 @@ const EventDetailPage: React.FC = () => {
       label: '告警对象',
       key: 'target_ident',
     },
-    // ...(!_.includes(['firemap', 'northstar'], eventDetail?.rule_prod) ? [{ label: t('detail.target_note'), key: 'target_note' }] : [false]),
     {
       label: t('detail.first_trigger_time'),
       key: 'first_trigger_time',
@@ -200,16 +192,6 @@ const EventDetailPage: React.FC = () => {
         return moment((time || 0) * 1000).format('YYYY-MM-DD HH:mm:ss');
       },
     },
-    // {
-    //   label: t('detail.rule_algo'),
-    //   key: 'rule_algo',
-    //   render(text) {
-    //     if (text) {
-    //       return t('detail.rule_algo_anomaly');
-    //     }
-    //     return t('detail.rule_algo_threshold');
-    //   },
-    // },
     {
       label: t('detail.cate'),
       key: 'cate',
@@ -217,7 +199,6 @@ const EventDetailPage: React.FC = () => {
     ...(_.includes(['firemap', 'northstar'], eventDetail?.rule_prod)
       ? [
           {
-            // label: t(`detail.${eventDetail?.rule_prod}_ql_label`),
             label: t(`查询条件`),
             key: 'prom_ql',
             render: (val) => {
@@ -270,21 +251,6 @@ const EventDetailPage: React.FC = () => {
         return groups ? groups.map((group) => <Tag color='purple'>{group.name}</Tag>) : '';
       },
     },
-    // {
-    //   label: t('detail.callbacks'),
-    //   key: 'callbacks',
-    //   render(callbacks) {
-    //     return callbacks
-    //       ? callbacks.map((callback) => (
-    //           <Tag>
-    //             <Paragraph copyable style={{ margin: 0 }}>
-    //               {callback}
-    //             </Paragraph>
-    //           </Tag>
-    //         ))
-    //       : '';
-    //   },
-    // },
   ];
 
   if (eventDetail?.annotations) {
@@ -307,14 +273,26 @@ const EventDetailPage: React.FC = () => {
   }
 
   useEffect(() => {
-    const requestPromise = isHistory ? getHistoryEventsById(eventId) : getAlertEventsById(eventId);
-    requestPromise.then((res) => {
-      setEventDetail(res.dat);
-    });
-  }, [busiId, eventId]);
+    if (visible && eventId) {
+      getAlertEventsById(eventId).then((res) => {
+        setEventDetail(res.dat);
+      });
+    } else {
+      setEventDetail(undefined);
+    }
+  }, [visible, eventId]);
 
   return (
-    <PageLayout title={t('detail.title')} showBack backPath='/alert-his-events'>
+    <Modal
+      title={t('detail.title')}
+      open={visible}
+      onCancel={onCancel}
+      width={1200}
+      footer={null}
+      destroyOnClose
+      style={{ top: 20 }}
+      bodyStyle={{ maxHeight: 'calc(100vh - 100px)', overflow: 'auto' }}
+    >
       <div className='event-detail-container'>
         <Spin spinning={!eventDetail}>
           <Card
@@ -324,7 +302,7 @@ const EventDetailPage: React.FC = () => {
             actions={
               !_.includes(['firemap', 'northstar'], eventDetail?.rule_prod)
                 ? [
-                    <div className='action-btns'>
+                    <div className='action-btns' key='actions'>
                       <Space>
                         <Button
                           type='primary'
@@ -339,11 +317,12 @@ const EventDetailPage: React.FC = () => {
                                 tags: eventDetail.tags,
                               }),
                             });
+                            onCancel();
                           }}
                         >
                           {t('shield')}
                         </Button>
-                        {!isHistory && (
+                        {eventDetail && (
                           <Button
                             danger
                             onClick={() => {
@@ -351,7 +330,8 @@ const EventDetailPage: React.FC = () => {
                                 deleteAlertEventsModal(
                                   [Number(eventId)],
                                   () => {
-                                    history.replace('/alert-cur-events');
+                                    onCancel();
+                                    onRefresh?.();
                                   },
                                   t,
                                 );
@@ -385,15 +365,15 @@ const EventDetailPage: React.FC = () => {
                       </div>
                     );
                   })}
-                <EventNotifyRecords eventId={eventDetail.id} />
                 <TaskTpls eventDetail={eventDetail} />
+                <EventNotifyRecords eventId={eventDetail.id} />
               </div>
             )}
           </Card>
         </Spin>
       </div>
-    </PageLayout>
+    </Modal>
   );
 };
 
-export default EventDetailPage;
+export default EventDetailModal;

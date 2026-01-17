@@ -133,9 +133,11 @@ const CreateModal: React.FC<ModalProps> = (props: ModalProps) => {
     }
     if (isBusinessForm) {
       let form = teamRef.current.form;
-      const { name, members, attr } = await form.validateFields();
+      const { name, members, attr, label_key, label_value } = await form.validateFields();
       let params = {
         name,
+        label_key,
+        label_value,
         grp_type: grp_type,
         attr: attr,
         members: members

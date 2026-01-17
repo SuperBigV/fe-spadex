@@ -226,7 +226,7 @@ export const getMenuList = (t) => {
         },
         {
           key: '/alert-cur-events',
-          label: t('活跃告警'),
+          label: t('正在告警'),
         },
         {
           key: '/alert-his-events',

@@ -16,9 +16,8 @@
  */
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Tag, Button, Table, Tooltip, Dropdown, Menu } from 'antd';
-import { MoreOutlined } from '@ant-design/icons';
-import { useHistory, Link } from 'react-router-dom';
+import { Tag, Button, Table, Tooltip, Space } from 'antd';
+import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import _ from 'lodash';
 import queryString from 'query-string';
@@ -28,6 +27,7 @@ import { parseRange } from '@/components/TimeRangePicker';
 import { getEvents } from './services';
 import { deleteAlertEventsModal } from './index';
 import { SeverityColor } from './index';
+import EventDetailModal from './EventDetailModal';
 
 // @ts-ignore
 import AckBtn from 'plus:/parcels/Event/Acknowledge/AckBtn';
@@ -48,6 +48,8 @@ export default function TableCpt(props: IProps) {
   const { t } = useTranslation('AlertCurEvents');
   const { groupedDatasourceList } = useContext(CommonStateContext);
   const [refreshFlag, setRefreshFlag] = useState<string>(_.uniqueId('refresh_'));
+  const [detailModalVisible, setDetailModalVisible] = useState<boolean>(false);
+  const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
   const columns = [
     {
       title: t('prod'),
@@ -75,7 +77,15 @@ export default function TableCpt(props: IProps) {
         return (
           <>
             <div className='mb1'>
-              <Link to={`/alert-cur-events/${id}`}>{title}</Link>
+              <a
+                onClick={() => {
+                  setSelectedEventId(id);
+                  setDetailModalVisible(true);
+                }}
+                style={{ cursor: 'pointer', color: '#1890ff' }}
+              >
+                {title}
+              </a>
             </div>
             <div>
               {_.map(tags, (item) => {
@@ -111,14 +121,14 @@ export default function TableCpt(props: IProps) {
         );
       },
     },
-    {
-      title: '跟进人',
-      dataIndex: 'follower',
-      width: 120,
-      render(value) {
-        return value || '无';
-      },
-    },
+    // {
+    //   title: '跟进人',
+    //   dataIndex: 'follower',
+    //   width: 120,
+    //   render(value) {
+    //     return value || '无';
+    //   },
+    // },
     {
       title: t('first_trigger_time'),
       dataIndex: 'first_trigger_time',
@@ -138,68 +148,57 @@ export default function TableCpt(props: IProps) {
     {
       title: t('common:table.operations'),
       dataIndex: 'operate',
-      width: 80,
+      width: 180,
       render(value, record) {
         return (
-          <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item>
-                  <AckBtn
-                    data={record}
-                    onOk={() => {
-                      setRefreshFlag(_.uniqueId('refresh_'));
-                    }}
-                  />
-                </Menu.Item>
-                {!_.includes(['firemap', 'northstar'], record?.rule_prod) && (
-                  <Menu.Item>
-                    <Button
-                      style={{ padding: 0 }}
-                      size='small'
-                      type='link'
-                      onClick={() => {
-                        history.push({
-                          pathname: '/alert-mutes/add',
-                          search: queryString.stringify({
-                            busiGroup: record.group_id,
-                            prod: record.rule_prod,
-                            cate: record.cate,
-                            datasource_ids: [record.datasource_id],
-                            tags: record.tags,
-                          }),
-                        });
-                      }}
-                    >
-                      {t('shield')}
-                    </Button>
-                  </Menu.Item>
-                )}
-                <Menu.Item>
-                  <Button
-                    style={{ padding: 0 }}
-                    size='small'
-                    type='link'
-                    danger
-                    onClick={() =>
-                      deleteAlertEventsModal(
-                        [record.id],
-                        () => {
-                          setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.id));
-                          setRefreshFlag(_.uniqueId('refresh_'));
-                        },
-                        t,
-                      )
-                    }
-                  >
-                    {t('common:btn.delete')}
-                  </Button>
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Button type='link' icon={<MoreOutlined />} />
-          </Dropdown>
+          <Space size='small'>
+            <AckBtn
+              data={record}
+              onOk={() => {
+                setRefreshFlag(_.uniqueId('refresh_'));
+              }}
+            />
+            {!_.includes(['firemap', 'northstar'], record?.rule_prod) && (
+              <Button
+                size='small'
+                type='link'
+                onClick={() => {
+                  history.push({
+                    pathname: '/alert-mutes/add',
+                    search: queryString.stringify({
+                      busiGroup: record.group_id,
+                      prod: record.rule_prod,
+                      cate: record.cate,
+                      datasource_ids: [record.datasource_id],
+                      tags: record.tags,
+                    }),
+                  });
+                }}
+              >
+                {t('shield')}
+              </Button>
+            )}
+            <Button
+              size='small'
+              type='link'
+              danger
+              onClick={() =>
+                deleteAlertEventsModal(
+                  [record.id],
+                  () => {
+                    setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.id));
+                    setRefreshFlag(_.uniqueId('refresh_'));
+                  },
+                  t,
+                )
+              }
+            >
+              {t('common:btn.delete')}
+            </Button>
+            <Button size='small' type='link'>
+              {t('根因分析')}
+            </Button>
+          </Space>
         );
       },
     },
@@ -267,6 +266,17 @@ export default function TableCpt(props: IProps) {
           }}
         />
       </div>
+      <EventDetailModal
+        eventId={selectedEventId || 0}
+        visible={detailModalVisible}
+        onCancel={() => {
+          setDetailModalVisible(false);
+          setSelectedEventId(null);
+        }}
+        onRefresh={() => {
+          setRefreshFlag(_.uniqueId('refresh_'));
+        }}
+      />
     </div>
   );
 }

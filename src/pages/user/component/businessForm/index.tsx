@@ -36,8 +36,10 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
   const [users, setUsers] = useState<any>([]);
   const [initialValues, setInitialValues] = useState({
     members: [{ perm_flag: true }],
-    attr: { soft_type: 'business', is_collection_enabled: true },
+    attr: { is_collection_enabled: true },
     name: '',
+    label_key: '',
+    label_value: '',
     // is_collection_enabled: false,
     // process_name: '',
   });
@@ -49,9 +51,19 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
   const [isMetricCollectionEnabled, setIsMetricCollectionEnabled] = useState(false);
   const [currentSoftType, setCurrentSoftType] = useState('business');
   const [authOptions, setAuthOptions] = useState<any>([]);
+  // 监听 label_key 字段变化，用于编辑模式下同步 currentSoftType
+  const labelKeyValue = Form.useWatch('label_key', form);
+
   useImperativeHandle(ref, () => ({
     form: form,
   }));
+
+  // 当 label_key 变化时，同步更新 currentSoftType（用于编辑模式）
+  useEffect(() => {
+    if (labelKeyValue && (labelKeyValue === 'business' || labelKeyValue === 'database' || labelKeyValue === 'middleware')) {
+      setCurrentSoftType(labelKeyValue);
+    }
+  }, [labelKeyValue]);
   const getAuthConfig = async () => {
     const authOptions = await getAuthConfigs();
     const options = authOptions.map((item) => ({
@@ -76,8 +88,36 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
   }, []);
   const changeSoftType = (value: string) => {
     setCurrentSoftType(value);
+    // 当分组类型改变时，清空应用类型的值
+    form.setFieldsValue({ label_value: undefined });
     // console.log('softType:', value);
   };
+
+  // 根据分组类型获取应用类型选项
+  const getLabelValueOptions = () => {
+    switch (currentSoftType) {
+      case 'business':
+        return [{ label: '业务软件', value: 'bussiness' }];
+      case 'database':
+        return [
+          { label: 'Mysql', value: 'mysql' },
+          { label: '人大金仓', value: 'rdjc' },
+          { label: 'Redis', value: 'redis' },
+          { label: 'Mongodb', value: 'mogodb' },
+          { label: '达梦数据库', value: 'dm' },
+        ];
+      case 'middleware':
+        return [
+          { label: 'Kafka', value: 'Kafka' },
+          { label: 'Elasticsearch', value: 'elasticsearch' },
+          { label: 'Tomcat', value: 'tomcat' },
+          { label: 'Nginx', value: 'nginx' },
+        ];
+      default:
+        return [];
+    }
+  };
+
   const getTeamInfoDetail = (id: number) => {
     getBusinessTeamInfo(id).then(
       (data: {
@@ -86,6 +126,8 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
         // processName: string;
         // opsUnit: number;
         // maintainUnit: number;
+        label_key: string;
+        label_value: string;
         attr: any;
         user_groups: { perm_flag: string; user_group: { id: number } }[];
       }) => {
@@ -106,12 +148,16 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
             perm_flag: item.perm_flag === 'rw',
             user_group_id: item.user_group?.id,
           })),
+          label_key: data.label_key,
+          label_value: data.label_value,
           // is_collection_enabled: data.is_collection_enabled,
           // process_name: data.processName,
         });
         // 确保表单字段值正确设置
         form.setFieldsValue({
           name: data.name,
+          label_key: data.label_key,
+          label_value: data.label_value,
           attr: {
             ...data.attr,
             is_collection_enabled: isCollectionEnabled,
@@ -167,7 +213,7 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
     <Form layout='vertical' form={form} initialValues={initialValues} preserve={false}>
       {action !== ActionType.AddBusinessMember && (
         <>
-          <Form.Item
+          {/* <Form.Item
             label={t('分组类型')}
             rules={[
               {
@@ -185,6 +231,37 @@ const TeamForm = React.forwardRef<ReactNode, TeamProps>((props, ref) => {
                 { label: '中间件', value: 'middleware' },
               ]}
             ></Select>
+          </Form.Item> */}
+          <Form.Item
+            label={t('分组类型')}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+            name={'label_key'}
+          >
+            <Select
+              placeholder={'请选择分组类型'}
+              onChange={changeSoftType}
+              options={[
+                { label: '业务软件', value: 'business' },
+                { label: '数据库', value: 'database' },
+                { label: '中间件', value: 'middleware' },
+              ]}
+            ></Select>
+          </Form.Item>
+          <Form.Item
+            label={t('应用类型')}
+            name='label_value'
+            rules={[
+              {
+                required: true,
+                message: '请选择应用类型',
+              },
+            ]}
+          >
+            <Select placeholder={'请选择应用类型'} options={getLabelValueOptions()} disabled={!currentSoftType}></Select>
           </Form.Item>
           <Form.Item
             label={t('分组名称')}

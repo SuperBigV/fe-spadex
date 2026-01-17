@@ -146,11 +146,11 @@ export default function index(props: IProps) {
               </Form.Item>
               <Base />
               <Rule form={form} bgid={bgid} />
-              <EventSettings initialValues={initialValues} />
+              {/* <EventSettings initialValues={initialValues} /> */}
               <Effective />
               <Notify disabled={disabled} bgid={bgid} />
             </div>
-            <Affix offsetBottom={0}>
+            <Affix offsetBottom={40}>
               <Card size='small' className='affix-bottom-shadow'>
                 {!disabled && (
                   <Space>

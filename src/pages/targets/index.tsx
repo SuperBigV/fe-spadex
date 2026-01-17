@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
-import { Modal, Tag, Form, Input, Alert, Select, Tooltip, Table, message, Checkbox, Spin, Divider, Tabs } from 'antd';
-import { DatabaseOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Modal, Tag, Form, Input, Alert, Select, Tooltip, Table, message, Checkbox, Spin, Divider, Tabs, Button, Space, Row, Col, Dropdown } from 'antd';
+import { DatabaseOutlined, QuestionCircleOutlined, SearchOutlined, AppstoreOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import _, { debounce } from 'lodash';
 import classNames from 'classnames';
@@ -34,6 +34,15 @@ import AlertRuleList from '@/pages/alertRules/List';
 import HistoryEvents from '@/pages/historyEvents/busiEvents';
 import { getDashboard, updateDashboardConfigs, getDashboardPure, getBusiGroupsDashboards } from '@/services/dashboardV2';
 import Dependencies from '@/pages/traceCpt/Dependencies';
+import EventTable from '@/pages/event/Table';
+import { deleteAlertEventsModal } from '@/pages/event';
+import { AutoRefresh } from '@/components/TimeRangePicker';
+import TimeRangePicker, { getDefaultValue } from '@/components/TimeRangePicker';
+import DatasourceSelect from '@/components/DatasourceSelect/DatasourceSelect';
+import { BusinessGroupSelectWithAll } from '@/components/BusinessGroup';
+import { getProdOptions } from '@/pages/alertRules/Form/components/ProdSelect';
+import { IS_ENT } from '@/utils/constant';
+import queryString from 'query-string';
 export { BusinessGroup }; // TODO 部分页面使用的老的业务组组件，后续逐步替换
 interface jumpProps {
   id: string;
@@ -442,7 +451,7 @@ const OperationModal: React.FC<OperateionModalProps> = ({ operateType, setOperat
 
 const Targets: React.FC = () => {
   const { t } = useTranslation('targets');
-  const { businessGroup } = useContext(CommonStateContext);
+  const { businessGroup, feats } = useContext(CommonStateContext);
   const [gids, setGids] = useState<string | undefined>(businessGroup.ids);
   const [operateType, setOperateType] = useState<OperateType>(OperateType.None);
   const [operateLife, setOperateLife] = useState<OperateLife>(OperateLife.None);
@@ -463,7 +472,180 @@ const Targets: React.FC = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const did = params.get('did');
-  // 函数用于解析查询参数
+
+  // 正在告警 TabPane 相关状态
+  const CACHE_KEY = 'alert_active_events_range';
+  const query = queryString.parse(location.search);
+  const getEventFilter = (query, currentGids?: string) => {
+    // 优先使用 gids，如果 gids 不存在或为 '0'，则使用 query 中的 bgid
+    let bgidValue: number | undefined = undefined;
+    if (currentGids && currentGids !== '0' && currentGids !== '-2') {
+      bgidValue = Number(currentGids);
+    } else if (query.bgid) {
+      bgidValue = Number(query.bgid);
+    }
+    return {
+      range: getDefaultValue(CACHE_KEY, undefined),
+      datasource_ids: query.datasource_ids ? _.split(query.datasource_ids, ',').map(Number) : [],
+      bgid: bgidValue,
+      severity: query.severity ? Number(query.severity) : undefined,
+      query: query.query,
+      is_recovered: query.is_recovered ? Number(query.is_recovered) : undefined,
+      rule_prods: query.rule_prods ? _.split(query.rule_prods, ',') : [],
+    };
+  };
+  const [eventFilter, setEventFilter] = useState(getEventFilter(query, gids));
+  const [eventRefreshFlag, setEventRefreshFlag] = useState<string>(_.uniqueId('refresh_'));
+  const [eventSelectedRowKeys, setEventSelectedRowKeys] = useState<number[]>([]);
+  let prodOptions = getProdOptions(feats);
+  if (IS_ENT) {
+    prodOptions = [
+      ...prodOptions,
+      {
+        label: t('AlertHisEvents:rule_prod.firemap'),
+        value: 'firemap',
+        pro: false,
+      },
+      {
+        label: t('AlertHisEvents:rule_prod.northstar'),
+        value: 'northstar',
+        pro: false,
+      },
+    ];
+  }
+
+  // 正在告警 TabPane 的 header 渲染函数
+  const { t: tEvent } = useTranslation('AlertCurEvents');
+  function renderEventHeader() {
+    return (
+      <Row justify='space-between' style={{ width: '100%' }}>
+        <Space>
+          <TimeRangePicker
+            allowClear
+            localKey={CACHE_KEY}
+            value={eventFilter.range}
+            onChange={(val) => {
+              setEventFilter({
+                ...eventFilter,
+                range: val,
+              });
+            }}
+            dateFormat='YYYY-MM-DD HH:mm:ss'
+          />
+          <Select
+            allowClear
+            placeholder={tEvent('prod')}
+            style={{ minWidth: 80 }}
+            value={eventFilter.rule_prods}
+            mode='multiple'
+            onChange={(val) => {
+              setEventFilter({
+                ...eventFilter,
+                rule_prods: val,
+              });
+            }}
+            dropdownMatchSelectWidth={false}
+          >
+            {prodOptions.map((item) => {
+              return (
+                <Select.Option value={item.value} key={item.value}>
+                  {item.label}
+                </Select.Option>
+              );
+            })}
+          </Select>
+          <DatasourceSelect
+            style={{ width: 100 }}
+            filterKey='alertRule'
+            value={eventFilter.datasource_ids}
+            onChange={(val: number[]) => {
+              setEventFilter({
+                ...eventFilter,
+                datasource_ids: val,
+              });
+            }}
+          />
+          <BusinessGroupSelectWithAll
+            value={eventFilter.bgid}
+            onChange={(val: number) => {
+              setEventFilter({
+                ...eventFilter,
+                bgid: val,
+              });
+            }}
+          />
+          <Select
+            allowClear
+            style={{ minWidth: 80 }}
+            placeholder={tEvent('severity')}
+            value={eventFilter.severity}
+            onChange={(val) => {
+              setEventFilter({
+                ...eventFilter,
+                severity: val,
+              });
+            }}
+            dropdownMatchSelectWidth={false}
+          >
+            <Select.Option value={1}>严重</Select.Option>
+            <Select.Option value={2}>警告</Select.Option>
+            <Select.Option value={3}>通知</Select.Option>
+          </Select>
+          <Input
+            className='search-input'
+            prefix={<SearchOutlined />}
+            placeholder={tEvent('search_placeholder')}
+            value={eventFilter.query}
+            onChange={(e) => {
+              setEventFilter({
+                ...eventFilter,
+                query: e.target.value,
+              });
+            }}
+          />
+        </Space>
+        <Col
+          flex='100px'
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Dropdown
+            overlay={
+              <ul className='ant-dropdown-menu'>
+                <li
+                  className='ant-dropdown-menu-item'
+                  onClick={() =>
+                    deleteAlertEventsModal(
+                      eventSelectedRowKeys,
+                      () => {
+                        setEventSelectedRowKeys([]);
+                        setEventRefreshFlag(_.uniqueId('refresh_'));
+                      },
+                      tEvent,
+                    )
+                  }
+                >
+                  {tEvent('common:btn.batch_delete')}
+                </li>
+              </ul>
+            }
+            trigger={['click']}
+          >
+            <Button style={{ marginRight: 8 }} disabled={eventSelectedRowKeys.length === 0}>
+              {tEvent('batch_btn')}
+            </Button>
+          </Dropdown>
+          <AutoRefresh
+            onRefresh={() => {
+              setEventRefreshFlag(_.uniqueId('refresh_'));
+            }}
+          />
+        </Col>
+      </Row>
+    );
+  }
 
   const onChange = (key) => {
     setActiveKey(key);
@@ -539,6 +721,25 @@ const Targets: React.FC = () => {
       setProcessName(undefined);
     }
   }, [gids, activeKey]);
+
+  // 当 gids 变化时，更新 eventFilter 的 bgid
+  useEffect(() => {
+    setEventFilter((prevFilter) => {
+      let newBgid: number | undefined = undefined;
+      if (gids && gids !== '0' && gids !== '-2') {
+        newBgid = Number(gids);
+      }
+      // 只有当 bgid 真正变化时才更新
+      if (prevFilter.bgid !== newBgid) {
+        return {
+          ...prevFilter,
+          bgid: newBgid,
+        };
+      }
+      return prevFilter;
+    });
+  }, [gids]);
+
   return (
     <PageLayout icon={<DatabaseOutlined />} title={t('软件洞察')}>
       <div className='object-manage-page-content'>
@@ -580,10 +781,30 @@ const Targets: React.FC = () => {
               {/* <AlarmRules /> */}
               <AlertRuleList gids={gids} />
             </TabPane>
-            {/* <TabPane tab='正在告警' key='5'>
-              <ActiveAlerts />
-            </TabPane> */}
-            <TabPane tab='告警记录' key='6'>
+            <TabPane tab='正在告警' key='5'>
+              {(() => {
+                const eventFilterObj = Object.assign(
+                  { range: eventFilter.range },
+                  eventFilter.datasource_ids.length ? { datasource_ids: eventFilter.datasource_ids } : {},
+                  eventFilter.severity ? { severity: eventFilter.severity } : {},
+                  eventFilter.query ? { query: eventFilter.query } : {},
+                  { bgid: eventFilter.bgid },
+                  eventFilter.rule_prods.length ? { rule_prods: _.join(eventFilter.rule_prods, ',') } : {},
+                );
+                return (
+                  <EventTable
+                    header={renderEventHeader()}
+                    filter={eventFilter}
+                    filterObj={eventFilterObj}
+                    setFilter={setEventFilter}
+                    refreshFlag={eventRefreshFlag}
+                    selectedRowKeys={eventSelectedRowKeys}
+                    setSelectedRowKeys={setEventSelectedRowKeys}
+                  />
+                );
+              })()}
+            </TabPane>
+            <TabPane tab='历史告警' key='6'>
               {/* <AlarmHistory /> */}
               <HistoryEvents></HistoryEvents>
             </TabPane>

@@ -180,9 +180,9 @@ const Event: React.FC = () => {
             }}
             dropdownMatchSelectWidth={false}
           >
-            <Select.Option value={1}>S1（Critical）</Select.Option>
-            <Select.Option value={2}>S2（Warning）</Select.Option>
-            <Select.Option value={3}>S3（Info）</Select.Option>
+            <Select.Option value={1}>严重</Select.Option>
+            <Select.Option value={2}>警告</Select.Option>
+            <Select.Option value={3}>通知</Select.Option>
           </Select>
           <Input
             className='search-input'
@@ -260,7 +260,7 @@ const Event: React.FC = () => {
 
   return (
     <PageLayout icon={<AlertOutlined />} title={t('title')}>
-      {view === 'card' ? (
+      {view === 'list' ? (
         <Card header={renderLeftHeader()} filter={filterObj} refreshFlag={refreshFlag} />
       ) : (
         <Table

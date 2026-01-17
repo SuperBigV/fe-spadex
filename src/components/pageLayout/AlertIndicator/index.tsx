@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Badge, Popover, Table, Button } from 'antd';
 import { AlertOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { useHistory } from 'react-router-dom';
 import { getCurrentAlertOfMy } from './services';
 interface AlertItem {
+  id: number;
   rule_name: string;
   cate: string;
   severity: number;
@@ -45,6 +47,8 @@ const classifyAlerts = (data) => {
   return result;
 };
 const AlertIndicator = () => {
+  const history = useHistory();
+
   // 告警数据状态
   const [alerts, setAlerts] = useState<classifyAlerts>({
     critical: { count: 0, list: [] },
@@ -80,11 +84,25 @@ const AlertIndicator = () => {
       title: '标题',
       dataIndex: 'rule_name',
       key: 'rule_name',
+      render: (text: string, record: AlertItem) => {
+        return (
+          <a
+            onClick={(e) => {
+              e.stopPropagation();
+              history.push(`/alert-cur-events/${record.id}`);
+              setPopoverVisible(false);
+            }}
+            style={{ cursor: 'pointer' }}
+          >
+            {text}
+          </a>
+        );
+      },
     },
     {
-      title: '告警源',
-      dataIndex: 'cate',
-      key: 'cate',
+      title: '业务线',
+      dataIndex: 'group_name',
+      key: 'group_name',
     },
     {
       title: '告警时间',
