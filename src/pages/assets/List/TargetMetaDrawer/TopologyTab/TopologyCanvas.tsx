@@ -12,6 +12,36 @@ interface IProps {
   loading?: boolean;
 }
 
+// 注册自定义节点（全局注册，避免重复注册）
+let nodeRegistered = false;
+const registerTopologyNode = (darkMode: boolean) => {
+  if (!nodeRegistered) {
+    Graph.registerNode(
+      'topology-node',
+      {
+        inherit: 'rect',
+        width: 120,
+        height: 40,
+        attrs: {
+          body: {
+            strokeWidth: 1,
+            stroke: darkMode ? '#434343' : '#d9d9d9',
+            fill: darkMode ? '#1f1f1f' : '#fff',
+            rx: 4,
+            ry: 4,
+          },
+          text: {
+            fontSize: 12,
+            fill: darkMode ? '#fff' : '#000',
+          },
+        },
+      },
+      true,
+    );
+    nodeRegistered = true;
+  }
+};
+
 export default function TopologyCanvas(props: IProps) {
   const { data, topologyType, loading = false } = props;
   const graphRef = useRef<HTMLDivElement>(null);
@@ -277,34 +307,27 @@ export default function TopologyCanvas(props: IProps) {
       }
 
       console.log('Initializing X6 graph with container:', graphRef.current);
+      const containerWidth = graphRef.current.clientWidth || 800;
+      const containerHeight = graphRef.current.clientHeight || 600;
+      console.log('Container size:', containerWidth, 'x', containerHeight);
+
       try {
         // 注册自定义节点
-        Graph.registerNode(
-          'topology-node',
-          {
-            inherit: 'rect',
-            width: 120,
-            height: 40,
-            attrs: {
-              body: {
-                strokeWidth: 1,
-                stroke: darkMode ? '#434343' : '#d9d9d9',
-                fill: darkMode ? '#1f1f1f' : '#fff',
-                rx: 4,
-                ry: 4,
-              },
-              text: {
-                fontSize: 12,
-                fill: darkMode ? '#fff' : '#000',
-              },
-            },
-          },
-          true,
-        );
+        registerTopologyNode(darkMode);
 
         const graph = new Graph({
           container: graphRef.current,
-          grid: true,
+          width: containerWidth,
+          height: containerHeight,
+          grid: {
+            visible: true,
+            type: 'dot',
+            size: 10,
+            args: {
+              color: darkMode ? '#434343' : '#e0e0e0',
+              thickness: 1,
+            },
+          },
           mousewheel: {
             enabled: true,
             zoomAtMousePosition: true,
@@ -328,17 +351,20 @@ export default function TopologyCanvas(props: IProps) {
             connectionPoint: 'anchor',
             allowBlank: false,
           },
+          background: {
+            color: darkMode ? '#141414' : '#fafafa',
+          },
         });
 
         if (mounted) {
           graphInstanceRef.current = graph;
           setGraphReady(true);
-          console.log('X6 Graph initialized successfully');
+          console.log('X6 Graph initialized successfully, size:', containerWidth, 'x', containerHeight);
         } else {
           graph.dispose();
         }
       } catch (error) {
-        console.error('Error initializing G6 graph:', error);
+        console.error('Error initializing X6 graph:', error);
         if (mounted) {
           setGraphReady(false);
         }
@@ -423,10 +449,10 @@ export default function TopologyCanvas(props: IProps) {
       try {
         const addedNode = graph.addNode({
           shape: 'topology-node',
-          id: node.id,
+          id: String(node.id),
           x: position.x,
           y: position.y,
-          label: node.name,
+          label: node.name || node.id,
           attrs: nodeAttrs,
         });
         if (addedNode) {
@@ -444,10 +470,19 @@ export default function TopologyCanvas(props: IProps) {
       const isDeployment = edge.type === 'deployment';
       console.log('Adding edge:', edge.id, edge.source, '->', edge.target, 'type:', edge.type);
       try {
+        // 确保源节点和目标节点都存在
+        const sourceNode = graph.getCellById(String(edge.source));
+        const targetNode = graph.getCellById(String(edge.target));
+
+        if (!sourceNode || !targetNode) {
+          console.warn('Source or target node not found for edge:', edge.id, 'source:', edge.source, 'target:', edge.target);
+          return;
+        }
+
         const addedEdge = graph.addEdge({
-          id: edge.id,
-          source: edge.source,
-          target: edge.target,
+          id: String(edge.id),
+          source: String(edge.source),
+          target: String(edge.target),
           attrs: {
             line: {
               stroke: isDeployment ? '#5F95FF' : '#A2B1C3',
@@ -475,8 +510,13 @@ export default function TopologyCanvas(props: IProps) {
     // 适应画布
     setTimeout(() => {
       try {
-        graph.centerContent();
-        console.log('Centered content');
+        const cells = graph.getCells();
+        if (cells.length > 0) {
+          graph.centerContent({ padding: 20 });
+          console.log('Centered content, total cells:', cells.length);
+        } else {
+          console.warn('No cells to center');
+        }
       } catch (error) {
         console.error('Error centering content:', error);
       }
@@ -499,5 +539,15 @@ export default function TopologyCanvas(props: IProps) {
     );
   }
 
-  return <div ref={graphRef} className='topology-canvas' />;
+  return (
+    <div
+      ref={graphRef}
+      className='topology-canvas'
+      style={{
+        width: '100%',
+        height: '600px',
+        minHeight: '600px',
+      }}
+    />
+  );
 }

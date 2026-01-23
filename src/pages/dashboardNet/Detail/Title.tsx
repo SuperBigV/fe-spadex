@@ -147,13 +147,13 @@ export default function Title(props: IProps) {
                 className='back_icon'
                 onClick={() => {
                   goBack(history).catch(() => {
-                    history.push(props.gobackPath || '/dashboards');
+                    history.push(props.gobackPath || '/dashboards-net');
                   });
                 }}
               />
             </Tooltip>
             <Space className='pr1'>
-              <Link to={props.gobackPath || '/dashboards'} style={{ fontSize: 14 }}>
+              <Link to={props.gobackPath || '/dashboards-net'} style={{ fontSize: 14 }}>
                 {isBuiltin ? t('builtInComponents:title') : t('态势列表')}
               </Link>
               {'/'}

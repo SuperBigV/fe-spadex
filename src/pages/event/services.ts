@@ -18,3 +18,9 @@ export function getCurEventsOfMe(params) {
     params,
   });
 }
+
+export function rootCauseAnalysis(hash: string) {
+  return request(`/api/n9e/root-cause-analysis/${hash}`, {
+    method: RequestMethod.Post,
+  });
+}

@@ -16,7 +16,7 @@
  */
 import React, { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Tag, Button, Table, Tooltip, Space } from 'antd';
+import { Tag, Button, Table, Tooltip, Space, message } from 'antd';
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import _ from 'lodash';
@@ -24,7 +24,7 @@ import queryString from 'query-string';
 import { useAntdTable } from 'ahooks';
 import { CommonStateContext } from '@/App';
 import { parseRange } from '@/components/TimeRangePicker';
-import { getEvents } from './services';
+import { getEvents, rootCauseAnalysis } from './services';
 import { deleteAlertEventsModal } from './index';
 import { SeverityColor } from './index';
 import EventDetailModal from './EventDetailModal';
@@ -195,7 +195,18 @@ export default function TableCpt(props: IProps) {
             >
               {t('common:btn.delete')}
             </Button>
-            <Button size='small' type='link'>
+            <Button
+              size='small'
+              type='link'
+              onClick={async () => {
+                try {
+                  await rootCauseAnalysis(record.hash);
+                  message.success(t('根因分析请求已发送') || '根因分析请求已发送');
+                } catch (error: any) {
+                  message.error(error?.message || t('根因分析请求失败') || '根因分析请求失败');
+                }
+              }}
+            >
               {t('根因分析')}
             </Button>
           </Space>

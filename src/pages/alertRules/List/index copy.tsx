@@ -64,10 +64,6 @@ export default function List(props: ListProps) {
   const { businessGroup, busiGroups, netGroup, netGroups } = useContext(CommonStateContext);
   const { gids, businessGroupType } = props;
 
-  // 根据 businessGroupType 选择对应的业务组上下文
-  const currentGroup = businessGroupType === 'net' ? netGroup : businessGroup;
-  const currentGroups = businessGroupType === 'net' ? netGroups : busiGroups;
-
   const { t } = useTranslation('alertRules');
   const history = useHistory();
   const { datasourceList, groupedDatasourceList, datasourceCateOptions } = useContext(CommonStateContext);
@@ -136,7 +132,7 @@ export default function List(props: ListProps) {
         },
       },
     ],
-    currentGroup.isLeaf && gids !== '-2'
+    businessGroup.isLeaf && gids !== '-2'
       ? []
       : ([
           {
@@ -144,7 +140,7 @@ export default function List(props: ListProps) {
             dataIndex: 'group_id',
             width: 100,
             render: (id) => {
-              return _.find(currentGroups, { id })?.name;
+              return _.find(busiGroups, { id })?.name;
             },
           },
         ] as any),
@@ -217,7 +213,6 @@ export default function List(props: ListProps) {
             dingtalk: '钉钉',
             feishu: '飞书',
             dmcall: '电话',
-            wecom: '企业微信',
           };
           return (
             <div
@@ -513,7 +508,7 @@ export default function List(props: ListProps) {
       const promqls = _.isArray(query.promql) ? query.promql : [query.promql];
       initialValues = {
         ...defaultValues,
-        group_id: Number(currentGroup.id),
+        group_id: Number(businessGroup.id),
         rule_config: {
           version: 'v2',
           queries: _.map(promqls, (promql, idx) => {
@@ -667,7 +662,7 @@ export default function List(props: ListProps) {
           />
         </Space>
         <Space>
-          {currentGroup.isLeaf && gids !== '-2' && (
+          {businessGroup.isLeaf && gids !== '-2' && (
             <Button
               type='primary'
               onClick={() => {
@@ -678,12 +673,12 @@ export default function List(props: ListProps) {
               {t('common:btn.add')}
             </Button>
           )}
-          {currentGroup.isLeaf && currentGroup.id && gids !== '-2' && (
+          {businessGroup.isLeaf && businessGroup.id && gids !== '-2' && (
             <Button
               onClick={() => {
-                if (currentGroup.id) {
+                if (businessGroup.id) {
                   Import({
-                    busiId: currentGroup.id,
+                    busiId: businessGroup.id,
                     refreshList: fetchData,
                     groupedDatasourceList,
                     datasourceCateOptions,
@@ -694,8 +689,8 @@ export default function List(props: ListProps) {
               {t('common:btn.import')}
             </Button>
           )}
-          {currentGroup.isLeaf && currentGroup.id && gids !== '-2' && (
-            <MoreOperations bgid={currentGroup.id} selectRowKeys={selectRowKeys} selectedRows={selectedRows} getAlertRules={fetchData} />
+          {businessGroup.isLeaf && businessGroup.id && gids !== '-2' && (
+            <MoreOperations bgid={businessGroup.id} selectRowKeys={selectRowKeys} selectedRows={selectedRows} getAlertRules={fetchData} />
           )}
           <Button
             onClick={() => {
@@ -738,7 +733,7 @@ export default function List(props: ListProps) {
             type={formModalType}
             initialValues={formInitialValues}
             editable={formEditable}
-            bgid={formModalType === 1 ? formInitialValues?.group_id : currentGroup.id}
+            bgid={formModalType === 1 ? formInitialValues?.group_id : businessGroup.id}
             onSuccess={handleFormSuccess}
             onCancel={handleFormCancel}
           />

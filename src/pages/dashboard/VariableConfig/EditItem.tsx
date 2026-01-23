@@ -219,7 +219,7 @@ function EditItem(props: IProps) {
                         <QuestionCircleOutlined
                           onClick={() => {
                             if (datasourceCate === 'prometheus') {
-                              window.open('https://flashcat.cloud/media/?type=夜莺监控&source=aHR0cHM6Ly9kb3dubG9hZC5mbGFzaGNhdC5jbG91ZC9uOWUtMTMtZGFzaGJvYXJkLWludHJvLm1wNA==');
+                              window.open('https://flashcat.cloud/media/?type=平台监控&source=aHR0cHM6Ly9kb3dubG9hZC5mbGFzaGNhdC5jbG91ZC9uOWUtMTMtZGFzaGJvYXJkLWludHJvLm1wNA==');
                             } else if (datasourceCate === 'elasticsearch') {
                               DocumentDrawer({
                                 language: i18n.language,

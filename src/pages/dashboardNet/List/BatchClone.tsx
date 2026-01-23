@@ -24,12 +24,12 @@ import { boardsClones } from '@/services/dashboardV2';
 
 interface IProps {
   board_ids: number[];
-  busiGroups: any[];
+  netGroups: any[];
 }
 
 function BatchClone(props: IProps & ModalWrapProps) {
   const { t } = useTranslation('dashboard');
-  const { visible, destroy, board_ids, busiGroups } = props;
+  const { visible, destroy, board_ids, netGroups } = props;
   const [importResult, setImportResult] = useState<{ name: string; msg: string }[]>();
 
   return (
@@ -71,7 +71,7 @@ function BatchClone(props: IProps & ModalWrapProps) {
         <Form.Item label={t('common:business_group')} name='bgids'>
           <Select
             mode='multiple'
-            options={_.map(busiGroups, (item) => {
+            options={_.map(netGroups, (item) => {
               return {
                 label: item.name,
                 value: item.id,

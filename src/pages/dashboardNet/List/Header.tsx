@@ -41,7 +41,7 @@ interface IProps {
 }
 
 export default function Header(props: IProps) {
-  const { businessGroup, busiGroups } = useContext(CommonStateContext);
+  const { netGroup, netGroups } = useContext(CommonStateContext);
   const { t } = useTranslation('dashboard');
   const { gids, selectRowKeys, refreshList, searchVal, onSearchChange, columnsConfigs, setColumnsConfigs, selectedBusinessGroup, setSelectedBusinessGroup } = props;
   const [importData, setImportData] = React.useState<{
@@ -78,13 +78,13 @@ export default function Header(props: IProps) {
           {gids === '-1' && <BusinessGroupSelectWithAll value={selectedBusinessGroup} onChange={setSelectedBusinessGroup} mode='multiple' />}
         </Space>
         <Space>
-          {businessGroup.isLeaf && gids && gids !== '-1' && gids !== '-2' && (
+          {netGroup.isLeaf && gids && gids !== '-1' && gids !== '-2' && (
             <Button
               type='primary'
               onClick={() => {
                 FormModal({
                   action: 'create',
-                  busiId: businessGroup.id,
+                  busiId: netGroup.id,
                   onOk: refreshList,
                 });
               }}
@@ -92,13 +92,13 @@ export default function Header(props: IProps) {
               {t('common:btn.add')}
             </Button>
           )}
-          {businessGroup.isLeaf && gids && gids !== '-1' && gids !== '-2' && (
+          {netGroup.isLeaf && gids && gids !== '-1' && gids !== '-2' && (
             <Button
               onClick={() => {
-                if (businessGroup.id) {
+                if (netGroup.id) {
                   setImportData({
                     visible: true,
-                    busiId: businessGroup.id,
+                    busiId: netGroup.id,
                     type: 'ImportBuiltin',
                   });
                 }
@@ -107,7 +107,7 @@ export default function Header(props: IProps) {
               {t('common:btn.import')}
             </Button>
           )}
-          {businessGroup.isLeaf && gids && gids !== '-1' && gids !== '-2' && (
+          {netGroup.isLeaf && gids && gids !== '-1' && gids !== '-2' && (
             <div className={'table-more-options'}>
               <Dropdown
                 overlay={
@@ -118,7 +118,7 @@ export default function Header(props: IProps) {
                         if (selectRowKeys.length) {
                           BatchClone({
                             board_ids: selectRowKeys,
-                            busiGroups,
+                            netGroups,
                           });
                         } else {
                           message.warning(t('batch.noSelected'));

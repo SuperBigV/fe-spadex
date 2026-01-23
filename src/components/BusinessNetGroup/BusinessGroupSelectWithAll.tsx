@@ -14,7 +14,7 @@ interface Props {
 
 export default function BusinessGroupSelect(props: Props) {
   const { t } = useTranslation();
-  const { busiGroups } = useContext(CommonStateContext);
+  const { netGroups } = useContext(CommonStateContext);
   const { value, onChange, mode } = props;
   const [allBusiGroups, setAllBusiGroups] = useState<any[]>([]);
 
@@ -37,7 +37,7 @@ export default function BusinessGroupSelect(props: Props) {
       dropdownMatchSelectWidth={false}
       showSearch
       optionFilterProp='label'
-      options={getBusinessGroupsOptions(busiGroups, allBusiGroups)}
+      options={getBusinessGroupsOptions(netGroups, allBusiGroups)}
     />
   );
 }

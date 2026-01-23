@@ -186,14 +186,14 @@ export const getMenuList = (t) => {
           key: '/room-dashboard',
           label: t('机房大屏'),
         },
-        {
-          key: '/network-dashboard',
-          label: t('网络大屏'),
-        },
-        {
-          key: '/software-dashboard',
-          label: t('软件大屏'),
-        },
+        // {
+        //   key: '/network-dashboard',
+        //   label: t('网络大屏'),
+        // },
+        // {
+        //   key: '/software-dashboard',
+        //   label: t('软件大屏'),
+        // },
       ],
     },
     // {
@@ -277,10 +277,10 @@ export const getMenuList = (t) => {
           label: '任务历史',
         },
 
-        {
-          key: '/pollings',
-          label: '智能巡检',
-        },
+        // {
+        //   key: '/pollings',
+        //   label: '智能巡检',
+        // },
         {
           key: '/probes',
           label: '拨测工具',
@@ -419,14 +419,14 @@ export const getMenuList = (t) => {
         //   key: '/help/sso',
         //   label: t('单点登录'),
         // },
-        // {
-        //   key: '/help/servers',
-        //   label: t('告警引擎'),
-        // },
-        // {
-        //   key: '/site-settings',
-        //   label: t('siteInfo:title'),
-        // },
+        {
+          key: '/help/servers',
+          label: t('告警引擎'),
+        },
+        {
+          key: '/site-settings',
+          label: t('siteInfo:title'),
+        },
         // {
         //   key: '/help/version',
         //   label: t('version:title'),

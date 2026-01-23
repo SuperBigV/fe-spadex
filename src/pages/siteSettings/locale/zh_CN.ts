@@ -10,7 +10,7 @@ const zh_CN = {
   menu_small_logo_url: '菜单页小 Logo',
   menu_small_logo_url_tip: '输入图片资源地址，建议尺寸 38x38',
   document_url: '文档地址',
-  document_url_tip: '覆盖默认的夜莺文档链接地址',
+  document_url_tip: '覆盖默认的平台文档链接地址',
   page_title: '站点标题',
   page_title_tip: '覆盖默认的标题 (Nightingale)',
   home_page_url: '首页地址',

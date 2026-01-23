@@ -779,7 +779,7 @@ const Targets: React.FC = () => {
             </TabPane>
             <TabPane tab='告警规则' key='4'>
               {/* <AlarmRules /> */}
-              <AlertRuleList gids={gids} />
+              <AlertRuleList gids={gids} businessGroupType='asset' />
             </TabPane>
             <TabPane tab='正在告警' key='5'>
               {(() => {

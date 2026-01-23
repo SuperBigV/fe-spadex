@@ -214,87 +214,87 @@ export default function index() {
                     dataIndex: 'update_by',
                     width: 100,
                   },
-                  {
-                    title: t('public.name'),
-                    width: 150,
-                    dataIndex: 'public',
-                    className: 'published-cell',
-                    render: (val: number, record: DashboardType) => {
-                      let content: React.ReactNode = null;
-                      if (val === 1 && record.public_cate !== undefined) {
-                        if (record.public_cate === 0) {
-                          content = (
-                            <Tooltip
-                              overlayClassName='ant-tooltip-with-link'
-                              title={
-                                <>
-                                  <div>
-                                    <Link
-                                      target='_blank'
-                                      to={{
-                                        pathname: `/dashboards/share/${record.id}`,
-                                        search: 'themeMode=dark',
-                                      }}
-                                    >
-                                      {t('public.theme_link.dark')}
-                                    </Link>
-                                  </div>
-                                  <div>
-                                    <Link
-                                      target='_blank'
-                                      to={{
-                                        pathname: `/dashboards/share/${record.id}`,
-                                        search: 'themeMode=light',
-                                      }}
-                                    >
-                                      {t('public.theme_link.light')}
-                                    </Link>
-                                  </div>
-                                </>
-                              }
-                            >
-                              <Link
-                                target='_blank'
-                                to={{
-                                  pathname: `/dashboards/share/${record.id}`,
-                                }}
-                              >
-                                <ShareAltOutlined /> {t(`public.cate.${record.public_cate}`)}
-                              </Link>
-                            </Tooltip>
-                          );
-                        } else {
-                          content = t(`public.cate.${record.public_cate}`);
-                        }
-                      } else {
-                        content = t('public.unpublic');
-                      }
+                  // {
+                  //   title: t('public.name'),
+                  //   width: 150,
+                  //   dataIndex: 'public',
+                  //   className: 'published-cell',
+                  //   render: (val: number, record: DashboardType) => {
+                  //     let content: React.ReactNode = null;
+                  //     if (val === 1 && record.public_cate !== undefined) {
+                  //       if (record.public_cate === 0) {
+                  //         content = (
+                  //           <Tooltip
+                  //             overlayClassName='ant-tooltip-with-link'
+                  //             title={
+                  //               <>
+                  //                 <div>
+                  //                   <Link
+                  //                     target='_blank'
+                  //                     to={{
+                  //                       pathname: `/dashboards/share/${record.id}`,
+                  //                       search: 'themeMode=dark',
+                  //                     }}
+                  //                   >
+                  //                     {t('public.theme_link.dark')}
+                  //                   </Link>
+                  //                 </div>
+                  //                 <div>
+                  //                   <Link
+                  //                     target='_blank'
+                  //                     to={{
+                  //                       pathname: `/dashboards/share/${record.id}`,
+                  //                       search: 'themeMode=light',
+                  //                     }}
+                  //                   >
+                  //                     {t('public.theme_link.light')}
+                  //                   </Link>
+                  //                 </div>
+                  //               </>
+                  //             }
+                  //           >
+                  //             <Link
+                  //               target='_blank'
+                  //               to={{
+                  //                 pathname: `/dashboards/share/${record.id}`,
+                  //               }}
+                  //             >
+                  //               <ShareAltOutlined /> {t(`public.cate.${record.public_cate}`)}
+                  //             </Link>
+                  //           </Tooltip>
+                  //         );
+                  //       } else {
+                  //         content = t(`public.cate.${record.public_cate}`);
+                  //       }
+                  //     } else {
+                  //       content = t('public.unpublic');
+                  //     }
 
-                      return (
-                        <Space>
-                          {content}
-                          {gids !== '-1' && (
-                            <EditOutlined
-                              onClick={() => {
-                                PublicForm({
-                                  busiGroups,
-                                  boardId: record.id,
-                                  initialValues: {
-                                    public: val,
-                                    public_cate: record.public_cate,
-                                    bgids: record.bgids,
-                                  },
-                                  onOk: () => {
-                                    setRefreshKey(_.uniqueId('refreshKey_'));
-                                  },
-                                });
-                              }}
-                            />
-                          )}
-                        </Space>
-                      );
-                    },
-                  },
+                  //     return (
+                  //       <Space>
+                  //         {content}
+                  //         {gids !== '-1' && (
+                  //           <EditOutlined
+                  //             onClick={() => {
+                  //               PublicForm({
+                  //                 busiGroups,
+                  //                 boardId: record.id,
+                  //                 initialValues: {
+                  //                   public: val,
+                  //                   public_cate: record.public_cate,
+                  //                   bgids: record.bgids,
+                  //                 },
+                  //                 onOk: () => {
+                  //                   setRefreshKey(_.uniqueId('refreshKey_'));
+                  //                 },
+                  //               });
+                  //             }}
+                  //           />
+                  //         )}
+                  //       </Space>
+                  //     );
+                  //   },
+                  // },
                   {
                     title: t('common:table.operations'),
                     width: 300,
