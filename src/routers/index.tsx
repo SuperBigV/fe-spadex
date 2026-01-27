@@ -89,6 +89,7 @@ import NetTargets from '@/pages/netTargets';
 // import NetToplogy from '@/pages/toplogy';
 import TopologyPage from '@/pages/topology';
 import ProbeTools from '@/pages/probeTools';
+import NetTools from '@/pages/netTools';
 import AiKnowlage from '@/pages/aiKnowlage';
 import { dynamicPackages, Entry, dynamicPages } from '@/utils';
 // @ts-ignore
@@ -249,7 +250,7 @@ export default function Content() {
         <Route exact path='/job-tasks/add' component={TaskAdd} />
         <Route exact path='/job-tasks/:id/result' component={TaskResult} />
         <Route exact path='/job-tasks/:id/detail' component={TaskDetail} />
-        <Route exact path='/probes' component={ProbeTools} />
+        <Route exact path='/probes' component={NetTools} />
 
         <Route exact path='/help/version' component={Version} />
         <Route exact path='/help/servers' component={Servers} />
