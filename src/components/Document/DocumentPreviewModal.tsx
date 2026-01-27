@@ -40,16 +40,17 @@ const DocumentPreviewModal: React.FC<DocumentPreviewModalProps> = ({ visible, on
   }, [visible, document, knowledgeBaseId]);
 
   const handleDownload = async () => {
+    if (!document) return;
     try {
       const blob = await documentApi.download(knowledgeBaseId, document.id);
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = window.document.createElement('a');
       a.href = url;
       a.download = document.file_name;
-      document.body.appendChild(a);
+      window.document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      window.document.body.removeChild(a);
       message.success('下载成功');
     } catch (error: any) {
       message.error(error.message || '下载失败');

@@ -17,6 +17,7 @@ export const defaultRuleConfig = {
       },
     ],
   },
+
   metric: {
     queries: [
       {
@@ -105,6 +106,7 @@ export const ruleTypeOptions = [
     value: 'host',
     pro: false,
   },
+
   {
     label: '日志',
     value: 'logging',

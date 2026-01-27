@@ -80,6 +80,7 @@ const zh_HK = {
       title: '告警條件',
       key: {
         target_miss: '機器失聯',
+        target_net_miss: '網絡設備失聯',
         pct_target_miss: '機器叢集失聯',
         offset: '機器時間偏移',
       },

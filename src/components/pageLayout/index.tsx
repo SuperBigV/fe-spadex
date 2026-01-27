@@ -202,33 +202,33 @@ const PageLayout: React.FC<IPageLayoutProps> = ({ icon, title, rightArea, introI
                   {/* <Version /> */}
                   <AlertIndicator />
 
-                  <Space style={{ marginRight: 16 }}>
-                    {/* 整合版本关闭文档链接 */}
-                    {!IS_ENT && (
-                      <div style={{ marginRight: 8, position: 'relative' }}>
-                        {/* <a target='_blank' href={siteInfo?.document_url || 'https://flashcat.cloud/docs/content/flashcat-monitor/nightingale-v7/introduction/'}> */}
-                        <a target='_blank' href={siteInfo?.document_url || ''}>
+                  {/* <Space style={{ marginRight: 16 }}> */}
+                  {/* 整合版本关闭文档链接 */}
+                  {/* {!IS_ENT && (
+                      <div style={{ marginRight: 8, position: 'relative' }}> */}
+                  {/* <a target='_blank' href={siteInfo?.document_url || 'https://flashcat.cloud/docs/content/flashcat-monitor/nightingale-v7/introduction/'}> */}
+                  {/* <a target='_blank' href={siteInfo?.document_url || ''}>
                           {t('docs')}
                         </a>
                       </div>
-                    )}
-                    {profile?.admin && (
+                    )} */}
+                  {/* {profile?.admin && (
                       <AdvancedWrap var='VITE_IS_PRO,VITE_IS_ENT'>
                         <Link to='/audits'>{t('audits:title')}</Link>
                       </AdvancedWrap>
                     )}
-                  </Space>
+                  </Space> */}
 
-                  {rightArea}
+                  {/* {rightArea} */}
 
-                  <AdvancedWrap var='VITE_IS_PRO,VITE_IS_ENT'>
+                  {/* <AdvancedWrap var='VITE_IS_PRO,VITE_IS_ENT'>
                     <License />
-                  </AdvancedWrap>
-                  <AdvancedWrap var='VITE_IS_PRO,VITE_IS_ENT'>
+                  </AdvancedWrap> */}
+                  {/* <AdvancedWrap var='VITE_IS_PRO,VITE_IS_ENT'>
                     <FeatureNotification />
-                  </AdvancedWrap>
+                  </AdvancedWrap> */}
 
-                  <Dropdown
+                  {/* <Dropdown
                     overlay={
                       <Menu
                         onSelect={({ key }) => {
@@ -247,7 +247,7 @@ const PageLayout: React.FC<IPageLayoutProps> = ({ icon, title, rightArea, introI
                     <a style={{ marginRight: 12 }} onClick={(e) => e.preventDefault()} id='i18n-btn'>
                       {curLanguage}
                     </a>
-                  </Dropdown>
+                  </Dropdown> */}
 
                   <div style={{ marginRight: 12 }}>
                     <DarkModeSelect />

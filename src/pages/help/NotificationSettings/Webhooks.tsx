@@ -195,7 +195,7 @@ export default function Webhooks() {
           </div>
         </Form>
       </div>
-      {!isPlus && (
+      {/* {!isPlus && (
         <div className='webhooks-doc'>
           <Alert
             type='info'
@@ -212,7 +212,7 @@ export default function Webhooks() {
             }
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 }

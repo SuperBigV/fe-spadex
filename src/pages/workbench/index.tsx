@@ -1,161 +1,70 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { Row, Col } from 'antd';
 import PageLayout from '@/components/pageLayout';
-import { Card, Col, Row, Table } from 'antd';
-import { AlertOutlined, DesktopOutlined, AppstoreAddOutlined, CheckCircleOutlined, GlobalOutlined } from '@ant-design/icons';
-import { get, set } from 'lodash';
-import CurEventList from '@/pages/event/curEventsMe';
-import { getWorkbenchDetail, getMyHosts } from './services';
-import card from '../event/card';
-import HostList from './hostList';
-import SoftList from './softList';
+import OverviewCards from './components/OverviewCards';
+import MyAssets from './components/MyAssets';
+import MyAlerts from './components/MyAlerts';
+import MonitoringOverview from './components/MonitoringOverview';
+import MyBusiGroups from './components/MyBusiGroups';
+import QuickActions from './components/QuickActions';
+import StatisticsCharts from './components/StatisticsCharts';
+import { useWorkbenchData } from './hooks/useWorkbenchData';
+import { useAutoRefresh } from './hooks/useAutoRefresh';
+import { GlobalOutlined } from '@ant-design/icons';
+import './styles/workbench.less';
 
-interface card {
-  title: string;
-  count: number;
-  key: string;
-}
-const iconMap = {
-  alert: <AlertOutlined style={{ fontSize: '30px' }} />,
-  host: <DesktopOutlined style={{ fontSize: '30px' }} />,
-  soft: <AppstoreAddOutlined style={{ fontSize: '30px' }} />,
-  healthy: <CheckCircleOutlined style={{ fontSize: '30px' }} />,
-};
+const Workbench: React.FC = () => {
+  const [timeRange, setTimeRange] = useState<'1h' | '6h' | '24h' | '7d'>('24h');
+  const [busiGroupIds, setBusiGroupIds] = useState<number[]>([]);
 
-const Dashboard = () => {
-  const [selectedCard, setSelectedCard] = useState('host');
-  const [cardData, setCardData] = useState<card[]>([]);
-  const [loading, setLoading] = useState(false);
-  const getCardData = async () => {
-    switch (selectedCard) {
-      case 'alert':
-        // await getWorkbenchDetail().then((detail) => {
-        //   setCardData(detail.dat);
-        //   setLoading(true);
-        // });
-        return;
-      case 'host':
-        await getWorkbenchDetail().then((detail) => {
-          setCardData(detail.dat);
-          setLoading(true);
-        });
-        return;
-      case 'soft':
-        return;
-      case 'healthy':
-        return;
-    }
-  };
-  useEffect(() => {
-    getCardData();
-  }, [selectedCard]);
+  const { overviewData, assetsData, alertsData, busiGroupsData, loading, refresh, refreshAssets, refreshAlerts, refreshBusiGroups } = useWorkbenchData({ timeRange, busiGroupIds });
 
-  // const cardData = [
-  //   { title: '正在告警', icon: <AlertOutlined style={{ fontSize: '14px' }} />, count: 5, key: 'alert' },
-  //   { title: '我的主机', icon: <DesktopOutlined style={{ fontSize: '14px' }} />, count: 10, key: 'host' },
-  //   { title: '我的软件', icon: <AppstoreAddOutlined style={{ fontSize: '14px' }} />, count: 8, key: 'soft' },
-  //   { title: '健康状态', icon: <CheckCircleOutlined style={{ fontSize: '14px' }} />, count: 0, key: 'healthy' }, // 示例值
-  // ];
-
-  const tableData = {
-    告警: [
-      { key: 1, name: '告警1', status: '严重' },
-      { key: 2, name: '告警2', status: '中等' },
-    ],
-    主机: [
-      { key: 1, name: '主机1', ip: '192.168.1.1' },
-      { key: 2, name: '主机2', ip: '192.168.1.2' },
-    ],
-    软件: [
-      { key: 1, name: '软件1', version: '1.0' },
-      { key: 2, name: '软件2', version: '2.0' },
-    ],
-    健康: [
-      { key: 1, name: '健康1', status: '正常' },
-      { key: 2, name: '健康2', status: '异常' },
-    ],
-  };
-
-  const columns = {
-    告警: [
-      { title: '名称', dataIndex: 'name', key: 'name' },
-      { title: '状态', dataIndex: 'status', key: 'status' },
-    ],
-    主机: [
-      { title: '名称', dataIndex: 'name', key: 'name' },
-      { title: 'IP', dataIndex: 'ip', key: 'ip' },
-    ],
-    软件: [
-      { title: '名称', dataIndex: 'name', key: 'name' },
-      { title: '版本', dataIndex: 'version', key: 'version' },
-    ],
-    健康: [
-      { title: '名称', dataIndex: 'name', key: 'name' },
-      { title: '状态', dataIndex: 'status', key: 'status' },
-    ],
-  };
+  // 启用自动刷新（每30秒）
+  useAutoRefresh({
+    interval: 30000,
+    enabled: true,
+    onRefresh: refresh,
+  });
 
   return (
-    <PageLayout icon={<GlobalOutlined />} title={'工作台'}>
-      {loading && (
-        <div style={{ padding: '20px' }}>
-          <Row gutter={16}>
-            {cardData.map((card) => (
-              <Col span={6} key={card.key}>
-                <Card
-                  onClick={() => setSelectedCard(card.key)}
-                  hoverable
-                  size='small'
-                  style={{
-                    cursor: 'pointer',
-                    border: selectedCard === card.key ? '2px solid #d9d9d9' : '1px solid #906EF9',
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '12px', // 添加内边距
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    {card.key === 'healthy' && (
-                      <div style={{ marginRight: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'green' }}>{iconMap[card.key]}</div>
-                    )}
-                    {card.key === 'host' && <div style={{ marginRight: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{iconMap[card.key]}</div>}
-                    {card.key === 'soft' && (
-                      <div style={{ marginRight: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#906EF9' }}>{iconMap[card.key]}</div>
-                    )}
-                    {card.key === 'alert' && (
-                      <div style={{ marginRight: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'red' }}>{iconMap[card.key]}</div>
-                    )}
-                    <div>
-                      <h3 style={{ margin: 0, fontSize: '18px', lineHeight: '1.4' }}>{card.title}</h3>
-                      <p
-                        style={{
-                          margin: 0,
-                          fontSize: '24px',
-                          fontWeight: 'bold',
-                          lineHeight: '1.3',
-                          color: card.key === 'healthy' && card.count > 0 ? '#ff4d4f' : '#52c41a',
-                        }}
-                      >
-                        {card.key === 'healthy' ? `${card.count} 异常` : card.count}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </Col>
-            ))}
-          </Row>
+    <PageLayout icon={<GlobalOutlined />} title='工作台'>
+      <div className='workbench-container'>
+        {/* 顶部概览卡片 */}
+        <OverviewCards data={overviewData} loading={loading} onRefresh={refresh} />
 
-          <div style={{ marginTop: '20px' }}>
-            {/* <Table dataSource={tableData[selectedCard]} columns={columns[selectedCard]} pagination={false} /> */}
-            {selectedCard === 'alert' && <CurEventList />}
-            {selectedCard === 'host' && <HostList />}
+        {/* 快捷操作 */}
+        <QuickActions />
 
-            {selectedCard === 'soft' && <SoftList />}
-            {/* {selectedCard === 'healthy' && <HealthyTable />}  */}
-          </div>
-        </div>
-      )}
+        {/* 主要内容区 */}
+        <Row gutter={16} className='workbench-content'>
+          {/* 左侧栏：我的资产 */}
+          <Col xs={24} sm={24} md={8} lg={6} xl={6}>
+            <div className='workbench-content-item'>
+              <MyAssets data={assetsData} loading={loading} onRefresh={refreshAssets} />
+            </div>
+          </Col>
+
+          {/* 中间区域：告警与监控 */}
+          <Col xs={24} sm={24} md={16} lg={12} xl={12}>
+            <div className='workbench-content-item'>
+              <MyAlerts data={alertsData} loading={loading} timeRange={timeRange} onRefresh={refreshAlerts} />
+            </div>
+            {/* <MonitoringOverview timeRange={timeRange} busiGroupIds={busiGroupIds} /> */}
+          </Col>
+
+          {/* 右侧栏：业务组 */}
+          <Col xs={24} sm={24} md={24} lg={6} xl={6}>
+            <div className='workbench-content-item'>
+              <MyBusiGroups data={busiGroupsData} loading={loading} onRefresh={refreshBusiGroups} />
+            </div>
+          </Col>
+        </Row>
+
+        {/* 底部统计图表 */}
+        {/* <StatisticsCharts timeRange="7d" /> */}
+      </div>
     </PageLayout>
   );
 };
 
-export default Dashboard;
+export default Workbench;

@@ -104,7 +104,7 @@ export default function Login() {
     <div className='login-warp'>
       <div className='banner integration'>
         {/* <img src={'/image/login-dashboard.svg'} style={{ margin: '0 60px', zIndex: 5, width: 632 }}></img> */}
-        <img src={'/image/bg-dashboard.png'} style={{ zIndex: 5, width: 900 }}></img>
+        <img src={'/image/login-dashboard2.png'} style={{ zIndex: 5, width: 900 }}></img>
       </div>
       <div className='login-panel'>
         <div className='login-main integration'>

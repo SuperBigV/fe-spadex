@@ -28,7 +28,8 @@ import Preview from './Preview';
 import './style.less';
 
 const queryKeyOptions = [{ value: 'all_hosts' }, { value: 'group_ids' }, { value: 'tags' }, { value: 'hosts' }];
-const triggerTypeOptions = [{ value: 'target_miss' }, { value: 'pct_target_miss' }, { value: 'offset' }];
+// const triggerTypeOptions = [{ value: 'target_miss' },{ value: 'target_net_miss' }, { value: 'pct_target_miss' }, { value: 'offset' }];
+const triggerTypeOptions = [{ value: 'target_miss' }, { value: 'target_net_miss' }];
 
 export default function index() {
   const { t } = useTranslation('alertRules');

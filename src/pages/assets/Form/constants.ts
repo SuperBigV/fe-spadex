@@ -15,8 +15,14 @@ export const defaultRuleConfig = {
         severity: 2,
         duration: 30,
       },
+      {
+        type: 'target_net_miss',
+        severity: 2,
+        duration: 30,
+      },
     ],
   },
+
   metric: {
     queries: [
       {

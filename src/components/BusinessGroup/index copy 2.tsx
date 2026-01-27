@@ -149,6 +149,7 @@ export default function index(props: IProps) {
                   const value = e.currentTarget.value;
                   getBusiGroups({
                     query: value,
+                    typ: 'busi',
                   }).then((res) => {
                     setBusinessTreeGroupData(listToTree(res || [], siteInfo?.businessGroupSeparator));
                     setBusiGroupsListData(res || []);
@@ -241,6 +242,7 @@ export default function index(props: IProps) {
                   const value = e.currentTarget.value;
                   getBusiGroups({
                     query: value,
+                    typ: 'busi',
                   }).then((res) => {
                     setBusinessTreeGroupData(listToTree(res || [], siteInfo?.businessGroupSeparator));
                     setBusiGroupsListData(res || []);

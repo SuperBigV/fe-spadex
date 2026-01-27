@@ -228,6 +228,14 @@ export function getDefaultValuesByProd(prod, defaultBrainParams, isPlus = false)
       ...datasourceDefaultValue,
     };
   }
+  if (prod === 'host_net') {
+    return {
+      prod,
+      cate: 'host_net',
+      rule_config: defaultRuleConfig.host,
+      ...datasourceDefaultValue,
+    };
+  }
   if (prod === 'anomaly') {
     return {
       prod,

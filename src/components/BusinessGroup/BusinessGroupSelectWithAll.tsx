@@ -21,6 +21,7 @@ export default function BusinessGroupSelect(props: Props) {
   useEffect(() => {
     getBusiGroups({
       all: true,
+      typ: 'busi',
     }).then((res) => {
       setAllBusiGroups(res);
     });

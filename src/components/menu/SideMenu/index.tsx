@@ -91,10 +91,10 @@ export const getMenuList = (t) => {
           key: '/partners',
           label: t('合作单位'),
         },
-        {
-          key: '/knowledge-base',
-          label: t('知识库管理'),
-        },
+        // {
+        //   key: '/knowledge-base',
+        //   label: t('知识库管理'),
+        // },
       ],
     },
     // {
@@ -283,7 +283,7 @@ export const getMenuList = (t) => {
         // },
         {
           key: '/probes',
-          label: '拨测工具',
+          label: '网络工具',
         },
       ],
     },
@@ -419,14 +419,14 @@ export const getMenuList = (t) => {
         //   key: '/help/sso',
         //   label: t('单点登录'),
         // },
-        {
-          key: '/help/servers',
-          label: t('告警引擎'),
-        },
-        {
-          key: '/site-settings',
-          label: t('siteInfo:title'),
-        },
+        // {
+        //   key: '/help/servers',
+        //   label: t('告警引擎'),
+        // },
+        // {
+        //   key: '/site-settings',
+        //   label: t('siteInfo:title'),
+        // },
         // {
         //   key: '/help/version',
         //   label: t('version:title'),

@@ -82,6 +82,7 @@ const zh_CN = {
       title: '告警条件',
       key: {
         target_miss: '机器失联',
+        target_net_miss: '网络设备失联',
         pct_target_miss: '机器集群失联',
         offset: '机器时间偏移',
       },
@@ -93,6 +94,28 @@ const zh_CN = {
     prom_eval_interval_tip: 'promql 执行频率，每隔 {{num}} 秒查询时序库，查到的结果重新命名写回时序库',
     prom_for_duration_tip:
       '通常持续时长大于执行频率，在持续时长内按照执行频率多次执行PromQL查询，每次都触发才生成告警；如果持续时长置为0，表示只要有一次PromQL查询触发阈值，就生成告警',
+  },
+  host_net: {
+    query: {
+      title: '机器筛选',
+      key: {
+        all_hosts: '全部机器',
+        datasource_ids: '数据源',
+        group_ids: '业务组',
+        tags: '标签',
+        hosts: '机器标识',
+      },
+      preview: '机器预览',
+    },
+    trigger: {
+      title: '告警条件',
+      key: {
+        target_net_miss: '网络设备失联',
+        pct_target_net_miss: '网络设备集群失联',
+      },
+      than: '超过',
+      pct_target_net_miss_text: '网络设备失联比例超过',
+    },
   },
   metric: {
     query: {

@@ -39,9 +39,9 @@ export default function Rule({ form, bgid }) {
       title={
         <Space>
           {t('rule_configs')}
-          {prod === 'metric' && (
+          {/* {prod === 'metric' && (
             <HelpLink src='https://flashcat.cloud/docs/content/flashcat-monitor/nightingale-v7/usage/alarm-management/alert-rules/rule-configuration/metric-alarm-rule-configuration/' />
-          )}
+          )} */}
         </Space>
       }
     >
@@ -70,6 +70,7 @@ export default function Rule({ form, bgid }) {
           if (prod === 'host') {
             return <Host />;
           }
+
           if (prod === 'metric') {
             return <Metric form={form} />;
           }
