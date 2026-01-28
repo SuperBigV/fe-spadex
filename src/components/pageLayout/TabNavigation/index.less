@@ -1,0 +1,128 @@
+.tab-navigation-container {
+  height: 40px;
+  background-color: transparent;
+  border-bottom: 1px solid var(--fc-border-color);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden; // 隐藏容器自身的滚动，让 Tabs 组件内部处理滚动
+  flex: 1;
+  min-width: 0; // 允许容器收缩
+  max-width: 100%; // 确保不超过父容器宽度
+  z-index: 10;
+  margin-top: 0;
+
+  // 隐藏滚动条但保持滚动功能
+  scrollbar-width: thin;
+  scrollbar-color: var(--fc-border-color) transparent;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--fc-border-color);
+    border-radius: 2px;
+
+    &:hover {
+      background-color: var(--fc-border-color-hover);
+    }
+  }
+
+  .tab-navigation-tabs {
+    width: 100%;
+    height: 100%;
+    min-width: 0; // 允许 Tabs 组件收缩
+
+    .ant-tabs-bar {
+      margin: 0;
+      border-bottom: none;
+    }
+
+    .ant-tabs-content-holder {
+      display: none; // 隐藏内容区域，只显示标签
+    }
+
+    .ant-tabs-nav {
+      margin: 0;
+      width: 100%;
+
+      .ant-tabs-nav-wrap {
+        width: 100%;
+        overflow: visible; // 允许显示滚动按钮
+        
+        .ant-tabs-nav-list {
+          width: 100%;
+          .ant-tabs-tab {
+            padding: 6px 12px;
+            margin: 0 2px;
+            border-radius: 4px 4px 0 0;
+            border: 1px solid transparent;
+            border-bottom: none;
+            background-color: transparent;
+            transition: all 0.2s;
+
+            &:hover {
+              background-color: var(--fc-fill-1);
+            }
+
+            &.ant-tabs-tab-active {
+              background-color: var(--fc-fill-1);
+              border-color: var(--fc-border-color);
+              border-bottom-color: var(--fc-fill-1);
+
+              .ant-tabs-tab-btn {
+                color: var(--fc-text-1);
+                font-weight: 500;
+              }
+            }
+
+            .ant-tabs-tab-btn {
+              display: inline-flex;
+              align-items: center;
+              color: var(--fc-text-2);
+              font-size: 13px;
+              line-height: 1.5;
+            }
+
+            .ant-tabs-tab-remove {
+              margin-left: 6px;
+              opacity: 0.6;
+              transition: opacity 0.2s;
+
+              &:hover {
+                opacity: 1;
+                color: var(--fc-error-color);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 深色模式适配
+.theme-dark {
+  .tab-navigation-container {
+    background-color: var(--fc-fill-2);
+    border-bottom-color: var(--fc-border-color);
+
+    .tab-navigation-tabs {
+      .ant-tabs-tab {
+        &:hover {
+          background-color: var(--fc-fill-1);
+        }
+
+        &.ant-tabs-tab-active {
+          background-color: var(--fc-fill-1);
+          border-color: var(--fc-border-color);
+        }
+      }
+    }
+  }
+}

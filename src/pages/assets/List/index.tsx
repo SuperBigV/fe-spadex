@@ -14,6 +14,7 @@ import FormModal from './FormModal';
 import ControlModal from './ControlModal';
 import { CommonStateContext } from '@/App';
 import TargetMetaDrawer from './TargetMetaDrawer';
+import TerminalModal from './TerminalModal';
 import { json } from 'd3';
 import { fromTheme } from 'tailwind-merge';
 import { getAuthConfigs } from '@/pages/authConfigs/services';
@@ -110,6 +111,8 @@ export default function AssetList(props: IProps) {
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
+  const [terminalVisible, setTerminalVisible] = useState(false);
+  const [terminalAsset, setTerminalAsset] = useState<{ id: string; name: string; category: string } | null>(null);
   const GREEN_COLOR = '#3FC453';
   const YELLOW_COLOR = '#FF9919';
   const RED_COLOR = '#FF656B';
@@ -574,7 +577,8 @@ export default function AssetList(props: IProps) {
                 type='link'
                 style={{ padding: 0 }}
                 onClick={() => {
-                  history.push(`/ident/${row.id}/${row.name}/terminal/${assetModel.uniqueIdentifier}`);
+                  setTerminalAsset({ id: row.id.toString(), name: row.name, category: assetModel.uniqueIdentifier });
+                  setTerminalVisible(true);
                 }}
               >
                 {'远程连接'}
@@ -586,7 +590,8 @@ export default function AssetList(props: IProps) {
                 type='link'
                 style={{ padding: 0 }}
                 onClick={() => {
-                  history.push(`/ident/${row.id}/${row.name}/terminal/${assetModel.uniqueIdentifier}`);
+                  setTerminalAsset({ id: row.id.toString(), name: row.name, category: assetModel.uniqueIdentifier });
+                  setTerminalVisible(true);
                 }}
               >
                 {'远程连接'}
@@ -1172,7 +1177,8 @@ export default function AssetList(props: IProps) {
                     type='link'
                     style={{ padding: 0 }}
                     onClick={() => {
-                      history.push(`/ident/${row.id}/${row.name}/terminal/${modelGroupDetail.uniqueIdentifier}`);
+                      setTerminalAsset({ id: row.id.toString(), name: row.name, category: modelGroupDetail.uniqueIdentifier });
+                      setTerminalVisible(true);
                     }}
                   >
                     {'远程连接'}
@@ -1184,7 +1190,8 @@ export default function AssetList(props: IProps) {
                     type='link'
                     style={{ padding: 0 }}
                     onClick={() => {
-                      history.push(`/ident/${row.id}/${row.name}/terminal/${modelGroupDetail.uniqueIdentifier}`);
+                      setTerminalAsset({ id: row.id.toString(), name: row.name, category: modelGroupDetail.uniqueIdentifier });
+                      setTerminalVisible(true);
                     }}
                   >
                     {'远程连接'}
@@ -1415,6 +1422,18 @@ export default function AssetList(props: IProps) {
           onChange={handleFieldChange}
         />
       </Modal>
+      {terminalAsset && (
+        <TerminalModal
+          visible={terminalVisible}
+          onCancel={() => {
+            setTerminalVisible(false);
+            setTerminalAsset(null);
+          }}
+          assetId={terminalAsset.id}
+          assetName={terminalAsset.name}
+          category={terminalAsset.category}
+        />
+      )}
       {/* <CollectsDrawer visible={collectsDrawerVisible} setVisiable={setCollectsDrawerVisible} ident={collectsDrawerIdent} /> */}
     </div>
   );

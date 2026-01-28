@@ -29,6 +29,7 @@ import Version from './Version';
 import AlertIndicator from './AlertIndicator';
 import SideMenuColorSetting from './SideMenuColorSetting';
 import HelpLink from './HelpLink';
+import TabNavigation from './TabNavigation';
 import './index.less';
 import './locale';
 
@@ -62,6 +63,18 @@ const PageLayout: React.FC<IPageLayoutProps> = ({ icon, title, rightArea, introI
   const query = querystring.parse(location.search);
   const { profile, siteInfo } = useContext(CommonStateContext);
   const embed = localStorage.getItem('embed') === '1' && window.self !== window.top;
+
+  // 判断是否显示标签页
+  const shouldShowTabs =
+    !embed &&
+    query.viewMode !== 'fullscreen' &&
+    !location.pathname.startsWith('/login') &&
+    !location.pathname.startsWith('/callback') &&
+    !location.pathname.startsWith('/chart/') &&
+    !location.pathname.startsWith('/dashboards/share/') &&
+    location.pathname !== '/403' &&
+    location.pathname !== '/404' &&
+    location.pathname !== '/out-of-service';
   const [curLanguage, setCurLanguage] = useState(i18nMap[i18n.language] || '中文');
   const [themeVisible, setThemeVisible] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -172,24 +185,7 @@ const PageLayout: React.FC<IPageLayoutProps> = ({ icon, title, rightArea, introI
                   display: query.viewMode === 'fullscreen' ? 'none' : 'flex',
                 }}
               >
-                <div className={'page-header-title'}>
-                  {showBack && window.history.state && (
-                    <RollbackOutlined
-                      onClick={() => {
-                        if (backPath) {
-                          history.push(backPath);
-                        } else {
-                          history.goBack();
-                        }
-                      }}
-                      style={{
-                        marginRight: '5px',
-                      }}
-                    />
-                  )}
-                  {icon}
-                  {title}
-                </div>
+                <div className={'page-header-title'}>{shouldShowTabs && <TabNavigation visible={shouldShowTabs} />}</div>
 
                 <div className={'page-header-right-area'} style={{ display: sessionStorage.getItem('menuHide') === '1' ? 'none' : undefined }}>
                   {introIcon}
@@ -262,6 +258,7 @@ const PageLayout: React.FC<IPageLayoutProps> = ({ icon, title, rightArea, introI
                   </Dropdown>
                 </div>
               </div>
+              {/* 标签页导航 - 显示在 header 内部 */}
             </div>
           )}
         </>

@@ -77,7 +77,7 @@ export const getMenuList = (t) => {
         },
         {
           key: '/busi-groups',
-          label: '业务管理',
+          label: '软件管理',
         },
         {
           key: '/ips',
