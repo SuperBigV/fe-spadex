@@ -112,6 +112,7 @@ import WorkformConfig from '@/pages/workform/WorkformConfig';
 // import WorkOrderTypeEdit from '@/pages/workform/WorkOrderTypeEdit';
 // import ProcessGroupEdit from '@/pages/workform/ProcessGroupEdit';
 import WorkOrderReports from '@/pages/workform/WorkOrderReports';
+import ImPage from '@/pages/im';
 const Packages = dynamicPackages();
 let lazyRoutes = Packages.reduce((result: any, module: Entry) => {
   return (result = result.concat(module.routes));
@@ -170,6 +171,7 @@ export default function Content() {
         <Route path='/demo' component={Demo} />
         <Route path='/overview' component={Overview} />
         <Route path='/workbench' component={Workbench} />
+        <Route exact path='/im' component={ImPage} />
         <Route path='/login' component={Login} exact />
         <Route path='/callback' component={LoginCallback} exact />
         <Route path='/callback/cas' component={LoginCallbackCAS} exact />

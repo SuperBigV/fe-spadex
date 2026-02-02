@@ -32,6 +32,10 @@ export const getMenuList = (t) => {
           label: t('我的工作台'),
         },
         {
+          key: '/im',
+          label: t('即时通讯'),
+        },
+        {
           key: '/embedded-dashboards',
           label: 'AIOps助手',
         },

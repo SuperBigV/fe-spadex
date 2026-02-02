@@ -45,13 +45,16 @@ export default defineConfig(({ mode }) => {
   let proxyURL = env.PROXY || 'http://0.0.0.0:17000';
   let proxyCmdbURL = env.CMDB_PROXY || 'http://0.0.0.0:17001';
   let proxyWorkformURL = env.WORKFORM_PROXY || 'http://0.0.0.0:17002';
+  let proxyImURL = env.IM_PROXY || 'http://0.0.0.0:17004';
   let fontFamily = '"Microsoft Yahei",Verdana,Helvetica Neue,sans-serif,PingFangSC-Regular,simsun,"sans-serif"';
   if (env.VITE_IS_PRO) {
     proxyURL = env.PROXY_PRO;
     proxyCmdbURL = env.PROXY_CMDB_PRO;
+    proxyImURL = env.PROXY_IM_PRO;
   } else if (env.VITE_IS_ENT) {
     proxyURL = env.PROXY_ENT;
     proxyCmdbURL = env.PROXY_CMDB_ENT;
+    proxyImURL = env.PROXY_IM_ENT;
     fontFamily = 'Helvetica Neue,sans-serif,PingFangSC-Regular,microsoft yahei ui,microsoft yahei,simsun,"sans-serif"';
   }
 
@@ -93,6 +96,10 @@ export default defineConfig(({ mode }) => {
         },
         '/cmdb': {
           target: proxyCmdbURL,
+          changeOrigin: true,
+        },
+        '/im/': {
+          target: proxyImURL,
           changeOrigin: true,
         },
       },
