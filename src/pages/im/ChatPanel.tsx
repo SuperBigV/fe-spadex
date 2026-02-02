@@ -47,17 +47,20 @@ export default function ChatPanel({ currentUserId, peerUserId, peerNickname, mes
         {peerNickname}
         <span className={`im-ws-status ${wsConnected ? 'connected' : 'connecting'}`}>{wsConnected ? '已连接' : '连接中...'}</span>
       </div>
-
-      <MessageList
-        currentUserId={currentUserId}
-        peerUserId={peerUserId}
-        messages={messages}
-        hasMore={hasMore}
-        loading={loading}
-        onLoadMore={() => {}}
-        onMessagesChange={handleMessagesChange}
-      />
-      <InputArea peerUserId={peerUserId} sendMessage={sendMessage} disabled={!wsConnected} />
+      <div className='im-chat-content'>
+        <MessageList
+          currentUserId={currentUserId}
+          peerUserId={peerUserId}
+          messages={messages}
+          hasMore={hasMore}
+          loading={loading}
+          onLoadMore={() => {}}
+          onMessagesChange={handleMessagesChange}
+        />
+      </div>
+      <div className='im-chat-input-area'>
+        <InputArea peerUserId={peerUserId} sendMessage={sendMessage} disabled={!wsConnected} />
+      </div>
     </div>
   );
 }

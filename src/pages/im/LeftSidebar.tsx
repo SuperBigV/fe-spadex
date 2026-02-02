@@ -16,7 +16,7 @@ export interface LeftSidebarProps {
 }
 
 export default function LeftSidebar({ currentUserId, peerUserId, onSelectPeer, conversationRefreshTrigger = 0 }: LeftSidebarProps) {
-  const [activeTab, setActiveTab] = useState<string>('recent');
+  const [activeTab, setActiveTab] = useState<string>('users');
 
   return (
     <div className='im-left-sidebar'>

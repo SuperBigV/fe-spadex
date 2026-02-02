@@ -77,9 +77,7 @@ export default function UserList({ currentUserId, peerUserId, onSelectPeer }: Us
             const isActive = peerUserId === item.id;
             return (
               <List.Item className={`im-user-item ${isActive ? 'active' : ''}`} onClick={() => onSelectPeer(item.id, displayName(item))}>
-                <span className='im-user-avatar'>
-                  <UserOutlined />
-                </span>
+                <span className='im-user-avatar'>{item.portrait ? <img src={item.portrait} alt='' className='im-user-avatar-img' /> : <UserOutlined />}</span>
                 <span className='im-user-name'>{displayName(item)}</span>
               </List.Item>
             );

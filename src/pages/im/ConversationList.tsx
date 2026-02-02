@@ -21,6 +21,7 @@ export default function ConversationList({ currentUserId, peerUserId, onSelectPe
   const [loading, setLoading] = useState(true);
   const [list, setList] = useState<IConversation[]>([]);
   const [nicknameMap, setNicknameMap] = useState<Record<number, string>>({});
+  const [portraitMap, setPortraitMap] = useState<Record<number, string>>({});
 
   const fetchList = () => {
     setLoading(true);
@@ -31,15 +32,18 @@ export default function ConversationList({ currentUserId, peerUserId, onSelectPe
         Promise.all(
           ids.map((id) =>
             getUserInfo(String(id))
-              .then((u: any) => ({ id, name: u?.nickname || u?.username || String(id) }))
-              .catch(() => ({ id, name: String(id) })),
+              .then((u: any) => ({ id, name: u?.nickname || u?.username || String(id), portrait: u?.portrait || '' }))
+              .catch(() => ({ id, name: String(id), portrait: '' })),
           ),
         ).then((results) => {
           const map: Record<number, string> = {};
-          results.forEach((r) => {
+          const portraits: Record<number, string> = {};
+          results.forEach((r: { id: number; name: string; portrait?: string }) => {
             map[r.id] = r.name;
+            if (r.portrait) portraits[r.id] = r.portrait;
           });
           setNicknameMap((prev) => ({ ...prev, ...map }));
+          setPortraitMap((prev) => ({ ...prev, ...portraits }));
         });
       })
       .catch(() => setList([]))
@@ -77,7 +81,7 @@ export default function ConversationList({ currentUserId, peerUserId, onSelectPe
           <List.Item className={`im-conversation-item ${isActive ? 'active' : ''}`} onClick={() => onSelectPeer(item.peer_user_id, nickname)}>
             <div className='im-conversation-item-inner'>
               <span className='im-conversation-avatar'>
-                <MessageOutlined />
+                {portraitMap[item.peer_user_id] ? <img src={portraitMap[item.peer_user_id]} alt='' className='im-conversation-avatar-img' /> : <MessageOutlined />}
               </span>
               <div className='im-conversation-body'>
                 <div className='im-conversation-row'>

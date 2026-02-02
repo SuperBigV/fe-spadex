@@ -1,12 +1,23 @@
 /**
  * 消息列表：历史分页 + WebSocket 新消息，支持加载更多
+ * 历史消息拉取后对 content 解密（当配置 VITE_IM_MASTER_KEY 时）
  */
 import React, { useEffect, useRef } from 'react';
 import { Spin } from 'antd';
 import { getMessages } from '@/services/im';
 import type { IMessage } from './types';
+import { decryptContentOrPlain } from './crypto';
 import MessageItem from './MessageItem';
 import './style.less';
+
+async function decryptMessageList(list: IMessage[], currentUserId: number, peerUserId: number): Promise<IMessage[]> {
+  return Promise.all(
+    list.map(async (m) => ({
+      ...m,
+      content: await decryptContentOrPlain(m.content, currentUserId, m.sender_id, m.receiver_id),
+    })),
+  );
+}
 
 export interface MessageListProps {
   currentUserId: number;
@@ -31,26 +42,28 @@ export default function MessageList({ currentUserId, peerUserId, messages, hasMo
     }
     loadingMoreRef.current = true;
     getMessages({ peer_user_id: peerUserId, limit: PAGE_SIZE })
-      .then((res) => {
+      .then(async (res) => {
         const list = res?.list ?? [];
         const more = res?.has_more ?? false;
-        onMessagesChange(list, more);
+        const decrypted = await decryptMessageList(list, currentUserId, peerUserId);
+        onMessagesChange(decrypted, more);
       })
       .catch(() => onMessagesChange([], false))
       .finally(() => {
         loadingMoreRef.current = false;
       });
-  }, [peerUserId, onMessagesChange]);
+  }, [peerUserId, currentUserId, onMessagesChange]);
 
   const loadMore = () => {
     if (!peerUserId || !hasMore || loadingMoreRef.current || messages.length === 0) return;
     const before = messages[messages.length - 1].created_at;
     loadingMoreRef.current = true;
     getMessages({ peer_user_id: peerUserId, limit: PAGE_SIZE, before })
-      .then((res) => {
+      .then(async (res) => {
         const nextList = res?.list ?? [];
         const more = res?.has_more ?? false;
-        onMessagesChange([...messages, ...nextList], more);
+        const decrypted = await decryptMessageList(nextList, currentUserId, peerUserId);
+        onMessagesChange([...messages, ...decrypted], more);
       })
       .catch(() => {})
       .finally(() => {

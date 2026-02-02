@@ -43,6 +43,7 @@ export default function ImPage() {
   );
 
   const { status, sendMessage } = useImWs({
+    currentUserId,
     enabled: location.pathname === '/im' && currentUserId > 0,
     onMessage: handleNewMessage,
     onError: (code, message) => {
