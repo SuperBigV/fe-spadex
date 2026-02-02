@@ -40,50 +40,47 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
   const tabsRef = useRef<HTMLDivElement>(null);
 
   // 添加标签页
-  const addTab = useCallback(
-    (tab: TabItem) => {
-      const currentState = getGlobalState('tabNavigation');
-      const existingIndex = currentState.tabs.findIndex(t => t.key === tab.key);
+  const addTab = useCallback((tab: TabItem) => {
+    const currentState = getGlobalState('tabNavigation');
+    const existingIndex = currentState.tabs.findIndex((t) => t.key === tab.key);
 
-      if (existingIndex >= 0) {
-        // 标签页已存在，只更新激活状态
-        setGlobalState('tabNavigation', {
-          ...currentState,
-          activeKey: tab.key,
-        });
-        saveTabNavigationState();
-        return;
-      }
-
-      // 检查标签页数量限制
-      let newTabs = [...currentState.tabs, tab];
-      if (newTabs.length > currentState.maxTabs) {
-        // 移除最旧的标签页（按时间戳排序）
-        newTabs = newTabs.sort((a, b) => a.timestamp - b.timestamp).slice(1);
-        // 重新按时间戳排序，保持最新顺序
-        newTabs = newTabs.sort((a, b) => b.timestamp - a.timestamp);
-        newTabs.push(tab);
-      }
-
+    if (existingIndex >= 0) {
+      // 标签页已存在，只更新激活状态
       setGlobalState('tabNavigation', {
         ...currentState,
-        tabs: newTabs,
         activeKey: tab.key,
       });
       saveTabNavigationState();
-    },
-    [],
-  );
+      return;
+    }
+
+    // 检查标签页数量限制
+    let newTabs = [...currentState.tabs, tab];
+    if (newTabs.length > currentState.maxTabs) {
+      // 移除最旧的标签页（按时间戳排序）
+      newTabs = newTabs.sort((a, b) => a.timestamp - b.timestamp).slice(1);
+      // 重新按时间戳排序，保持最新顺序
+      newTabs = newTabs.sort((a, b) => b.timestamp - a.timestamp);
+      newTabs.push(tab);
+    }
+
+    setGlobalState('tabNavigation', {
+      ...currentState,
+      tabs: newTabs,
+      activeKey: tab.key,
+    });
+    saveTabNavigationState();
+  }, []);
 
   // 关闭标签页
   const closeTab = useCallback(
     (tabKey: string) => {
       const currentState = getGlobalState('tabNavigation');
-      const index = currentState.tabs.findIndex(tab => tab.key === tabKey);
+      const index = currentState.tabs.findIndex((tab) => tab.key === tabKey);
 
       if (index === -1) return;
 
-      const newTabs = currentState.tabs.filter(tab => tab.key !== tabKey);
+      const newTabs = currentState.tabs.filter((tab) => tab.key !== tabKey);
       let newActiveKey = currentState.activeKey;
 
       // 如果关闭的是当前激活的标签页，切换到相邻标签页
@@ -107,7 +104,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
 
       // 如果切换了标签页，跳转到对应路由
       if (newActiveKey && newActiveKey !== currentState.activeKey) {
-        const targetTab = newTabs.find(tab => tab.key === newActiveKey);
+        const targetTab = newTabs.find((tab) => tab.key === newActiveKey);
         if (targetTab) {
           const fullPath = targetTab.path + (targetTab.query || '') + (targetTab.hash || '');
           history.push(fullPath);
@@ -121,7 +118,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
   const closeOthers = useCallback(
     (tabKey: string) => {
       const currentState = getGlobalState('tabNavigation');
-      const targetTab = currentState.tabs.find(tab => tab.key === tabKey);
+      const targetTab = currentState.tabs.find((tab) => tab.key === tabKey);
       if (!targetTab) return;
 
       setGlobalState('tabNavigation', {
@@ -153,7 +150,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
   const refreshTab = useCallback(
     (tabKey: string) => {
       const currentState = getGlobalState('tabNavigation');
-      const targetTab = currentState.tabs.find(tab => tab.key === tabKey);
+      const targetTab = currentState.tabs.find((tab) => tab.key === tabKey);
       if (!targetTab) return;
 
       // 重新加载当前页面
@@ -169,7 +166,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
   const handleTabChange = useCallback(
     (activeKey: string) => {
       const currentState = getGlobalState('tabNavigation');
-      const targetTab = currentState.tabs.find(tab => tab.key === activeKey);
+      const targetTab = currentState.tabs.find((tab) => tab.key === activeKey);
       if (!targetTab) return;
 
       setGlobalState('tabNavigation', {
@@ -195,8 +192,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
 
     // 如果当前路由对应的标签页不存在，创建它
     if (shouldCreateTab(pathname, search)) {
-      const existingTab = currentState.tabs.find(tab => tab.key === currentTabKey);
-      
+      const existingTab = currentState.tabs.find((tab) => tab.key === currentTabKey);
+
       if (!existingTab) {
         // 创建新标签页
         const title = getTabTitleWithTranslation(pathname, t);
@@ -225,7 +222,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
       // 如果当前路由不需要标签页，但存在于标签页列表中，移除它
       const currentState = getGlobalState('tabNavigation');
       const tabKey = generateTabKey(pathname, search, hash);
-      const existingTab = currentState.tabs.find(tab => tab.key === tabKey);
+      const existingTab = currentState.tabs.find((tab) => tab.key === tabKey);
       if (existingTab) {
         closeTab(tabKey);
       }
@@ -237,25 +234,36 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
 
     // 检查标签页是否已存在
     const currentState = getGlobalState('tabNavigation');
-    const existingTab = currentState.tabs.find(tab => tab.key === tabKey);
+    const existingTab = currentState.tabs.find((tab) => tab.key === tabKey);
 
     if (existingTab) {
-      // 标签页已存在，只更新激活状态
-      if (currentState.activeKey !== tabKey) {
-        setGlobalState('tabNavigation', {
-          ...currentState,
-          activeKey: tabKey,
-        });
+      // 标签页已存在，更新激活状态；若当前 URL 的 query/hash 变化（如 /embedded-dashboards 页面内部 replace 了 ?id=xxx），同步到 tab 以便点击标签时跳转正确
+      const needUpdateActive = currentState.activeKey !== tabKey;
+      const needUpdateQuery = existingTab.query !== search || existingTab.hash !== hash;
+      if (needUpdateActive || needUpdateQuery) {
+        if (needUpdateQuery) {
+          const updatedTabs = currentState.tabs.map((tab) => (tab.key === tabKey ? { ...tab, query: search, hash: hash, timestamp: Date.now() } : tab));
+          setGlobalState('tabNavigation', {
+            ...currentState,
+            tabs: updatedTabs,
+            ...(needUpdateActive ? { activeKey: tabKey } : {}),
+          });
+        } else {
+          setGlobalState('tabNavigation', {
+            ...currentState,
+            activeKey: tabKey,
+          });
+        }
         saveTabNavigationState();
       }
     } else {
       // 检查是否存在相同路径但不同查询参数的标签页
       // 如果存在，只更新查询参数，不创建新标签页（用于页面内部导航，如 BusinessGroup2）
-      const samePathTab = currentState.tabs.find(tab => tab.path === pathname && tab.key !== tabKey);
-      
+      const samePathTab = currentState.tabs.find((tab) => tab.path === pathname && tab.key !== tabKey);
+
       if (samePathTab) {
         // 更新现有标签页的查询参数和激活状态
-        const updatedTabs = currentState.tabs.map(tab => {
+        const updatedTabs = currentState.tabs.map((tab) => {
           if (tab.key === samePathTab.key) {
             return {
               ...tab,
@@ -267,7 +275,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
           }
           return tab;
         });
-        
+
         setGlobalState('tabNavigation', {
           ...currentState,
           tabs: updatedTabs,
@@ -332,9 +340,9 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
   }
 
   return (
-    <div className="tab-navigation-container" ref={tabsRef}>
+    <div className='tab-navigation-container' ref={tabsRef}>
       <Tabs
-        type="editable-card"
+        type='editable-card'
         activeKey={tabNavigation.activeKey}
         onChange={handleTabChange}
         hideAdd
@@ -343,9 +351,9 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
             closeTab(targetKey as string);
           }
         }}
-        className="tab-navigation-tabs"
+        className='tab-navigation-tabs'
       >
-        {tabNavigation.tabs.map(tab => (
+        {tabNavigation.tabs.map((tab) => (
           <TabPane
             key={tab.key}
             tab={
@@ -362,10 +370,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ visible = true, position 
                 }
                 trigger={['contextMenu']}
               >
-                <span
-                  data-tab-key={tab.key}
-                  style={{ display: 'inline-flex', alignItems: 'center', userSelect: 'none', cursor: 'pointer' }}
-                >
+                <span data-tab-key={tab.key} style={{ display: 'inline-flex', alignItems: 'center', userSelect: 'none', cursor: 'pointer' }}>
                   {tab.icon && <span style={{ marginRight: 4 }}>{tab.icon}</span>}
                   <span>{tab.title}</span>
                 </span>

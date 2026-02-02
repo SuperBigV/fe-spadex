@@ -227,18 +227,12 @@ const KnowledgeBaseList: React.FC<KnowledgeBaseListProps> = ({ selectedId, onSel
               >
                 <List.Item.Meta
                   avatar={<FolderOutlined style={{ fontSize: 20 }} />}
-                  title={
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span>{item.name}</span>
-                      <Badge status={item.status === 'enabled' ? 'success' : 'default'} />
-                    </div>
-                  }
+                  title={<span className='knowledge-base-item-name'>{item.name}</span>}
                   description={
-                    <div>
-                      <div>{item.description || '无描述'}</div>
-                      <div style={{ fontSize: 12, color: '#999', marginTop: 4 }}>
-                        {item.document_count || 0} 个文档
-                      </div>
+                    <div className='knowledge-base-item-meta'>
+                      <Badge status={item.status === 'enabled' ? 'success' : 'default'} />
+                      <span className='knowledge-base-item-desc'>{item.description || '无描述'}</span>
+                      <span className='knowledge-base-item-count'>{item.document_count || 0} 个文档</span>
                     </div>
                   }
                 />

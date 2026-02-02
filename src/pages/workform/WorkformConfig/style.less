@@ -1,0 +1,70 @@
+// 工单配置页 - 与项目整体风格统一，使用 --fc- 变量
+.workform-config {
+  background: var(--fc-fill-2);
+  padding: 0 16px 16px 16px;
+  border-radius: 4px;
+
+  .workform-config-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--fc-border-color);
+
+    .workform-config-desc {
+      color: var(--fc-text-3);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+  }
+
+  .workform-config-tabs {
+    .ant-tabs-nav {
+      margin-bottom: 0;
+      &::before {
+        border-bottom-color: var(--fc-border-color);
+      }
+    }
+    .ant-tabs-tab {
+      font-weight: 500;
+      &.ant-tabs-tab-active .ant-tabs-tab-btn {
+        color: var(--fc-primary-color);
+      }
+    }
+    .ant-tabs-ink-bar {
+      background: var(--fc-primary-color);
+    }
+    .ant-tabs-content-holder {
+      padding-top: 16px;
+    }
+  }
+
+  .workform-config-table-wrap {
+    .ant-table {
+      background: var(--fc-fill-2);
+      font-size: 13px;
+    }
+    .ant-table-thead > tr > th {
+      background: var(--fc-fill-3);
+      border-bottom: 1px solid var(--fc-border-color);
+      color: var(--fc-text-1);
+      font-weight: 600;
+    }
+    .ant-table-tbody > tr > td {
+      border-bottom: 1px solid var(--fc-border-color);
+      color: var(--fc-text-1);
+    }
+    .ant-table-tbody > tr:hover > td {
+      background: var(--fc-fill-3);
+    }
+    .ant-btn-link:not(.ant-btn-dangerous) {
+      color: var(--fc-primary-color);
+      &:hover {
+        color: var(--fc-primary-color-hover, var(--fc-primary-color));
+      }
+    }
+  }
+}

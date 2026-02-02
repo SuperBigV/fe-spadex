@@ -1,0 +1,172 @@
+// 工单详情模态框：内边距与滚动
+.workform-detail-modal.ant-modal .ant-modal-body {
+  padding: 20px 24px 24px;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+// 工单详情内容：用于详情页与列表模态框，统一视觉层级与布局
+.workform-detail-content {
+  // 基本信息区
+  .workform-detail-header {
+    margin-bottom: 20px;
+    border-radius: 6px;
+    overflow: hidden;
+
+    .ant-card-body {
+      padding: 16px 20px;
+    }
+
+    .ant-descriptions-item-label {
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.65);
+    }
+
+    .workform-detail-actions {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+  }
+
+  // 区块通用：隐藏 Card 默认标题，使用自定义 section 结构
+  .workform-detail-section {
+    margin-bottom: 20px;
+    border-radius: 6px;
+    overflow: hidden;
+
+    .ant-card-head {
+      display: none;
+    }
+
+    .ant-card-body {
+      padding: 0;
+      border: none;
+    }
+
+    // 区块标题：与正文明显区分（加粗、字号、左边框、浅底）
+    .workform-detail-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.85);
+      padding: 12px 16px 10px;
+      border-left: 3px solid @primary-color;
+      background: rgba(0, 0, 0, 0.02);
+      margin-bottom: 0;
+      letter-spacing: 0.2px;
+      line-height: 1.4;
+    }
+
+    // 区块正文：与标题形成层级（略小字号、正文色、独立背景）
+    .workform-detail-section-body {
+      padding: 14px 16px 16px;
+      background: rgba(0, 0, 0, 0.01);
+      color: rgba(0, 0, 0, 0.65);
+      font-size: 13px;
+      line-height: 1.65;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+    }
+  }
+
+  // 问题描述：正文样式
+  .workform-detail-desc {
+    .workform-detail-desc-text {
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 1em;
+    }
+
+    .workform-detail-attachments {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(0, 0, 0, 0.08);
+
+      .workform-detail-attachments-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.45);
+        margin-bottom: 8px;
+      }
+
+      a {
+        color: @primary-color;
+        font-size: 13px;
+      }
+    }
+  }
+
+  // 处理记录与操作日志
+  .workform-detail-timeline {
+    .workform-detail-section-body {
+      padding-top: 8px;
+    }
+
+    .ant-timeline {
+      padding-left: 4px;
+    }
+
+    .ant-timeline-item-content {
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.65);
+    }
+  }
+}
+
+// 深色主题：全部使用浅色字体与边框，不用黑色
+.theme-dark .workform-detail-content,
+.ant-modal-wrap.theme-dark .workform-detail-content,
+.ant-modal-wrap .theme-dark .workform-detail-content {
+  // 基本信息区：标签与分隔线
+  .workform-detail-header {
+    .ant-descriptions-item-label {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .ant-descriptions-item-content {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .workform-detail-actions {
+      border-top-color: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  // 区块标题：浅色字与浅底
+  .workform-detail-section-title {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.06);
+    border-left-color: @primary-color;
+  }
+
+  // 区块正文：浅色字与浅底、浅色边框
+  .workform-detail-section-body {
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.75);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  // 问题描述：附件标签与分隔线
+  .workform-detail-desc {
+    .workform-detail-attachments {
+      border-top-color: rgba(255, 255, 255, 0.1);
+
+      .workform-detail-attachments-label {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      a {
+        color: @primary-color;
+      }
+    }
+  }
+
+  // 处理记录与操作日志
+  .workform-detail-timeline .ant-timeline-item-content {
+    color: rgba(255, 255, 255, 0.75);
+  }
+}

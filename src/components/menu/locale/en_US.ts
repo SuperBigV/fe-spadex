@@ -57,5 +57,12 @@ const en_US = {
   站内公告: 'Notification',
   integrations: 'Integrations',
   built_in_components: 'Built-in Components',
+  // Workform
+  工单系统: 'Work Orders',
+  工单列表: 'Work Order List',
+  创建工单: 'Create Work Order',
+  工单类型: 'Work Order Types',
+  处理组: 'Process Groups',
+  报表分析: 'Reports',
 };
 export default en_US;

@@ -36,7 +36,7 @@ const TAB_BLACKLIST = [
  */
 export const shouldCreateTab = (pathname: string, search?: string): boolean => {
   // 检查是否在黑名单中
-  if (TAB_BLACKLIST.some(path => pathname.startsWith(path))) {
+  if (TAB_BLACKLIST.some((path) => pathname.startsWith(path))) {
     return false;
   }
 
@@ -52,22 +52,26 @@ export const shouldCreateTab = (pathname: string, search?: string): boolean => {
 };
 
 /**
+ * 仅按 path 区分的路由：页面会在加载后自动追加 query（如 ?id=xxx），
+ * 若 tabKey 包含 search 会导致先创建无 query 的标签、再因 URL 变化又建一个，出现两个标签。
+ * 此类路由的 tabKey 只使用 pathname，同一 path 始终对应一个标签。
+ */
+const PATH_ONLY_TAB_PATHS = ['/embedded-dashboards'];
+
+/**
  * 生成标签页的唯一标识
  */
 export const generateTabKey = (pathname: string, search?: string, hash?: string): string => {
+  if (PATH_ONLY_TAB_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'))) {
+    return pathname;
+  }
   return `${pathname}${search || ''}${hash || ''}`;
 };
 
 /**
  * 从路由信息创建标签页
  */
-export const createTabFromRoute = (
-  pathname: string,
-  search?: string,
-  hash?: string,
-  title?: string,
-  icon?: React.ReactNode,
-): TabItem => {
+export const createTabFromRoute = (pathname: string, search?: string, hash?: string, title?: string, icon?: React.ReactNode): TabItem => {
   const key = generateTabKey(pathname, search, hash);
   return {
     key,

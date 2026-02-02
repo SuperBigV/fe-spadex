@@ -123,8 +123,8 @@ request.interceptors.response.use(
               };
             }
           } else {
-            // n9e 和 n9e-plus 大部分接口返回的数据结构是 { err: '', dat: {} }
-            if (data.err === '' || data.status === 'success' || data.error === '') {
+            // n9e、n9e-plus、workform 等返回 { err: '', dat: {} }，成功时 err 可能被 omitempty 省略
+            if (!data.err || data.err === '' || data.status === 'success' || !data.error || data.error === '') {
               return { ...data, success: true };
             } else {
               throw {

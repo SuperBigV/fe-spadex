@@ -105,6 +105,13 @@ import RoomDashboard from '@/pages/operation/roomDashboard';
 // import NetworkDashboard from '@/pages/operation/networkDashboard';
 // import SoftwareDashboard from '@/pages/operation/softwareDashboard';
 import KnowledgeBasePage from '@/pages/knowledgeBase';
+import OperatorRecordPage from '@/pages/operatorRecord';
+import WorkOrderList from '@/pages/workform/WorkOrderList';
+import WorkOrderDetail from '@/pages/workform/WorkOrderDetail';
+import WorkformConfig from '@/pages/workform/WorkformConfig';
+// import WorkOrderTypeEdit from '@/pages/workform/WorkOrderTypeEdit';
+// import ProcessGroupEdit from '@/pages/workform/ProcessGroupEdit';
+import WorkOrderReports from '@/pages/workform/WorkOrderReports';
 const Packages = dynamicPackages();
 let lazyRoutes = Packages.reduce((result: any, module: Entry) => {
   return (result = result.concat(module.routes));
@@ -193,6 +200,7 @@ export default function Content() {
         <Route path='/asset-list' component={AssetList} />
         <Route path='/ips' component={IpManage} />
         <Route path='/knowledge-base' component={KnowledgeBasePage} />
+        <Route path='/operation-record' component={OperatorRecordPage} />
 
         {/* SSH安全模块 */}
         <Route path='/dangerous-commands' component={SSHBlacklist} />
@@ -266,6 +274,17 @@ export default function Content() {
 
         <Route exact path='/trace/explorer' component={TraceExplorer} />
         <Route exact path='/trace/dependencies' component={TraceDependencies} />
+
+        {/* 工单系统 */}
+        <Route exact path='/workform' render={() => <Redirect to='/workform-orders' />} />
+        <Route exact path='/workform-orders' component={WorkOrderList} />
+        <Route exact path='/workform-orders/:id' component={WorkOrderDetail} />
+        <Route exact path='/workform-config' component={WorkformConfig} />
+        {/* <Route exact path='/workform-config/type/add' component={WorkOrderTypeEdit} key='work-order-type-add' /> */}
+        {/* <Route exact path='/workform-config/type/:id' component={WorkOrderTypeEdit} key='work-order-type-edit' /> */}
+        {/* <Route exact path='/workform-config/group/add' component={ProcessGroupEdit} key='process-group-add' /> */}
+        {/* <Route exact path='/workform-config/group/:id' component={ProcessGroupEdit} key='process-group-edit' /> */}
+        <Route exact path='/workform-reports' component={WorkOrderReports} />
 
         <Route exact path='/permissions' component={Permissions} />
 

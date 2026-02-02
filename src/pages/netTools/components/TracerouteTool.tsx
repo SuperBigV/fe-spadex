@@ -1,16 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Card,
-  Form,
-  Button,
-  Space,
-  InputNumber,
-  message,
-  Spin,
-  Alert,
-  Input,
-  Tooltip,
-} from 'antd';
+import { Card, Form, Button, Space, InputNumber, message, Spin, Alert, Input, Tooltip } from 'antd';
 import { PlayCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import HostSelector from './HostSelector';
 import ExecutionModeSelector from './ExecutionModeSelector';
@@ -81,51 +70,34 @@ const TracerouteTool: React.FC<TracerouteToolProps> = ({ hosts }) => {
   };
 
   return (
-    <div className="tool-container">
+    <div className='tool-container'>
       <Card
-        title="路由追踪"
+        title='路由追踪'
         extra={
-          <Tooltip title="追踪数据包从源到目标的完整路径。用于精确定位网络故障和路由分析。">
+          <Tooltip title='追踪数据包从源到目标的完整路径。用于精确定位网络故障和路由分析。'>
             <InfoCircleOutlined style={{ color: '#1890ff', cursor: 'pointer' }} />
           </Tooltip>
         }
       >
-
         <Form
           form={form}
-          layout="vertical"
+          layout='vertical'
           onFinish={handleSubmit}
           initialValues={{
             maxHops: 30,
             timeout: 1,
           }}
         >
-          <Form.Item label="执行模式" name="execMode">
+          <Form.Item label='执行模式' name='execMode'>
             <ExecutionModeSelector value={execMode} onChange={setExecMode} />
           </Form.Item>
 
-          <Form.Item
-            label="目标地址"
-            name="target"
-            rules={[{ required: true, message: '请输入目标 IP 或域名' }]}
-          >
-            <HostSelector
-              hosts={hosts}
-              allowInput
-              placeholder="输入 IP 或域名，或从列表选择"
-            />
-          </Form.Item>
-
           {execMode === 'remote' && (
-            <Form.Item
-              label="Agent"
-              name="agentIdent"
-              rules={[{ required: true, message: '请选择 Agent' }]}
-            >
+            <Form.Item label='Agent' name='agentIdent' rules={[{ required: true, message: '请选择 Agent' }]}>
               <HostSelector
                 hosts={hosts}
                 allowInput={false}
-                placeholder="选择执行 Agent"
+                placeholder='选择执行 Agent'
                 onChange={(value) => {
                   const host = hosts.find((h) => h.ip === value);
                   form.setFieldsValue({ agentIdent: host?.ident });
@@ -134,48 +106,37 @@ const TracerouteTool: React.FC<TracerouteToolProps> = ({ hosts }) => {
             </Form.Item>
           )}
 
-          <Form.Item label="高级参数">
+          <Form.Item label='目标地址' name='target' rules={[{ required: true, message: '请输入目标 IP 或域名' }]}>
+            <HostSelector hosts={hosts} allowInput placeholder='输入 IP 或域名，或从列表选择' />
+          </Form.Item>
+
+          <Form.Item label='高级参数'>
             <Space>
-              <Form.Item name="maxHops" noStyle>
-                <InputNumber
-                  min={1}
-                  max={64}
-                  placeholder="最大跳数"
-                  addonBefore="最大跳数"
-                />
+              <Form.Item name='maxHops' noStyle>
+                <InputNumber min={1} max={64} placeholder='最大跳数' addonBefore='最大跳数' />
               </Form.Item>
-              <Form.Item name="timeout" noStyle>
-                <InputNumber
-                  min={1}
-                  max={10}
-                  placeholder="超时(秒)"
-                  addonBefore="超时"
-                />
+              <Form.Item name='timeout' noStyle>
+                <InputNumber min={1} max={10} placeholder='超时(秒)' addonBefore='超时' />
               </Form.Item>
             </Space>
           </Form.Item>
 
           <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              icon={<PlayCircleOutlined />}
-            >
+            <Button type='primary' htmlType='submit' loading={loading} icon={<PlayCircleOutlined />}>
               开始测试
             </Button>
           </Form.Item>
         </Form>
 
-        <Spin spinning={loading} tip="测试中，请稍候...">
+        <Spin spinning={loading} tip='测试中，请稍候...'>
           {result && (
-            <Card title="测试结果" style={{ marginTop: 16 }}>
+            <Card title='测试结果' style={{ marginTop: 16 }}>
               {result.success ? (
                 <div>
                   <Alert
                     message={`目标: ${result.target}`}
                     description={`执行模式: ${result.execMode === 'local' ? '本地执行' : '远程执行'} | 检测时间: ${new Date(result.checkTime).toLocaleString()}`}
-                    type="info"
+                    type='info'
                     style={{ marginBottom: 16 }}
                   />
                   <TextArea
@@ -186,16 +147,11 @@ const TracerouteTool: React.FC<TracerouteToolProps> = ({ hosts }) => {
                       fontFamily: 'monospace',
                       fontSize: '12px',
                     }}
-                    placeholder="路由追踪结果将显示在这里..."
+                    placeholder='路由追踪结果将显示在这里...'
                   />
                 </div>
               ) : (
-                <Alert
-                  message="测试失败"
-                  description={result.error || '未知错误'}
-                  type="error"
-                  showIcon
-                />
+                <Alert message='测试失败' description={result.error || '未知错误'} type='error' showIcon />
               )}
             </Card>
           )}

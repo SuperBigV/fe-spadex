@@ -3,10 +3,13 @@
   flex: 1;
   min-height: 400px;
   position: relative;
-  // background: rgba(10, 14, 39, 0.5);
+  background: rgba(10, 25, 55, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(64, 128, 255, 0.3);
   border-radius: 8px;
   overflow: hidden;
-  // border: 1px solid rgba(64, 128, 255, 0.3);
+  box-shadow: 0 0 20px rgba(64, 128, 255, 0.1), inset 0 1px 0 rgba(100, 180, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,7 +21,7 @@
   }
 
   .empty-placeholder {
-    color: #a0aec0;
+    color: rgba(160, 174, 192, 0.9);
     font-size: 28px;
   }
 }

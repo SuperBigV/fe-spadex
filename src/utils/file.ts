@@ -40,6 +40,7 @@ export const getFileFormatIcon = (format: string): string => {
     doc: '📝',
     xlsx: '📊',
     xls: '📊',
+    csv: '📊',
     pptx: '📽️',
     ppt: '📽️',
     txt: '📄',

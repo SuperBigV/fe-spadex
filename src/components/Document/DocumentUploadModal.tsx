@@ -94,10 +94,10 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ visible, onCa
     }
 
     // 文件格式验证
-    const allowedFormats = ['pdf', 'docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt', 'txt', 'md'];
+    const allowedFormats = ['pdf', 'docx', 'doc', 'xlsx', 'xls', 'pptx', 'ppt', 'txt', 'md', 'csv'];
     const fileFormat = file.name.split('.').pop()?.toLowerCase();
     if (!fileFormat || !allowedFormats.includes(fileFormat)) {
-      message.error('不支持的文件格式，仅支持：PDF、DOCX、DOC、XLSX、XLS、PPTX、PPT、TXT、MD');
+      message.error('不支持的文件格式，仅支持：PDF、DOCX、DOC、XLSX、XLS、PPTX、PPT、TXT、MD、CSV');
       return false;
     }
 
@@ -107,14 +107,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ visible, onCa
   };
 
   return (
-    <Modal
-      title='上传文档'
-      visible={visible}
-      onOk={handleOk}
-      onCancel={handleCancel}
-      confirmLoading={uploading}
-      destroyOnClose
-    >
+    <Modal title='上传文档' visible={visible} onOk={handleOk} onCancel={handleCancel} confirmLoading={uploading} destroyOnClose>
       <Form form={form} layout='vertical'>
         <Form.Item name='name' label='文档名称'>
           <Input placeholder='留空则使用文件名' />
@@ -133,7 +126,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ visible, onCa
               <InboxOutlined />
             </p>
             <p className='ant-upload-text'>点击或拖拽文件到此区域上传</p>
-            <p className='ant-upload-hint'>支持 PDF、DOCX、DOC、XLSX、XLS、PPTX、PPT、TXT、MD 格式，最大 100MB</p>
+            <p className='ant-upload-hint'>支持 PDF、DOCX、DOC、XLSX、XLS、PPTX、PPT、TXT、MD、CSV 格式，最大 100MB</p>
           </Dragger>
         </Form.Item>
         {uploading && (

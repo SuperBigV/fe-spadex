@@ -18,8 +18,10 @@ import React, { ReactNode, useContext, useState, useEffect, useRef } from 'react
 import { useHistory, Link, useLocation } from 'react-router-dom';
 import querystring from 'query-string';
 import { useTranslation } from 'react-i18next';
-import { Menu, Dropdown, Space, Drawer } from 'antd';
-import { DownOutlined, RollbackOutlined } from '@ant-design/icons';
+import { Menu, Dropdown, Space, Drawer, Badge } from 'antd';
+import { DownOutlined, RollbackOutlined, MailOutlined } from '@ant-design/icons';
+import InboxDrawer from '@/components/InboxDrawer';
+import { getMessageUnreadCount } from '@/services/workform';
 import { Logout } from '@/services/login';
 import AdvancedWrap, { License } from '@/components/AdvancedWrap';
 import { CommonStateContext } from '@/App';
@@ -77,12 +79,42 @@ const PageLayout: React.FC<IPageLayoutProps> = ({ icon, title, rightArea, introI
     location.pathname !== '/out-of-service';
   const [curLanguage, setCurLanguage] = useState(i18nMap[i18n.language] || '中文');
   const [themeVisible, setThemeVisible] = useState(false);
+  const [inboxDrawerOpen, setInboxDrawerOpen] = useState(false);
+  const [inboxUnreadCount, setInboxUnreadCount] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const chatRef = useRef<any>(null);
+  const prevInboxUnreadRef = useRef(-1);
   useEffect(() => {
     setCurLanguage(i18nMap[i18n.language] || '中文');
   }, [i18n.language]);
+
+  // 站内信未读数轮询（30 秒），未读增加时可选播放提示音
+  useEffect(() => {
+    if (embed || location.pathname.startsWith('/login') || location.pathname.startsWith('/callback')) return;
+    const token = localStorage.getItem(AccessTokenKey);
+    if (!token) return;
+    const fetchUnread = () => {
+      getMessageUnreadCount()
+        .then((res) => {
+          const n = res.unread_count || 0;
+          if (n > prevInboxUnreadRef.current && prevInboxUnreadRef.current >= 0 && localStorage.getItem('inbox_sound_off') !== '1') {
+            try {
+              const audio = new Audio('/audio/notification.mp3');
+              audio.volume = 0.5;
+              audio.play().catch(() => {});
+            } catch (_e) {}
+          }
+          prevInboxUnreadRef.current = n;
+          setInboxUnreadCount(n);
+        })
+        .catch(() => {});
+    };
+    fetchUnread();
+    const timer = setInterval(fetchUnread, 30000);
+    return () => clearInterval(timer);
+  }, [embed, location.pathname]);
+
   useEffect(() => {
     const handleMessage = (e) => {
       if (e.origin !== 'http://127.0.0.1') return;
@@ -197,6 +229,29 @@ const PageLayout: React.FC<IPageLayoutProps> = ({ icon, title, rightArea, introI
 
                   {/* <Version /> */}
                   <AlertIndicator />
+                  <span
+                    role='button'
+                    tabIndex={0}
+                    style={{ marginRight: 16, display: 'inline-flex', alignItems: 'center', color: 'inherit', cursor: 'pointer' }}
+                    title='站内信'
+                    onClick={() => setInboxDrawerOpen(true)}
+                    onKeyDown={(e) => e.key === 'Enter' && setInboxDrawerOpen(true)}
+                  >
+                    <Badge count={inboxUnreadCount > 0 ? inboxUnreadCount : 0} size='small' offset={[-2, 2]}>
+                      <MailOutlined style={{ fontSize: 16 }} />
+                    </Badge>
+                  </span>
+                  <InboxDrawer
+                    open={inboxDrawerOpen}
+                    onClose={() => setInboxDrawerOpen(false)}
+                    unreadCount={inboxUnreadCount}
+                    onRead={() => {
+                      setInboxUnreadCount((c) => Math.max(0, c - 1));
+                      getMessageUnreadCount()
+                        .then((res) => setInboxUnreadCount(res.unread_count || 0))
+                        .catch(() => {});
+                    }}
+                  />
 
                   {/* <Space style={{ marginRight: 16 }}> */}
                   {/* 整合版本关闭文档链接 */}

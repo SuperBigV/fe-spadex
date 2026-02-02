@@ -220,6 +220,7 @@ const CreateModal: React.FC<AssetModalProps> = (props: AssetModalProps) => {
                   { id: -3, name: '认证配置' },
                   { id: -4, name: '采购供应商' },
                   { id: -5, name: '维保单位' },
+                  { id: -6, name: '负责人' },
                 ]
                   .concat(assetModels)
                   .filter((model) => !_.toString(gid)?.includes(model.id.toString()))

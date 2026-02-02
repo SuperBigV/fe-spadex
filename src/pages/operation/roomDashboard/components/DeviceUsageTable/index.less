@@ -2,29 +2,24 @@
   .card-header {
     margin-bottom: 15px;
   }
-  /* 修改整个表格背景 */
+
+  /* 表格透明背景 */
   .ant-table {
-    background-color: #162449 !important;
+    background: transparent !important;
   }
 
-  /* 修改表头背景 */
   .ant-table-thead > tr > th {
-    background-color: #162449 !important;
+    background: rgba(10, 25, 55, 0.15) !important;
+    border-bottom: 1px solid rgba(64, 128, 255, 0.25) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
   }
 
-  /* 修改表格行背景 */
   .ant-table-tbody > tr > td {
-    background-color: #162449 !important;
+    background: transparent !important;
+    border-bottom: 1px solid rgba(64, 128, 255, 0.1) !important;
   }
 
-  /* 修改鼠标悬停行背景 */
   .ant-table-tbody > tr:hover > td {
-    background-color: #162449 !important;
+    background: rgba(64, 128, 255, 0.08) !important;
   }
-  // :global {
-  //   .ant-table {
-  //     background: #162449 !important;
-  //     color: #ffffff;
-  //   }
-  // }
 }

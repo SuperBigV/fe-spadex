@@ -24,6 +24,7 @@ import { getBusiGroups } from '@/services/common';
 import { getSuppliers, getMaintenanceList } from '@/services/partner';
 import { table } from 'console';
 import { timeFormatter } from '@/pages/dashboard/Renderer/utils/valueFormatter';
+import { getUserInfoList } from '@/services/manage';
 
 export interface ITargetProps {
   id: number;
@@ -102,6 +103,7 @@ export default function AssetList(props: IProps) {
   const [modelOptions, setModelOptions] = useState<any[]>([]);
   const [busiOptions, setBusiOptions] = useState<any[]>([]);
   const [authOptions, setAuthOptions] = useState<any[]>([]);
+  const [userOptions, setUserOptions] = useState<any[]>([]);
   const [rackOptions, setRackOptions] = useState<any[]>([]);
   const [supplierOptions, setSupplierOptions] = useState<any[]>([]);
   const [maintainerOptions, setMaintainerOptions] = useState<any[]>([]);
@@ -268,6 +270,17 @@ export default function AssetList(props: IProps) {
             render: (text, record) => {
               const model = authOptions.find((model) => model.value === record.auth_snmp);
               return <div>{model && model.label}</div>;
+            },
+          };
+        }
+        if (item.uniqueIdentifier === 'user') {
+          return {
+            title: item.fieldName,
+            dataIndex: item.uniqueIdentifier,
+            key: item.id,
+            render: (text, record) => {
+              const model = userOptions.find((item) => item.id === record.user);
+              return <div>{model && model.name}</div>;
             },
           };
         }
@@ -725,6 +738,13 @@ export default function AssetList(props: IProps) {
         value: item.id,
       }));
       setAuthOptions(options3);
+      const userOptions = await getUserInfoList();
+      const options7 = userOptions.dat.list.map((item) => ({
+        name: item.nickname,
+        id: item.id,
+      }));
+      console.log('options7', options7);
+      setUserOptions(options7);
       const columnsResponse = await getColumnsByGid(gids?.toString() || '');
       const tableColumns = columnsResponse.filter((item) => item.fields);
       // tableColumns.push({
@@ -909,12 +929,26 @@ export default function AssetList(props: IProps) {
               },
             };
           }
+          if (item.uniqueIdentifier === 'user') {
+            return {
+              title: item.fieldName,
+              dataIndex: item.uniqueIdentifier,
+              key: item.id,
+              width: 120,
+              className: 'n9e-hosts-table-column-ip',
+              render: (text, record) => {
+                const model = options7.find((item) => item.id === record.user);
+                return <div>{model && model.name}</div>;
+              },
+            };
+          }
           if (item.uniqueIdentifier === 'supplier') {
             return {
               title: item.fieldName,
               dataIndex: item.uniqueIdentifier,
               key: item.id,
               align: 'left',
+
               render: (text, record) => {
                 const model = options5.find((model) => model.value === record.supplier);
                 return <div>{model && model.label}</div>;

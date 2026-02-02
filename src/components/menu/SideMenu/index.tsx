@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import Icon, { MenuUnfoldOutlined, MenuFoldOutlined, GlobalOutlined, AppstoreAddOutlined, SecurityScanOutlined } from '@ant-design/icons';
+import Icon, { MenuUnfoldOutlined, MenuFoldOutlined, GlobalOutlined, AppstoreAddOutlined, SecurityScanOutlined, FormOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 import querystring from 'query-string';
 import { useTranslation } from 'react-i18next';
@@ -288,6 +288,25 @@ export const getMenuList = (t) => {
       ],
     },
     {
+      key: 'workform',
+      icon: <FormOutlined />,
+      label: t('工单系统'),
+      children: [
+        {
+          key: '/workform-orders',
+          label: t('工单列表'),
+        },
+        {
+          key: '/workform-config',
+          label: t('工单配置'),
+        },
+        {
+          key: '/workform-reports',
+          label: t('报表分析'),
+        },
+      ],
+    },
+    {
       key: 'record',
       icon: <SecurityScanOutlined />,
       label: '记录中心',
@@ -379,6 +398,7 @@ export const getMenuList = (t) => {
           key: '/knowledge-base',
           label: '知识库',
         },
+
         {
           key: '/auths',
           label: '认证管理',

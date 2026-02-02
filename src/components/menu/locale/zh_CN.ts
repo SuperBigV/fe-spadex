@@ -54,5 +54,12 @@ const zh_CN = {
   quickMenus: '快捷菜单',
   integrations: '集成中心',
   built_in_components: '模板中心',
+  // 工单系统
+  工单系统: '工单系统',
+  工单列表: '工单列表',
+  创建工单: '创建工单',
+  工单类型: '工单类型',
+  处理组: '处理组',
+  报表分析: '报表分析',
 };
 export default zh_CN;

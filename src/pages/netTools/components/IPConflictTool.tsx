@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, Form, Button, Space, message, Spin, Alert, Table, Tag, Select, Input, Radio, InputNumber, Statistic, Row, Col, Tooltip } from 'antd';
 import { PlayCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import HostSelector from './HostSelector';
+import ExecutionModeSelector from './ExecutionModeSelector';
 import { postNetToolIPConflict } from '../services';
 import type { Host, IPConflictResponse } from '../types';
 
@@ -147,18 +148,36 @@ const IPConflictTool: React.FC<IPConflictToolProps> = ({ hosts }) => {
           </Tooltip>
         }
       >
-
         <Form
           form={form}
           layout='vertical'
           onFinish={handleSubmit}
           initialValues={{
             scanMode: 'single',
+            execMode: 'local',
             detectionMethod: 'both',
             timeout: 1000,
             concurrency: 50,
           }}
         >
+          <Form.Item label='执行模式' name='execMode'>
+            <ExecutionModeSelector value={execMode} onChange={setExecMode} />
+          </Form.Item>
+
+          {execMode === 'remote' && (
+            <Form.Item label='Agent' name='agentIdent' rules={[{ required: true, message: '请选择 Agent' }]}>
+              <HostSelector
+                hosts={hosts}
+                allowInput={false}
+                placeholder='选择执行 Agent'
+                onChange={(value) => {
+                  const host = hosts.find((h) => h.ip === value);
+                  form.setFieldsValue({ agentIdent: host?.ident });
+                }}
+              />
+            </Form.Item>
+          )}
+
           <Form.Item label='扫描模式' name='scanMode'>
             <Radio.Group
               value={scanMode}
@@ -206,20 +225,6 @@ const IPConflictTool: React.FC<IPConflictToolProps> = ({ hosts }) => {
               extra='最大支持 /24 网段（254个IP）'
             >
               <Input placeholder='例如: 192.168.1.0/24' style={{ width: 400 }} />
-            </Form.Item>
-          )}
-
-          {execMode === 'remote' && (
-            <Form.Item label='Agent' name='agentIdent' rules={[{ required: true, message: '请选择 Agent' }]}>
-              <HostSelector
-                hosts={hosts}
-                allowInput={false}
-                placeholder='选择执行 Agent'
-                onChange={(value) => {
-                  const host = hosts.find((h) => h.ip === value);
-                  form.setFieldsValue({ agentIdent: host?.ident });
-                }}
-              />
             </Form.Item>
           )}
 

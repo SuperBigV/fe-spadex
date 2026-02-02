@@ -19,6 +19,7 @@ import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 import { RASConfig } from '../types';
 import { addTarget, editTarget } from '@/services/manage';
+import { getUserInfoList } from '@/services/manage';
 export const getColumnsByGid = (id: string) => {
   return request(`/cmdb/${id}/columns`, {
     method: RequestMethod.Get,
@@ -27,6 +28,18 @@ export const getColumnsByGid = (id: string) => {
 };
 
 export const getModelOptions = (id) => {
+  // 如果id==-6,则请求/api/n9e/users?p=1&limit=10&query=   获取用户列表
+  if (id === -6) {
+    return getUserInfoList({ p: 1, limit: 1000, query: '' }).then((res) =>
+      // 过滤掉nickname包含机器人字符串的
+      res.dat.list
+        .filter((item) => !item.nickname.includes('机器人'))
+        .map((item) => ({
+          name: item.nickname,
+          id: item.id,
+        })),
+    );
+  }
   return request(`/cmdb/asset-model/${id}/data`, {
     method: RequestMethod.Get,
     silence: true,

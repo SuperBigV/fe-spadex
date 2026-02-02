@@ -251,6 +251,8 @@ function FormModal(props: Props & ModalWrapProps) {
                       } else if (relatedModel === -3) {
                         inputComponent = <Select options={authOptions}></Select>;
                       } else {
+                        console.log('uniqueIdentifier', uniqueIdentifier);
+                        console.log('relationOptions[uniqueIdentifier]', relationOptions[uniqueIdentifier]);
                         inputComponent = <Select options={relationOptions[uniqueIdentifier]}></Select>;
                       }
                       break;

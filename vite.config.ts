@@ -44,6 +44,7 @@ export default defineConfig(({ mode }) => {
   // 也可以通过环境变量来设置，创建 `.env` 文件，内容为 `PROXY=http://localhost:8080`
   let proxyURL = env.PROXY || 'http://0.0.0.0:17000';
   let proxyCmdbURL = env.CMDB_PROXY || 'http://0.0.0.0:17001';
+  let proxyWorkformURL = env.WORKFORM_PROXY || 'http://0.0.0.0:17002';
   let fontFamily = '"Microsoft Yahei",Verdana,Helvetica Neue,sans-serif,PingFangSC-Regular,simsun,"sans-serif"';
   if (env.VITE_IS_PRO) {
     proxyURL = env.PROXY_PRO;
@@ -81,6 +82,11 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       proxy: {
+        // 只代理 API 路径 /workform/xxx，避免 /workform-orders、/workform-config 等前端路由被误代理导致刷新 404
+        '/workform/': {
+          target: proxyWorkformURL,
+          changeOrigin: true,
+        },
         '/api': {
           target: proxyURL,
           changeOrigin: true,

@@ -1,17 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Card,
-  Form,
-  Button,
-  Space,
-  InputNumber,
-  message,
-  Spin,
-  Descriptions,
-  Tag,
-  Alert,
-  Tooltip,
-} from 'antd';
+import { Card, Form, Button, Space, InputNumber, message, Spin, Descriptions, Tag, Alert, Tooltip } from 'antd';
 import { PlayCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import HostSelector from './HostSelector';
 import ExecutionModeSelector from './ExecutionModeSelector';
@@ -90,19 +78,18 @@ const PingTool: React.FC<PingToolProps> = ({ hosts }) => {
   };
 
   return (
-    <div className="tool-container">
+    <div className='tool-container'>
       <Card
-        title="Ping 测试"
+        title='Ping 测试'
         extra={
-          <Tooltip title="测试到目标主机的网络连通性和延迟。用于快速检查网络连接状态和测量网络延迟。">
+          <Tooltip title='测试到目标主机的网络连通性和延迟。用于快速检查网络连接状态和测量网络延迟。'>
             <InfoCircleOutlined style={{ color: '#1890ff', cursor: 'pointer' }} />
           </Tooltip>
         }
       >
-
         <Form
           form={form}
-          layout="vertical"
+          layout='vertical'
           onFinish={handleSubmit}
           initialValues={{
             count: 4,
@@ -110,32 +97,16 @@ const PingTool: React.FC<PingToolProps> = ({ hosts }) => {
             interval: 1000,
           }}
         >
-          <Form.Item label="执行模式" name="execMode">
+          <Form.Item label='执行模式' name='execMode'>
             <ExecutionModeSelector value={execMode} onChange={setExecMode} />
           </Form.Item>
 
-          <Form.Item
-            label="目标地址"
-            name="target"
-            rules={[{ required: true, message: '请输入目标 IP 或域名' }]}
-          >
-            <HostSelector
-              hosts={hosts}
-              allowInput
-              placeholder="输入 IP 或域名，或从列表选择"
-            />
-          </Form.Item>
-
           {execMode === 'remote' && (
-            <Form.Item
-              label="Agent"
-              name="agentIdent"
-              rules={[{ required: true, message: '请选择 Agent' }]}
-            >
+            <Form.Item label='Agent' name='agentIdent' rules={[{ required: true, message: '请选择 Agent' }]}>
               <HostSelector
                 hosts={hosts}
                 allowInput={false}
-                placeholder="选择执行 Agent"
+                placeholder='选择执行 Agent'
                 onChange={(value) => {
                   const host = hosts.find((h) => h.ip === value);
                   form.setFieldsValue({ agentIdent: host?.ident });
@@ -144,101 +115,62 @@ const PingTool: React.FC<PingToolProps> = ({ hosts }) => {
             </Form.Item>
           )}
 
-          <Form.Item label="高级参数">
+          <Form.Item label='目标地址' name='target' rules={[{ required: true, message: '请输入目标 IP 或域名' }]}>
+            <HostSelector hosts={hosts} allowInput placeholder='输入 IP 或域名，或从列表选择' />
+          </Form.Item>
+
+          <Form.Item label='高级参数'>
             <Space>
-              <Form.Item name="count" noStyle>
-                <InputNumber
-                  min={1}
-                  max={100}
-                  placeholder="Ping 次数"
-                  addonBefore="次数"
-                />
+              <Form.Item name='count' noStyle>
+                <InputNumber min={1} max={100} placeholder='Ping 次数' addonBefore='次数' />
               </Form.Item>
-              <Form.Item name="timeout" noStyle>
-                <InputNumber
-                  min={1}
-                  max={300}
-                  placeholder="超时(秒)"
-                  addonBefore="超时"
-                />
+              <Form.Item name='timeout' noStyle>
+                <InputNumber min={1} max={300} placeholder='超时(秒)' addonBefore='超时' />
               </Form.Item>
-              <Form.Item name="interval" noStyle>
-                <InputNumber
-                  min={100}
-                  max={10000}
-                  placeholder="间隔(ms)"
-                  addonBefore="间隔"
-                />
+              <Form.Item name='interval' noStyle>
+                <InputNumber min={100} max={10000} placeholder='间隔(ms)' addonBefore='间隔' />
               </Form.Item>
             </Space>
           </Form.Item>
 
           <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              icon={<PlayCircleOutlined />}
-            >
+            <Button type='primary' htmlType='submit' loading={loading} icon={<PlayCircleOutlined />}>
               开始测试
             </Button>
           </Form.Item>
         </Form>
 
-        <Spin spinning={loading} tip="测试中，请稍候...">
+        <Spin spinning={loading} tip='测试中，请稍候...'>
           {result && (
-            <Card title="测试结果" style={{ marginTop: 16 }}>
+            <Card title='测试结果' style={{ marginTop: 16 }}>
               {result.success ? (
                 <Descriptions bordered column={2}>
-                  <Descriptions.Item label="目标地址" span={2}>
+                  <Descriptions.Item label='目标地址' span={2}>
                     {result.target}
                   </Descriptions.Item>
-                  <Descriptions.Item label="探测源 IP">
-                    {result.sourceIp}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="执行模式">
-                    {result.execMode === 'local' ? '本地执行' : '远程执行'}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="发送包数">
-                    {result.sent}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="接收包数">
-                    {result.received}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="丢包率">
-                    <Tag color={result.packetLoss === '0%' ? 'success' : 'warning'}>
-                      {result.packetLoss}
-                    </Tag>
+                  <Descriptions.Item label='探测源 IP'>{result.sourceIp}</Descriptions.Item>
+                  <Descriptions.Item label='执行模式'>{result.execMode === 'local' ? '本地执行' : '远程执行'}</Descriptions.Item>
+                  <Descriptions.Item label='发送包数'>{result.sent}</Descriptions.Item>
+                  <Descriptions.Item label='接收包数'>{result.received}</Descriptions.Item>
+                  <Descriptions.Item label='丢包率'>
+                    <Tag color={result.packetLoss === '0%' ? 'success' : 'warning'}>{result.packetLoss}</Tag>
                   </Descriptions.Item>
                   {result.avgRtt && (
                     <>
-                      <Descriptions.Item label="最小延迟">
-                        {result.minRtt?.toFixed(2)} ms
-                      </Descriptions.Item>
-                      <Descriptions.Item label="最大延迟">
-                        {result.maxRtt?.toFixed(2)} ms
-                      </Descriptions.Item>
-                      <Descriptions.Item label="平均延迟">
-                        {result.avgRtt.toFixed(2)} ms
-                      </Descriptions.Item>
+                      <Descriptions.Item label='最小延迟'>{result.minRtt?.toFixed(2)} ms</Descriptions.Item>
+                      <Descriptions.Item label='最大延迟'>{result.maxRtt?.toFixed(2)} ms</Descriptions.Item>
+                      <Descriptions.Item label='平均延迟'>{result.avgRtt.toFixed(2)} ms</Descriptions.Item>
                     </>
                   )}
-                  <Descriptions.Item label="状态">
-                    <Tag color={result.status === 'success' ? 'success' : 'error'}>
-                      {result.status}
-                    </Tag>
+                  <Descriptions.Item label='状态'>
+                    <Tag color={result.status === 'success' ? 'success' : 'error'}>{result.status}</Tag>
                   </Descriptions.Item>
-                  <Descriptions.Item label="检测时间" span={2}>
+                  <Descriptions.Item label='检测时间' span={2}>
                     {new Date(result.checkTime).toLocaleString()}
                   </Descriptions.Item>
                 </Descriptions>
               ) : (
-                <Alert
-                  message="测试失败"
-                  description={result.error || '未知错误'}
-                  type="error"
-                  showIcon
-                />
+                <Alert message='测试失败' description={result.error || '未知错误'} type='error' showIcon />
               )}
             </Card>
           )}

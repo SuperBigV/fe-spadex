@@ -1,7 +1,7 @@
 .room-dashboard-container {
   width: 100%;
   height: 100vh;
-  background-image: url('/image/dashboard-bg1.png');
+  background-image: url('/image/room-bg.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -10,7 +10,7 @@
   overflow: hidden;
   color: #ffffff;
 
-  // 背景遮罩层
+  // 背景遮罩层（减弱使背景图更透出）
   &::before {
     content: '';
     position: absolute;
@@ -18,7 +18,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(10, 14, 39, 0.3);
+    background: rgba(10, 14, 39, 0.15);
     z-index: 0;
   }
 
@@ -30,7 +30,9 @@
 
 .dashboard-header {
   height: 70px;
-  background: linear-gradient(180deg, rgba(10, 14, 39, 0.95) 0%, rgba(10, 14, 39, 0.8) 100%);
+  background: linear-gradient(180deg, rgba(10, 25, 55, 0.75) 0%, rgba(10, 25, 55, 0.5) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 2px solid rgba(64, 128, 255, 0.5);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   display: flex;
@@ -78,8 +80,9 @@
   :global {
     .ant-select {
       .ant-select-selector {
-        background: rgba(26, 35, 70, 0.8) !important;
-        border: 1px solid rgba(64, 128, 255, 0.3) !important;
+        background: rgba(10, 25, 55, 0.35) !important;
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(64, 128, 255, 0.4) !important;
         color: #ffffff !important;
       }
 
@@ -89,13 +92,15 @@
     }
 
     .ant-btn {
-      background: rgba(26, 35, 70, 0.8) !important;
-      border: 1px solid rgba(64, 128, 255, 0.3) !important;
+      background: rgba(10, 25, 55, 0.35) !important;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(64, 128, 255, 0.4) !important;
       color: #ffffff !important;
 
       &:hover {
-        border-color: rgba(64, 128, 255, 0.6) !important;
+        border-color: rgba(79, 209, 199, 0.7) !important;
         color: #4fd1c7 !important;
+        box-shadow: 0 0 12px rgba(79, 209, 199, 0.2);
       }
     }
   }
@@ -171,19 +176,33 @@
   }
 }
 
-// 通用卡片样式
+// 通用卡片样式 - 透明科技感
 .dashboard-card {
-  background: rgba(26, 35, 70, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(64, 128, 255, 0.3);
+  position: relative;
+  background: rgba(10, 25, 55, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(64, 128, 255, 0.35);
   border-radius: 8px;
   padding: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 20px rgba(64, 128, 255, 0.12), inset 0 1px 0 rgba(100, 180, 255, 0.15), 0 4px 24px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    border-radius: 8px 8px 0 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(79, 209, 199, 0.5) 50%, transparent 100%);
+    pointer-events: none;
+  }
+
   &:hover {
-    border-color: rgba(64, 128, 255, 0.6);
-    box-shadow: 0 6px 30px rgba(64, 128, 255, 0.2);
+    border-color: rgba(64, 128, 255, 0.55);
+    box-shadow: 0 0 28px rgba(64, 128, 255, 0.2), inset 0 1px 0 rgba(100, 180, 255, 0.2), 0 4px 24px rgba(0, 0, 0, 0.25);
   }
 
   .card-title {
@@ -194,5 +213,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    text-shadow: 0 0 10px rgba(64, 128, 255, 0.5);
   }
 }
