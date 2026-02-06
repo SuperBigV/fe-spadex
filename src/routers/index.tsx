@@ -113,6 +113,11 @@ import WorkformConfig from '@/pages/workform/WorkformConfig';
 // import ProcessGroupEdit from '@/pages/workform/ProcessGroupEdit';
 import WorkOrderReports from '@/pages/workform/WorkOrderReports';
 import ImPage from '@/pages/im';
+import InspectionOverview from '@/pages/inspection/Overview';
+import InspectionTemplateList from '@/pages/inspection/TemplateList';
+import InspectionTemplateDetail from '@/pages/inspection/TemplateDetail';
+import InspectionTaskList from '@/pages/inspection/TaskList';
+import InspectionTaskDetail from '@/pages/inspection/TaskDetail';
 const Packages = dynamicPackages();
 let lazyRoutes = Packages.reduce((result: any, module: Entry) => {
   return (result = result.concat(module.routes));
@@ -287,6 +292,15 @@ export default function Content() {
         {/* <Route exact path='/workform-config/group/add' component={ProcessGroupEdit} key='process-group-add' /> */}
         {/* <Route exact path='/workform-config/group/:id' component={ProcessGroupEdit} key='process-group-edit' /> */}
         <Route exact path='/workform-reports' component={WorkOrderReports} />
+
+        {/* 巡检模块 */}
+        <Route exact path='/inspection' render={() => <Redirect to='/inspection-overview' />} />
+        <Route exact path='/inspection-overview' component={InspectionOverview} />
+        <Route exact path='/inspection-templates' component={InspectionTemplateList} />
+        <Route exact path='/inspection-templates/add' component={InspectionTemplateDetail} />
+        <Route exact path='/inspection-templates/:id' component={InspectionTemplateDetail} />
+        <Route exact path='/inspection-tasks' component={InspectionTaskList} />
+        <Route exact path='/inspection-tasks/:id' component={InspectionTaskDetail} />
 
         <Route exact path='/permissions' component={Permissions} />
 

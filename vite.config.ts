@@ -45,6 +45,7 @@ export default defineConfig(({ mode }) => {
   let proxyURL = env.PROXY || 'http://0.0.0.0:17000';
   let proxyCmdbURL = env.CMDB_PROXY || 'http://0.0.0.0:17001';
   let proxyWorkformURL = env.WORKFORM_PROXY || 'http://0.0.0.0:17002';
+  let proxyInspectionURL = env.INSPECTION_PROXY || 'http://0.0.0.0:17005';
   let proxyImURL = env.IM_PROXY || 'http://0.0.0.0:17004';
   let fontFamily = '"Microsoft Yahei",Verdana,Helvetica Neue,sans-serif,PingFangSC-Regular,simsun,"sans-serif"';
   if (env.VITE_IS_PRO) {
@@ -88,6 +89,11 @@ export default defineConfig(({ mode }) => {
         // 只代理 API 路径 /workform/xxx，避免 /workform-orders、/workform-config 等前端路由被误代理导致刷新 404
         '/workform/': {
           target: proxyWorkformURL,
+          changeOrigin: true,
+        },
+        // 只代理 API 路径 /inspection/xxx，避免 /inspection-overview 等前端路由被误代理导致刷新 404
+        '/inspection/': {
+          target: proxyInspectionURL,
           changeOrigin: true,
         },
         '/api': {

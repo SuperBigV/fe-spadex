@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState, useContext } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import Icon, { MenuUnfoldOutlined, MenuFoldOutlined, GlobalOutlined, AppstoreAddOutlined, SecurityScanOutlined, FormOutlined } from '@ant-design/icons';
+import Icon, { MenuUnfoldOutlined, MenuFoldOutlined, GlobalOutlined, AppstoreAddOutlined, SecurityScanOutlined, FormOutlined, RadarChartOutlined } from '@ant-design/icons';
 import _ from 'lodash';
 import querystring from 'query-string';
 import { useTranslation } from 'react-i18next';
@@ -307,6 +307,25 @@ export const getMenuList = (t) => {
         {
           key: '/workform-reports',
           label: t('报表分析'),
+        },
+      ],
+    },
+    {
+      key: 'inspection',
+      icon: <RadarChartOutlined />,
+      label: t('智能巡检'),
+      children: [
+        {
+          key: '/inspection-overview',
+          label: t('巡检概览'),
+        },
+        {
+          key: '/inspection-templates',
+          label: t('巡检模板'),
+        },
+        {
+          key: '/inspection-tasks',
+          label: t('巡检任务'),
         },
       ],
     },

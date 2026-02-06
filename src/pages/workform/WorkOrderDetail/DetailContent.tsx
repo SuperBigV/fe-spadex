@@ -122,15 +122,32 @@ const WorkOrderDetailContent: React.FC<WorkOrderDetailContentProps> = ({ id, onC
   };
 
   const handleFeedback = () => {
-    feedbackForm.validateFields().then((values) => {
-      feedbackWorkOrder(id, { content: values.content })
-        .then(() => {
-          message.success('已反馈');
-          setFeedbackModalVisible(false);
-          feedbackForm.resetFields();
-          fetchDetail();
-        })
-        .catch((e) => message.error(e?.message || '操作失败'));
+    feedbackForm.validateFields().then(async (values) => {
+      const content = String(values?.content || '').trim();
+      if (!content) {
+        message.error('请输入反馈内容');
+        return;
+      }
+      try {
+        // 1) 走“不满意/需继续”的标准流程（通常会写入操作日志）
+        await feedbackWorkOrder(id, { content });
+
+        // 2) 将反馈内容同步追加到「处理记录」，用于明确“追加的问题”
+        //    这样在「处理记录与操作日志」合并时间轴中也能以“处理记录”维度呈现。
+        try {
+          await addWorkOrderRecord(id, { content: `【追加问题】${content}`, is_internal: 0 });
+        } catch (e: any) {
+          // 不阻断主流程：反馈已成功，只提示记录追加失败
+          message.warning(e?.message || '反馈成功，但追加到处理记录失败');
+        }
+
+        message.success('已反馈');
+        setFeedbackModalVisible(false);
+        feedbackForm.resetFields();
+        fetchDetail();
+      } catch (e: any) {
+        message.error(e?.message || '操作失败');
+      }
     });
   };
 
@@ -188,7 +205,7 @@ const WorkOrderDetailContent: React.FC<WorkOrderDetailContentProps> = ({ id, onC
                 </Descriptions.Item>
                 <Descriptions.Item label='类型'>{detail.work_order_type_name || '-'}</Descriptions.Item>
                 <Descriptions.Item label='提交人'>{detail.submitter_name || '-'}</Descriptions.Item>
-                <Descriptions.Item label='处理人'>{detail.assignee_name || '-'}</Descriptions.Item>
+                {/* <Descriptions.Item label='处理人'>{detail.assignee_name || '-'}</Descriptions.Item> */}
                 <Descriptions.Item label='联系方式'>{detail.contact_info || '-'}</Descriptions.Item>
                 <Descriptions.Item label='创建时间'>{detail.created_at ? moment.unix(detail.created_at).format('YYYY-MM-DD HH:mm:ss') : '-'}</Descriptions.Item>
                 <Descriptions.Item label='解决时间'>{detail.resolved_at ? moment.unix(detail.resolved_at).format('YYYY-MM-DD HH:mm:ss') : '-'}</Descriptions.Item>

@@ -1,23 +1,26 @@
 /* IM 页面样式：左侧列表不设独立滚动，全部用户项随整页展示 */
 .im-page {
   display: flex;
-  height: 100%;
-  min-height: 400px;
+  height: calc(100vh - 88px);
+  min-height: 480px;
   overflow: auto;
   background: var(--fc-fill-2, #f5f5f5);
   .im-page-left {
-    width: 200px;
-    padding: 5px;
-    margin-right: 5px;
-    min-width: 240px;
-    background: var(--fc-fill-2, #f5f5f5);
-    border: 1px solid var(--fc-border-subtle, #808080);
-    border-radius: 3px;
+    width: 260px;
+    min-width: 260px;
+    padding: 12px;
+    margin-right: 12px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(233, 215, 215, 0.97);
+    display: flex;
+    flex-direction: column;
   }
   .im-page-right {
     flex: 1;
-    border: 1px solid var(--fc-border-subtle, #808080);
-    border-radius: 3px;
+    // border: 1px solid var(--fc-border-subtle, #808080);
+    box-shadow: 0 1px 4px rgba(233, 215, 215, 0.97);
+    border-radius: 8px;
   }
 }
 
@@ -146,6 +149,7 @@
   display: flex;
   align-items: center;
   .im-user-avatar {
+    position: relative;
     width: 36px;
     height: 30px;
     border-radius: 50%;
@@ -156,12 +160,25 @@
     margin-right: 10px;
     flex-shrink: 0;
     color: #666;
-    overflow: hidden;
+    overflow: visible;
 
     .im-user-avatar-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+    .im-user-unread {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #ff4d4f;
+      color: #fff;
+      font-size: 10px;
+      padding: 0 4px;
+      border-radius: 10px;
+      min-width: 14px;
+      text-align: center;
+      line-height: 14px;
     }
   }
   .im-user-name {

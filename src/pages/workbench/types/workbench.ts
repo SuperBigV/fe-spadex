@@ -153,6 +153,9 @@ export interface StatisticsParams {
 
 export type StatisticsResponse =
   | { type: 'alert_trend'; data: Array<{ date: string; critical: number; warning: number; info: number }> }
-  | { type: 'asset_distribution'; data: { status: Array<{ name: string; value: number }>; type: Array<{ name: string; value: number }>; busiGroup: Array<{ name: string; value: number }> } }
+  | {
+      type: 'asset_distribution';
+      data: { status: Array<{ name: string; value: number }>; type: Array<{ name: string; value: number }>; busiGroup: Array<{ name: string; value: number }> };
+    }
   | { type: 'resource_trend'; data: Array<{ date: string; cpu: number; memory: number; disk: number; networkIn?: number; networkOut?: number }> }
   | { type: 'busi_health'; data: Array<{ busiGroupId: number; busiGroupName: string; healthScore: number; assetCount: number; alertCount: number }> };

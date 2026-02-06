@@ -45,6 +45,7 @@ const WorkformConfig: React.FC = () => {
   const [typeEditSubmitting, setTypeEditSubmitting] = useState(false);
   const [typeGroupOptions, setTypeGroupOptions] = useState<{ id: number; name: string }[]>([]);
   const [typeForm] = Form.useForm();
+  const [typeAddForm] = Form.useForm(); // 新建使用独立 form，避免与编辑 form 冲突导致 target_type/target_id 未收集
 
   // 处理组
   const [groupLoading, setGroupLoading] = useState(false);
@@ -221,13 +222,14 @@ const WorkformConfig: React.FC = () => {
   };
 
   const handleTypeAddSubmit = () => {
-    typeForm.validateFields().then((values) => {
+    typeAddForm.validateFields().then((values) => {
       const { target_type, target_id, ...rest } = values;
       const payload = { ...rest, sort_order: rest.sort_order != null ? Number(rest.sort_order) : 0 };
       setTypeAddSubmitting(true);
       createWorkOrderType(payload)
         .then((res: any) => {
-          const newId = res?.id;
+          // const newId = res?.id;
+          const newId = res?.id ?? res;
           if (newId != null && target_type && target_id != null && target_id !== '') {
             return setAssignmentRule(newId, { target_type, target_id: String(target_id) });
           }
@@ -236,7 +238,7 @@ const WorkformConfig: React.FC = () => {
         .then(() => {
           message.success('创建成功');
           setTypeAddVisible(false);
-          typeForm.resetFields();
+          typeAddForm.resetFields();
           fetchTypeList();
         })
         .catch((e) => message.error(e?.message || '创建失败'))
@@ -362,7 +364,7 @@ const WorkformConfig: React.FC = () => {
                 type='primary'
                 icon={<PlusOutlined />}
                 onClick={() => {
-                  typeForm.resetFields();
+                  typeAddForm.resetFields();
                   setTypeAddVisible(true);
                 }}
               >
@@ -440,13 +442,13 @@ const WorkformConfig: React.FC = () => {
           open={typeAddVisible}
           onCancel={() => {
             setTypeAddVisible(false);
-            typeForm.resetFields();
+            typeAddForm.resetFields();
           }}
           footer={null}
           destroyOnClose
           width={520}
         >
-          <Form form={typeForm} layout='vertical' onFinish={handleTypeAddSubmit}>
+          <Form form={typeAddForm} layout='vertical' onFinish={handleTypeAddSubmit}>
             <Form.Item name='name' label='名称' rules={[{ required: true, message: '请输入名称' }]}>
               <Input placeholder='工单类型名称' />
             </Form.Item>
@@ -505,7 +507,7 @@ const WorkformConfig: React.FC = () => {
                 <Button
                   onClick={() => {
                     setTypeAddVisible(false);
-                    typeForm.resetFields();
+                    typeAddForm.resetFields();
                   }}
                 >
                   取消

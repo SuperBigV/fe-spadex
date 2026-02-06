@@ -12,9 +12,11 @@ export interface UserListProps {
   currentUserId: number;
   peerUserId: number | null;
   onSelectPeer: (peerUserId: number, nickname?: string) => void;
+  /** 各用户未读数，用于头像角标 */
+  unreadByPeer?: Record<number, number>;
 }
 
-export default function UserList({ currentUserId, peerUserId, onSelectPeer }: UserListProps) {
+export default function UserList({ currentUserId, peerUserId, onSelectPeer, unreadByPeer = {} }: UserListProps) {
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState<IUserItem[]>([]);
   const [search, setSearch] = useState('');
@@ -75,9 +77,13 @@ export default function UserList({ currentUserId, peerUserId, onSelectPeer }: Us
           dataSource={list}
           renderItem={(item) => {
             const isActive = peerUserId === item.id;
+            const unread = unreadByPeer[item.id] ?? 0;
             return (
               <List.Item className={`im-user-item ${isActive ? 'active' : ''}`} onClick={() => onSelectPeer(item.id, displayName(item))}>
-                <span className='im-user-avatar'>{item.portrait ? <img src={item.portrait} alt='' className='im-user-avatar-img' /> : <UserOutlined />}</span>
+                <span className='im-user-avatar'>
+                  {item.portrait ? <img src={item.portrait} alt='' className='im-user-avatar-img' /> : <UserOutlined />}
+                  {unread > 0 && <span className='im-user-unread'>{unread > 99 ? '99+' : unread}</span>}
+                </span>
                 <span className='im-user-name'>{displayName(item)}</span>
               </List.Item>
             );

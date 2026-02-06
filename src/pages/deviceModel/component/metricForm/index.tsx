@@ -33,11 +33,11 @@ const UserForm = React.forwardRef<ReactNode, ModelMetricFormProps>((props, ref) 
   const methodList = [
     {
       name: 'Walk',
-      note: '用snmpwalk获取数据的oid',
+      note: '用snmpwalk获取数据的oid,一般用于获取多个值',
     },
     {
       name: 'Get',
-      note: '使用snmpget可以获取到值的oid',
+      note: '使用snmpget可以获取到值的oid,一般用于获取单个值',
     },
   ];
   useImperativeHandle(ref, () => ({
@@ -91,7 +91,7 @@ const UserForm = React.forwardRef<ReactNode, ModelMetricFormProps>((props, ref) 
       <Form.Item label={'oid'} name='oid'>
         <Input />
       </Form.Item>
-      {/* <Form.Item label={'查询方法'} name='method'>
+      <Form.Item label={'查询方法'} name='method'>
         <Select>
           {methodList.map((item, index) => (
             <Option value={item.name} key={index}>
@@ -102,7 +102,7 @@ const UserForm = React.forwardRef<ReactNode, ModelMetricFormProps>((props, ref) 
             </Option>
           ))}
         </Select>
-      </Form.Item> */}
+      </Form.Item>
     </Form>
   ) : null;
 });

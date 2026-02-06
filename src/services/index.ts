@@ -15,3 +15,4 @@
  *
  */
 export * from './resource';
+export * from './inspection';

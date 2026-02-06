@@ -64,6 +64,10 @@ const Resource: React.FC = () => {
       dataIndex: 'oid',
     },
     {
+      title: '查询方法',
+      dataIndex: 'method',
+    },
+    {
       title: '说明',
       dataIndex: ['metric', 'note'],
       ellipsis: true,

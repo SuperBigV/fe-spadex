@@ -34,6 +34,16 @@ function Jobs() {
   return null;
 }
 
+// plus 版会在 plus:/parcels/AlertRule/utils 导出以下方法；
+// 非 plus 版本用占位实现以保证打包通过。
+function processFormValues(values: any) {
+  return values;
+}
+
+function processInitialValues(values: any) {
+  return values;
+}
+
 const advancedCates = [];
 const envCateMap = {};
 enum AdvancedDatasourceCateEnum {}
@@ -60,6 +70,8 @@ export {
   EventPreview,
   Explorer,
   Jobs,
+  processFormValues,
+  processInitialValues,
   advancedCates,
   envCateMap,
   AdvancedDatasourceCateEnum,

@@ -23,6 +23,8 @@ export default function ImPage() {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const [conversationRefreshTrigger, setConversationRefreshTrigger] = useState(0);
+  /** 各会话未读数（仅前端累加，点击进入会话后清零） */
+  const [unreadByPeer, setUnreadByPeer] = useState<Record<number, number>>({});
 
   const { play, shouldPlay } = useNotificationSound();
 
@@ -33,6 +35,8 @@ export default function ImPage() {
       if (isForCurrent) {
         setMessages((prev) => [msg, ...prev]);
       } else {
+        const peerId = msg.sender_id === currentUserId ? msg.receiver_id : msg.sender_id;
+        setUnreadByPeer((prev) => ({ ...prev, [peerId]: (prev[peerId] ?? 0) + 1 }));
         if (shouldPlay(currentUserId, peerUserId, msg.sender_id, msg.receiver_id)) {
           play();
         }
@@ -53,13 +57,26 @@ export default function ImPage() {
     },
   });
 
-  const handleSelectPeer = useCallback((uid: number, nickname?: string) => {
-    setPeerUserId(uid);
-    setPeerNickname(nickname || `用户${uid}`);
-    setMessages([]);
-    setHasMore(false);
-    markConversationRead(uid).catch(() => {});
-  }, []);
+  const handleSelectPeer = useCallback(
+    (uid: number, nickname?: string) => {
+      const isSamePeer = peerUserId === uid;
+      setPeerUserId(uid);
+      setPeerNickname(nickname || `用户${uid}`);
+      if (!isSamePeer) {
+        setMessages([]);
+        setHasMore(false);
+      }
+      setUnreadByPeer((prev) => {
+        const next = { ...prev };
+        delete next[uid];
+        return next;
+      });
+      markConversationRead(uid)
+        .then(() => setConversationRefreshTrigger((t) => t + 1))
+        .catch(() => {});
+    },
+    [peerUserId],
+  );
 
   const handleMessagesChange = useCallback((list: IMessage[], more: boolean) => {
     setMessages(list);
@@ -80,7 +97,13 @@ export default function ImPage() {
     <PageLayout title='即时通讯'>
       <div className='im-page'>
         <div className='im-page-left'>
-          <LeftSidebar currentUserId={currentUserId} peerUserId={peerUserId} onSelectPeer={handleSelectPeer} conversationRefreshTrigger={conversationRefreshTrigger} />
+          <LeftSidebar
+            currentUserId={currentUserId}
+            peerUserId={peerUserId}
+            onSelectPeer={handleSelectPeer}
+            conversationRefreshTrigger={conversationRefreshTrigger}
+            unreadByPeer={unreadByPeer}
+          />
         </div>
         <div className='im-page-right'>
           <ChatPanel
