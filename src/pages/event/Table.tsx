@@ -253,7 +253,7 @@ export default function TableCpt(props: IProps) {
 
   return (
     <div className='event-content'>
-      <div className='n9e-border-base' style={{ padding: 16, width: '100%', overflowY: 'auto' }}>
+      <div className='spadex-border-base' style={{ padding: 16, width: '100%', overflowY: 'auto' }}>
         <div style={{ display: 'flex' }}>{header}</div>
         <Table
           className='mt8'

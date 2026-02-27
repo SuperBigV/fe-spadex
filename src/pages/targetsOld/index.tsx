@@ -510,10 +510,10 @@ const Targets: React.FC = () => {
           // renderHeadExtra={() => {
           //   return (
           //     <div>
-          //       <div className='n9e-biz-group-container-group-title'>{t('default_filter')}</div>
+          //       <div className='spadex-biz-group-container-group-title'>{t('default_filter')}</div>
           //       <div
           //         className={classNames({
-          //           'n9e-biz-group-item': true,
+          //           'spadex-biz-group-item': true,
           //           active: gids === '0',
           //         })}
           //         onClick={() => {
@@ -524,7 +524,7 @@ const Targets: React.FC = () => {
           //       </div>
           //       <div
           //         className={classNames({
-          //           'n9e-biz-group-item': true,
+          //           'spadex-biz-group-item': true,
           //           active: gids === undefined,
           //         })}
           //         onClick={() => {
@@ -543,7 +543,7 @@ const Targets: React.FC = () => {
           }}
         />
         <div
-          className='table-area n9e-border-base'
+          className='table-area spadex-border-base'
           style={{
             height: '100%',
             overflowY: 'auto',

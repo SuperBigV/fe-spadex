@@ -17,7 +17,7 @@
 import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 
-const profileApi = 'api/n9e/self/profile';
+const profileApi = 'api/spadex/self/profile';
 // 修改个人信息
 export const UpdateProfile = function (data: object) {
   return request(`/${profileApi}`, {
@@ -32,7 +32,7 @@ export const GetProfile = function () {
   });
 };
 
-const secretApi = 'api/n9e/self/token';
+const secretApi = 'api/spadex/self/token';
 // 获取个人秘钥
 export const GetSecret = function () {
   return request(`/${secretApi}`, {

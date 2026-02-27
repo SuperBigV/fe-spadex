@@ -7,7 +7,7 @@ import { useGetState } from 'ahooks';
 import './style.less';
 import './locale';
 
-const cacheKey = 'n9e-feedback-position-bottom';
+const cacheKey = 'spadex-feedback-position-bottom';
 const getCacheBottom = () => {
   const bottom = localStorage.getItem(cacheKey);
   return bottom ? parseInt(bottom, 10) : 24;
@@ -59,7 +59,7 @@ export default function Index() {
     return (
       <div
         draggable={false}
-        className='n9e-feedback-container'
+        className='spadex-feedback-container'
         style={{ right: position.right, bottom: position.bottom }}
         onMouseDown={handleMouseDown}
         onClick={() => {
@@ -71,7 +71,7 @@ export default function Index() {
         }}
       >
         <SmileOutlined />
-        <div className='n9e-feedback-text'>{t('feedback')}</div>
+        <div className='spadex-feedback-text'>{t('feedback')}</div>
       </div>
     );
   }

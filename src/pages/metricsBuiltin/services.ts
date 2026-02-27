@@ -30,7 +30,7 @@ export const getMetrics = function (
   list: Record[];
   total: number;
 }> {
-  return request('/api/n9e/builtin-metrics', {
+  return request('/api/spadex/builtin-metrics', {
     method: RequestMethod.Get,
     params: {
       ...params,
@@ -42,76 +42,76 @@ export const getMetrics = function (
 export const postMetrics = function (data): Promise<{
   [key: string]: string;
 }> {
-  return request('/api/n9e/builtin-metrics', {
+  return request('/api/spadex/builtin-metrics', {
     method: RequestMethod.Post,
     data,
   }).then((res) => res.dat);
 };
 
 export const putMetric = function (data: Record) {
-  return request('/api/n9e/builtin-metrics', {
+  return request('/api/spadex/builtin-metrics', {
     method: RequestMethod.Put,
     data,
   });
 };
 
 export const deleteMetrics = function (ids: number[]): Promise<any> {
-  return request('/api/n9e/builtin-metrics', {
+  return request('/api/spadex/builtin-metrics', {
     method: RequestMethod.Delete,
     data: { ids },
   });
 };
 
 export const getTypes = function (params?: { collector?: string; query?: string; disabled?: number }): Promise<string[]> {
-  return request('/api/n9e/builtin-metrics/types', {
+  return request('/api/spadex/builtin-metrics/types', {
     method: RequestMethod.Get,
     params,
   }).then((res) => res.dat);
 };
 
 export const getDefaultTypes = function (params?: { collector?: string; query?: string }): Promise<string[]> {
-  return request('/api/n9e/builtin-metrics/types/default', {
+  return request('/api/spadex/builtin-metrics/types/default', {
     method: RequestMethod.Get,
     params,
   }).then((res) => res.dat);
 };
 
 export const getCollectors = function (params?: { typ?: string; query?: string }): Promise<string[]> {
-  return request('/api/n9e/builtin-metrics/collectors', {
+  return request('/api/spadex/builtin-metrics/collectors', {
     method: RequestMethod.Get,
     params,
   }).then((res) => res.dat);
 };
 
 export const getFilters = function (): Promise<any[]> {
-  return request('/api/n9e/builtin-metric-filters', {
+  return request('/api/spadex/builtin-metric-filters', {
     method: RequestMethod.Get,
   }).then((res) => res.dat);
 };
 
 export const postFilter = function (data): Promise<any> {
-  return request('/api/n9e/builtin-metric-filters', {
+  return request('/api/spadex/builtin-metric-filters', {
     method: RequestMethod.Post,
     data,
   }).then((res) => res.dat);
 };
 
 export const putFilter = function (data): Promise<any> {
-  return request('/api/n9e/builtin-metric-filters', {
+  return request('/api/spadex/builtin-metric-filters', {
     method: RequestMethod.Put,
     data,
   }).then((res) => res.dat);
 };
 
 export const deleteFilter = function (data): Promise<any> {
-  return request('/api/n9e/builtin-metric-filters', {
+  return request('/api/spadex/builtin-metric-filters', {
     method: RequestMethod.Delete,
     data,
   }).then((res) => res.dat);
 };
 
 export const buildLabelFilterAndExpression = function (data): Promise<any> {
-  return request('/api/n9e/builtin-metric-promql', {
+  return request('/api/spadex/builtin-metric-promql', {
     method: RequestMethod.Post,
     data,
   }).then((res) => res.dat);

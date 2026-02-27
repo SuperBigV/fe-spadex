@@ -19,7 +19,7 @@ import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 
 export const getInstructionsByName = function (name: string): Promise<string> {
-  return request(`/api/n9e/integrations/makedown/${name}`, {
+  return request(`/api/spadex/integrations/makedown/${name}`, {
     method: RequestMethod.Get,
   }).then((res) => {
     return res.dat;

@@ -13,8 +13,8 @@ tar zxvf categraf_ent-v0.3.94-linux-amd64.tar.gz
 providers = ["local","http"]
 
 [http_provider]
-# Replace ${n9e_ip} with the actual address of n9e
-remote_url = "http://${n9e_ip}:17000/v1/n9e-plus/collects"
+# Replace ${spadex_ip} with the actual address of spadex
+remote_url = "http://${spadex_ip}:17000/v1/spadex-plus/collects"
 ```
 
 ### 3. Start the catgraf collector

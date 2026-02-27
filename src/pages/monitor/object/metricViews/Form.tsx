@@ -68,7 +68,7 @@ function FormCpt(props: ModalWrapProps & IProps) {
 
   return (
     <Modal
-      className='n9e-metric-views-modal'
+      className='spadex-metric-views-modal'
       title={
         <Tabs className='custom-import-title' activeKey={activeKey} onChange={setActiveKey}>
           <TabPane tab={t(`list.${action}_title`)} key='form' />

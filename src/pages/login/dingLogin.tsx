@@ -12,8 +12,8 @@ const DingTalkLogin: React.FC = () => {
   };
 
   const loginParams: IDTLoginLoginParams = {
-    // redirect_uri: encodeURIComponent('http://127.0.0.1:8765/api/n9e/auth/ding/login'), // 替换为你的重定向URI
-    redirect_uri: encodeURIComponent('http://zops.icsoc.net/api/n9e/auth/ding/login'), // 替换为你的重定向URI
+    // redirect_uri: encodeURIComponent('http://127.0.0.1:8765/api/spadex/auth/ding/login'), // 替换为你的重定向URI
+    redirect_uri: encodeURIComponent('http://zops.icsoc.net/api/spadex/auth/ding/login'), // 替换为你的重定向URI
     response_type: 'code',
     client_id: 'dingl5q0kdldvovw2gry', // 替换为你的钉钉应用ID
     scope: 'openid', // 替换为你的scope

@@ -20,7 +20,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { Modal, Input, Tabs, Form, Button, Alert, message, Select } from 'antd';
 import Icon from '@ant-design/icons';
 import { createDashboard } from '@/services/dashboardV2';
-import { getValidImportData, convertDashboardGrafanaToN9E, JSONParse, checkGrafanaDashboardVersion } from '../utils';
+import { getValidImportData, convertDashboardGrafanaTospadex, JSONParse, checkGrafanaDashboardVersion } from '../utils';
 import ImportBuiltinContent from './ImportBuiltinContent';
 
 export type ModalType = 'Import' | 'ImportGrafana' | 'ImportBuiltin' | 'ImportGrafanaURL';
@@ -62,7 +62,7 @@ export default function Import(props: IProps) {
   const [form] = Form.useForm();
   const [importLoading, setImportLoading] = useState(false);
   const importGrafanaFunc = (json) => {
-    const data = convertDashboardGrafanaToN9E(json);
+    const data = convertDashboardGrafanaTospadex(json);
     createDashboard(busiId, {
       ...data,
       tags: '',
@@ -171,7 +171,7 @@ export default function Import(props: IProps) {
         >
           <div style={{ marginBottom: 10 }}>
             <Alert
-              message={<Trans ns='dashboard' i18nKey='batch.import_grafana_tip' components={{ a: <a href='https://github.com/n9e/fe/issues/48' target='_blank' /> }} />}
+              message={<Trans ns='dashboard' i18nKey='batch.import_grafana_tip' components={{ a: <a href='https://github.com/spadex/fe/issues/48' target='_blank' /> }} />}
               type='info'
             />
           </div>

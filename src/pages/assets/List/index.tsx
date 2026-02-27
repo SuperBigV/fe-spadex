@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from 'react';
 import { Table, Spin, message, Dropdown, Menu, Modal, Tag, Popconfirm, Checkbox, Button, Row, Col, Input, Image, Tooltip, Space } from 'antd';
 import { MoreOutlined, CodeOutlined, DesktopOutlined, SearchOutlined, DownOutlined, InfoCircleOutlined, LinkOutlined, ReloadOutlined, PoweroffOutlined } from '@ant-design/icons';
 
-import { getColumnsByGid, getGidDetail, getByGidAssetsList, addAsset, addAssetToN9e, editAsset, targetControlPost, getTargetPassword, getRacks } from './services'; // 假设这两个函数用于获取表格列和数据
+import { getColumnsByGid, getGidDetail, getByGidAssetsList, addAsset, addAssetTospadex, editAsset, targetControlPost, getTargetPassword, getRacks } from './services'; // 假设这两个函数用于获取表格列和数据
 import _, { includes, set } from 'lodash';
 import moment from 'moment';
 import { ColumnsType } from 'antd/es/table';
@@ -452,7 +452,7 @@ export default function AssetList(props: IProps) {
             ),
             width: 120,
             dataIndex: 'tags',
-            className: 'n9e-hosts-table-column-tags',
+            className: 'spadex-hosts-table-column-tags',
             ellipsis: {
               showTitle: false,
             },
@@ -840,7 +840,7 @@ export default function AssetList(props: IProps) {
               ),
               width: 120,
               dataIndex: 'tags',
-              className: 'n9e-hosts-table-column-tags',
+              className: 'spadex-hosts-table-column-tags',
               ellipsis: {
                 showTitle: false,
               },
@@ -878,7 +878,7 @@ export default function AssetList(props: IProps) {
               title: item.fieldName,
               dataIndex: item.uniqueIdentifier,
               key: item.id,
-              className: 'n9e-hosts-table-column-tags',
+              className: 'spadex-hosts-table-column-tags',
               width: 120,
               align: 'left',
               ellipsis: {
@@ -935,7 +935,7 @@ export default function AssetList(props: IProps) {
               dataIndex: item.uniqueIdentifier,
               key: item.id,
               width: 120,
-              className: 'n9e-hosts-table-column-ip',
+              className: 'spadex-hosts-table-column-ip',
               render: (text, record) => {
                 const model = options7.find((item) => item.id === record.user);
                 return <div>{model && model.name}</div>;
@@ -1028,7 +1028,7 @@ export default function AssetList(props: IProps) {
               title: item.fieldName,
               dataIndex: item.uniqueIdentifier,
               fieldType: item.fieldType,
-              className: 'n9e-hosts-table-column-ip',
+              className: 'spadex-hosts-table-column-ip',
               width: 140,
             };
           }
@@ -1387,7 +1387,7 @@ export default function AssetList(props: IProps) {
                             });
                             message.success(t('common:success.create'));
                             if (assetModel.uniqueIdentifier.includes('host_') || assetModel.uniqueIdentifier.includes('net_')) {
-                              addAssetToN9e(id, assetModel.uniqueIdentifier, values);
+                              addAssetTospadex(id, assetModel.uniqueIdentifier, values);
                             }
                           });
                         },
@@ -1402,7 +1402,7 @@ export default function AssetList(props: IProps) {
           )}
           {tableLoading && (
             <Table
-              className='mt8 n9e-hosts-table'
+              className='mt8 spadex-hosts-table'
               size='small'
               {...tableProps}
               rowSelection={{

@@ -71,7 +71,7 @@ export type MetricListRes = {
 };
 
 export enum strategyType {
-  n9e = 0,
+  spadex = 0,
   prometheus = 1,
 }
 

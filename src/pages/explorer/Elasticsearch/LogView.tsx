@@ -73,7 +73,7 @@ export default function LogView(props: Props) {
                 const finded = _.find(fields, { name: text });
                 return (
                   <Space>
-                    <span className='n9e-es-discover-fields-item-icon'>{finded ? typeIconMap[typeMap[finded.type]] || <QuestionOutlined /> : <QuestionOutlined />}</span>
+                    <span className='spadex-es-discover-fields-item-icon'>{finded ? typeIconMap[typeMap[finded.type]] || <QuestionOutlined /> : <QuestionOutlined />}</span>
                     {getFieldLabel(text, fieldConfig)}
                   </Space>
                 );

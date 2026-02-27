@@ -9,7 +9,12 @@
   color-scheme: dark;
   background-color: @backgroupColor;
   color: @baseColor;
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: @baseColor;
   }
   .dashboard-detail-header {
@@ -27,17 +32,18 @@
   }
   .renderer-timeseries-legend-list {
     & > div.disabled {
-      color: #74778A
+      color: #74778a;
     }
   }
-  .react-grid-item > .react-resizable-handle::after{
-    border-right: 2px solid #46495C;
-    border-bottom: 2px solid #46495C;
+  .react-grid-item > .react-resizable-handle::after {
+    border-right: 2px solid #46495c;
+    border-bottom: 2px solid #46495c;
   }
   .is-active {
     background: fade(@primary-color, 40%);
   }
-  .n9e-metric-views-list-content-item.active, .n9e-metric-views-dimensionLabel-content-item.active {
+  .spadex-metric-views-list-content-item.active,
+  .spadex-metric-views-dimensionLabel-content-item.active {
     background-color: fade(@primary-color, 30%);
   }
   .ts-graph-zoom-resetBtn {

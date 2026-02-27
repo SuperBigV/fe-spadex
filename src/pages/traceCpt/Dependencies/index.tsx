@@ -194,7 +194,7 @@ export default function index(props: DependenciesProps = {}) {
 
   const content = (
     <div style={{ height: hideServiceSelector ? '100%' : 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column' }}>
-      <div className='n9e-border-base p2' style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div className='spadex-border-base p2' style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {!hideServiceSelector && (
           <Space style={{ marginBottom: 16, flexShrink: 0 }}>
             {/* <InputGroupWithFormItem label={t('common:datasource.type')}>

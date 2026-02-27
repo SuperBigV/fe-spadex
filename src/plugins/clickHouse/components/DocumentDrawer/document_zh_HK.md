@@ -13,10 +13,10 @@ select * from database_name.table_name limit 10
 1. 必須在 SQL 中使用 `as time` 的語法指定哪一列是時間列，然後 `group by time order by time desc` 對時間做排序，例如
 
 ```sql
-select count(*) as count, trigger_time as time 
-from n9e_v6_plus.alert_his_event 
-group by time 
-order by time 
+select count(*) as count, trigger_time as time
+from spadex_v6_plus.alert_his_event
+group by time
+order by time
 desc LIMIT 100
 ```
 
@@ -25,39 +25,39 @@ desc LIMIT 100
 > 2.1 查詢最近一分鐘的數據，也可以把 MINUTE 換成 SECOND、HOUR、DAY、WEEK、MONTH 等
 
 ```sql
-SELECT count(*) AS count, trigger_time AS time FROM n9e_v6_plus.alert_his_event  WHERE FROM_UNIXTIME(trigger_time) >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
+SELECT count(*) AS count, trigger_time AS time FROM spadex_v6_plus.alert_his_event  WHERE FROM_UNIXTIME(trigger_time) >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
 ```
 
 > 2.2 查詢某一個時間段的數據，trigger_time 是 unix 時間戳 (1720061167) 的情況
->  WHERE 語句可以直接寫 WHERE trigger_time >= 1720060214 AND trigger_time < 1720061214
->  或者 trigger_time >= $__unixEpochFrom() AND trigger_time < $__unixEpochTo(), $__unixEpochFrom() 表示開始的 unix 時間戳，$__unixEpochTo() 表示結束時間的 unix 時間戳
+> WHERE 語句可以直接寫 WHERE trigger_time >= 1720060214 AND trigger_time < 1720061214
+> 或者 trigger_time >= $__unixEpochFrom() AND trigger_time < $__unixEpochTo(), $__unixEpochFrom() 表示開始的 unix 時間戳，$\_\_unixEpochTo() 表示結束時間的 unix 時間戳
 
 ```sql
-SELECT count(*) AS count, trigger_time AS time 
-FROM n9e_v6_plus.alert_his_event  
+SELECT count(*) AS count, trigger_time AS time
+FROM spadex_v6_plus.alert_his_event
 WHERE trigger_time >= $__unixEpochFrom() AND trigger_time < $__unixEpochTo()
-GROUP BY time 
+GROUP BY time
 ORDER BY time DESC
 ```
 
 > 2.3 查詢某一個時間段的數據，trigger_time 是 2024-07-04 10:48:01 字符串格式的情況
->  WHERE 語句可以直接寫 WHERE trigger_time >= "2024-07-04 09:48:01" AND trigger_time < "2024-07-04 11:48:01"
+> WHERE 語句可以直接寫 WHERE trigger_time >= "2024-07-04 09:48:01" AND trigger_time < "2024-07-04 11:48:01"
 
 ```sql
-SELECT count(*) AS count, trigger_time AS time 
-FROM n9e_v6_plus.alert_his_event  
+SELECT count(*) AS count, trigger_time AS time
+FROM spadex_v6_plus.alert_his_event
 WHERE trigger_time >= "2024-07-04 09:48:01" AND trigger_time < "2024-07-04 11:48:01"
-GROUP BY time 
+GROUP BY time
 ORDER BY time DESC
 ```
 
 > 2.4 查詢最近 7 天每分鐘產生的告警數量
 
 ```sql
-SELECT FROM_UNIXTIME(trigger_time, '%Y-%m-%d %H:%i:00') AS alert_minute,COUNT(*) AS alert_count 
-FROM n9e_v6_plus.alert_his_event 
-WHERE trigger_time >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 7 DAY)) 
-GROUP BY alert_minute 
+SELECT FROM_UNIXTIME(trigger_time, '%Y-%m-%d %H:%i:00') AS alert_minute,COUNT(*) AS alert_count
+FROM spadex_v6_plus.alert_his_event
+WHERE trigger_time >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 7 DAY))
+GROUP BY alert_minute
 ORDER BY alert_minute DESC;
 ```
 
@@ -102,15 +102,15 @@ $__unixEpochGroup(dateColumn,'5m')在 group by 的時候使用，以 5m 為分�
 以上面的 alert_his_event 表為例，查詢一段時間範圍內每分鐘的告警數量的 SQL 如下
 
 ```sql
-SELECT 
+SELECT
   $__unixEpochGroup(trigger_time, '1m') AS time,
   COUNT(*) AS alert_count
-FROM 
-  n9e_v6_plus.alert_his_event
-WHERE 
+FROM
+  spadex_v6_plus.alert_his_event
+WHERE
   $__unixEpochFilter(trigger_time)
-GROUP BY 
+GROUP BY
   time
-ORDER BY 
+ORDER BY
   time
 ```

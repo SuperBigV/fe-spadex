@@ -160,7 +160,7 @@ export default function Graph(props: IProps) {
           </Tooltip>
         </Space>
       }
-      className='n9e-metric-views-metrics-graph'
+      className='spadex-metric-views-metrics-graph'
       extra={
         <Space>
           <Space size={0} style={{ marginRight: 10 }}>

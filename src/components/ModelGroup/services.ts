@@ -19,7 +19,7 @@ import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 
 export function getModelGroups(params?: { query?: string; limit?: number; all?: boolean }) {
-  return request(`/api/n9e/device-models`, {
+  return request(`/api/spadex/device-models`, {
     method: RequestMethod.Get,
     params: {
       ...(params || {}),

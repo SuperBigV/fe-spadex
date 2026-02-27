@@ -28,7 +28,7 @@ export const getColumnsByGid = (id: string) => {
 };
 
 export const getModelOptions = (id) => {
-  // 如果id==-6,则请求/api/n9e/users?p=1&limit=10&query=   获取用户列表
+  // 如果id==-6,则请求/api/spadex/users?p=1&limit=10&query=   获取用户列表
   if (id === -6) {
     return getUserInfoList({ p: 1, limit: 1000, query: '' }).then((res) =>
       // 过滤掉nickname包含机器人字符串的
@@ -82,8 +82,8 @@ export const getRacksByRoomId = (id) => {
     method: RequestMethod.Get,
   });
 };
-export const addAssetToN9e = function (id, grp, data) {
-  const n9eData = {
+export const addAssetTospadex = function (id, grp, data) {
+  const spadexData = {
     ident: data.data.name,
     host_ip: data.data.ip,
     group_ids: data.data.busi,
@@ -93,8 +93,8 @@ export const addAssetToN9e = function (id, grp, data) {
       device_model_id: data.data.model,
     },
   };
-  console.log('n9eData:', n9eData);
-  return addTarget(n9eData);
+  console.log('spadexData:', spadexData);
+  return addTarget(spadexData);
 };
 export const addAsset = function (gid, data) {
   return request(`/cmdb/asset/${gid}`, {
@@ -123,7 +123,7 @@ export const targetControlPost = function (data) {
 };
 export const editAsset = function (id, data) {
   console.log('data:', data);
-  const n9eData = {
+  const spadexData = {
     ident: data.data.name,
     host_ip: data.data.ip,
     group_ids: data.data.busi,
@@ -134,7 +134,7 @@ export const editAsset = function (id, data) {
       device_model_id: data.data.model,
     },
   };
-  editTarget(n9eData);
+  editTarget(spadexData);
   return request(`/cmdb/asset/${id}`, {
     method: RequestMethod.Put,
     data,
@@ -142,7 +142,7 @@ export const editAsset = function (id, data) {
 };
 
 export function getTargetInformationByIdent(ident: string) {
-  return request('/api/n9e/target/extra-meta', {
+  return request('/api/spadex/target/extra-meta', {
     method: RequestMethod.Get,
     params: {
       ident,

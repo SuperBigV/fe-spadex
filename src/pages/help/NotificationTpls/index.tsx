@@ -44,8 +44,8 @@ export default function index() {
       icon={<SoundOutlined />}
     >
       <div>
-        <div className='n9e-notification-tpls user-manage-content'>
-          <div className='n9e-notification-tpls-sidebar left-tree-area'>
+        <div className='spadex-notification-tpls user-manage-content'>
+          <div className='spadex-notification-tpls-sidebar left-tree-area'>
             <div className='sub-title'>
               {t('list')}
               <Button
@@ -101,7 +101,7 @@ export default function index() {
               )}
             />
           </div>
-          <div className='n9e-notification-tpls-main resource-table-content'>
+          <div className='spadex-notification-tpls-main resource-table-content'>
             <div className='team-info'>
               <Space
                 style={{

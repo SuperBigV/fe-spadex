@@ -29,7 +29,7 @@ const en_US = {
   filter: {
     title: 'Filters',
     title_tip:
-      'The purpose of the filter is to narrow the scope of monitoring data queries when clicking on the right metric to view the monitoring data of the metric. If the filter condition {ident="n9e01"} is configured and selected, the query initiated when querying cpu_usage_idle is cpu_usage_idle{ident="n9e01"}, which will greatly reduce the number of query curves',
+      'The purpose of the filter is to narrow the scope of monitoring data queries when clicking on the right metric to view the monitoring data of the metric. If the filter condition {ident="spadex01"} is configured and selected, the query initiated when querying cpu_usage_idle is cpu_usage_idle{ident="spadex01"}, which will greatly reduce the number of query curves',
     add_title: 'Add Filter',
     edit_title: 'Edit Filter',
     import_title: 'Import Filter',

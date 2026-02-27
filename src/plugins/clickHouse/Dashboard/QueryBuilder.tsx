@@ -69,7 +69,7 @@ export default function MySQLQueryBuilder() {
                       <div />
                     </Form.Item>
                     <Form.Item
-                      className='n9e-mysql-dashboard-querybuilder-query-item'
+                      className='spadex-mysql-dashboard-querybuilder-query-item'
                       label={
                         <div
                           style={{

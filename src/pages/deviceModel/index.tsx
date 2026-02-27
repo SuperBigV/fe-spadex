@@ -227,7 +227,7 @@ const Resource: React.FC = () => {
                   return (
                     <div
                       className={classNames({
-                        'n9e-metric-views-list-content-item': true,
+                        'spadex-metric-views-list-content-item': true,
                         active: _.toNumber(item.id) === _.toNumber(modelId),
                       })}
                       key={item.id}

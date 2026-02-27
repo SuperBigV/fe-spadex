@@ -29,7 +29,7 @@ export function getEventNotifyRecords(eventId): Promise<{
   sub_rules: AlertSubscribesRecord[];
   notifies: AlertRulesRecords;
 }> {
-  return request(`/api/n9e/event-notify-records/${eventId}`, {
+  return request(`/api/spadex/event-notify-records/${eventId}`, {
     method: RequestMethod.Get,
   }).then((res) => {
     return (

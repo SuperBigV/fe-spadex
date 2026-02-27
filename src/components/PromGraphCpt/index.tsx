@@ -26,7 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { IRawTimeRange } from '@/components/TimeRangePicker';
 import PromQueryBuilderModal from '@/components/PromQueryBuilder/PromQueryBuilderModal';
 import BuiltinMetrics from '@/components/PromQLInput/BuiltinMetrics';
-import { N9E_PATHNAME } from '@/utils/constant';
+import { spadex_PATHNAME } from '@/utils/constant';
 import PromQLInput from '../PromQLInput';
 import Table from './Table';
 import Graph from './Graph';
@@ -68,7 +68,7 @@ const TabPane = Tabs.TabPane;
 export default function index(props: IProps) {
   const { t } = useTranslation('promGraphCpt');
   const {
-    url = `/api/${N9E_PATHNAME}/proxy`,
+    url = `/api/${spadex_PATHNAME}/proxy`,
     datasourceValue,
     promQL,
     contentMaxHeight = 300,

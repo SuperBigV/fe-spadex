@@ -21,33 +21,33 @@ import { VariableConfig, RASConfig } from './types';
 export type { VariableConfig, RASConfig } from './types';
 
 export const getVariableConfigs = function (): Promise<VariableConfig[]> {
-  return request('/api/n9e/user-variable-configs', {
+  return request('/api/spadex/user-variable-configs', {
     method: RequestMethod.Get,
   }).then((res) => res.dat);
 };
 
 export const postVariableConfigs = function (data: VariableConfig) {
-  return request('/api/n9e/user-variable-config', {
+  return request('/api/spadex/user-variable-config', {
     method: RequestMethod.Post,
     data,
   });
 };
 
 export const putVariableConfigs = function (id: number, data: VariableConfig) {
-  return request(`/api/n9e/user-variable-config/${id}`, {
+  return request(`/api/spadex/user-variable-config/${id}`, {
     method: RequestMethod.Put,
     data,
   });
 };
 
 export const deleteVariableConfigs = function (id: number) {
-  return request(`/api/n9e/user-variable-config/${id}`, {
+  return request(`/api/spadex/user-variable-config/${id}`, {
     method: RequestMethod.Delete,
   });
 };
 
 export const getRSAConfig = function (): Promise<RASConfig> {
-  return request('/api/n9e/auth/rsa-config', {
+  return request('/api/spadex/auth/rsa-config', {
     method: RequestMethod.Get,
   }).then((res) => res.dat);
 };

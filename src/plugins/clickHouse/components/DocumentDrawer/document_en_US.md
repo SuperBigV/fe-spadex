@@ -13,10 +13,10 @@ SELECT * FROM database_name.table_name LIMIT 10
 1. You must use the `AS time` syntax in SQL to specify which column is the time column, then use `GROUP BY time ORDER BY time DESC` to sort by time, for example:
 
 ```sql
-SELECT COUNT(*) AS count, trigger_time AS time 
-FROM n9e_v6_plus.alert_his_event 
-GROUP BY time 
-ORDER BY time 
+SELECT COUNT(*) AS count, trigger_time AS time
+FROM spadex_v6_plus.alert_his_event
+GROUP BY time
+ORDER BY time
 DESC LIMIT 100
 ```
 
@@ -25,38 +25,38 @@ DESC LIMIT 100
 > 2.1 Query data from the last minute, you can also replace MINUTE with SECOND, HOUR, DAY, WEEK, MONTH, etc.
 
 ```sql
-SELECT COUNT(*) AS count, trigger_time AS time 
-FROM n9e_v6_plus.alert_his_event  
+SELECT COUNT(*) AS count, trigger_time AS time
+FROM spadex_v6_plus.alert_his_event
 WHERE FROM_UNIXTIME(trigger_time) >= DATE_SUB(NOW(), INTERVAL 1 MINUTE)
 ```
 
-> 2.2 Query data for a specific time period, when trigger_time is a Unix timestamp (1720061167) The WHERE clause can be written directly as WHERE trigger_time >= 1720060214 AND trigger_time < 1720061214 Or trigger_time >= $__unixEpochFrom() AND trigger_time < $__unixEpochTo(), where $__unixEpochFrom() represents the starting Unix timestamp, and $__unixEpochTo() represents the ending Unix timestamp
+> 2.2 Query data for a specific time period, when trigger_time is a Unix timestamp (1720061167) The WHERE clause can be written directly as WHERE trigger_time >= 1720060214 AND trigger_time < 1720061214 Or trigger_time >= $**unixEpochFrom() AND trigger_time < $**unixEpochTo(), where $**unixEpochFrom() represents the starting Unix timestamp, and $**unixEpochTo() represents the ending Unix timestamp
 
 ```sql
-SELECT COUNT(*) AS count, trigger_time AS time 
-FROM n9e_v6_plus.alert_his_event  
+SELECT COUNT(*) AS count, trigger_time AS time
+FROM spadex_v6_plus.alert_his_event
 WHERE trigger_time >= $__unixEpochFrom() AND trigger_time < $__unixEpochTo()
-GROUP BY time 
+GROUP BY time
 ORDER BY time DESC
 ```
 
 > 2.3 Query data for a specific time period, when trigger_time is in the string format "2024-07-04 10:48:01" The WHERE clause can be written directly as WHERE trigger_time >= "2024-07-04 09:48:01" AND trigger_time < "2024-07-04 11:48:01"
 
 ```sql
-SELECT COUNT(*) AS count, trigger_time AS time 
-FROM n9e_v6_plus.alert_his_event  
+SELECT COUNT(*) AS count, trigger_time AS time
+FROM spadex_v6_plus.alert_his_event
 WHERE trigger_time >= "2024-07-04 09:48:01" AND trigger_time < "2024-07-04 11:48:01"
-GROUP BY time 
+GROUP BY time
 ORDER BY time DESC
 ```
 
 > 2.4 Query the number of alerts generated every minute for the last 7 days
 
 ```sql
-SELECT FROM_UNIXTIME(trigger_time, '%Y-%m-%d %H:%i:00') AS alert_minute, COUNT(*) AS alert_count 
-FROM n9e_v6_plus.alert_his_event 
-WHERE trigger_time >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 7 DAY)) 
-GROUP BY alert_minute 
+SELECT FROM_UNIXTIME(trigger_time, '%Y-%m-%d %H:%i:00') AS alert_minute, COUNT(*) AS alert_count
+FROM spadex_v6_plus.alert_his_event
+WHERE trigger_time >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 7 DAY))
+GROUP BY alert_minute
 ORDER BY alert_minute DESC;
 ```
 
@@ -103,15 +103,15 @@ $__unixEpochGroup(dateColumn,'5m')Used in GROUP BY, calculates data with a group
 Using the alert_his_event table above as an example, the SQL to query the number of alerts per minute within a time range is as follows:
 
 ```sql
-SELECT 
+SELECT
   $__unixEpochGroup(trigger_time, '1m') AS time,
   COUNT(*) AS alert_count
-FROM 
-  n9e_v6_plus.alert_his_event
-WHERE 
+FROM
+  spadex_v6_plus.alert_his_event
+WHERE
   $__unixEpochFilter(trigger_time)
-GROUP BY 
+GROUP BY
   time
-ORDER BY 
+ORDER BY
   time
 ```

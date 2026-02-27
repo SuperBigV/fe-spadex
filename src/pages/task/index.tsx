@@ -36,12 +36,12 @@ interface DataItem {
   title: string;
 }
 
-const N9E_GIDS_LOCALKEY = 'N9E_TASK_NODE_ID';
+const spadex_GIDS_LOCALKEY = 'spadex_TASK_NODE_ID';
 
 function getTableData(options: any, gids: string | undefined, query: string, mine: boolean, days: number) {
   if (gids) {
     const ids = gids === '-2' ? undefined : gids;
-    return request(`/api/n9e/busi-groups/tasks`, {
+    return request(`/api/spadex/busi-groups/tasks`, {
       method: RequestMethod.Get,
       params: {
         gids: ids,
@@ -65,7 +65,7 @@ const index = (_props: any) => {
   const [mine, setMine] = useState(true);
   const [days, setDays] = useState(7);
   const { businessGroup, busiGroups } = useContext(CommonStateContext);
-  const [gids, setGids] = useState<string | undefined>(getDefaultGids(N9E_GIDS_LOCALKEY, businessGroup));
+  const [gids, setGids] = useState<string | undefined>(getDefaultGids(spadex_GIDS_LOCALKEY, businessGroup));
   const { tableProps } = useAntdTable((options) => getTableData(options, gids, query, mine, days), { refreshDeps: [gids, query, mine, days] });
   const columns: ColumnProps<DataItem>[] = _.concat(
     businessGroup.isLeaf && gids !== '-2'
@@ -135,9 +135,9 @@ const index = (_props: any) => {
       }
     >
       <div style={{ display: 'flex' }}>
-        <BusinessGroupSideBarWithAll gids={gids} setGids={setGids} localeKey={N9E_GIDS_LOCALKEY} allOptionLabel={t('common:task.allOptionLabel')} />
+        <BusinessGroupSideBarWithAll gids={gids} setGids={setGids} localeKey={spadex_GIDS_LOCALKEY} allOptionLabel={t('common:task.allOptionLabel')} />
         {gids ? (
-          <div className='n9e-border-base p2' style={{ flex: 1 }}>
+          <div className='spadex-border-base p2' style={{ flex: 1 }}>
             <Row>
               <Col span={16} className='mb10'>
                 <Input

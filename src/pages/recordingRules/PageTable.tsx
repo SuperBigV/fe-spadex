@@ -347,7 +347,7 @@ const PageTable: React.FC<Props> = ({ gids }) => {
   };
 
   return (
-    <div className='strategy-table-content n9e-border-base'>
+    <div className='strategy-table-content spadex-border-base'>
       <div className='strategy-table-search'>
         <Space>
           <RefreshIcon

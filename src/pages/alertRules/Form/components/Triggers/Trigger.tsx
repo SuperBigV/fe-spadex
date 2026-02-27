@@ -40,7 +40,7 @@ export default function Trigger(props: IProps) {
   const [expanded, setExpanded] = React.useState(false);
 
   return (
-    <div className='n9e-fill-color-3 p2'>
+    <div className='spadex-fill-color-3 p2'>
       <Form.Item {...prefixField} name={[...prefixName, 'mode']}>
         <Radio.Group buttonStyle='solid' size='small' disabled={disabled}>
           <Radio.Button value={0}>{t('datasource:es.alert.trigger.builder')}</Radio.Button>
@@ -64,7 +64,7 @@ export default function Trigger(props: IProps) {
       <div>
         <div className='mb1'>
           <Space
-            className='n9e-cursor-pointer'
+            className='spadex-cursor-pointer'
             onClick={() => {
               setExpanded(!expanded);
             }}

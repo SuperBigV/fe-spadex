@@ -2,7 +2,7 @@ import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 
 export function getTargetInformationByIdent(ident: string) {
-  return request('/api/n9e/target/extra-meta', {
+  return request('/api/spadex/target/extra-meta', {
     method: RequestMethod.Get,
     params: {
       ident,
@@ -18,20 +18,20 @@ export function getTargetInformationByIdent(ident: string) {
 }
 
 export function putTargetsBgids(data: { bgids: number[]; idents: string[]; action: string }) {
-  return request('/api/n9e/targets/bgids', {
+  return request('/api/spadex/targets/bgids', {
     method: RequestMethod.Put,
     data,
   });
 }
 
 export function getBusiGroupsTags() {
-  return request('/api/n9e/busi-groups/tags', {
+  return request('/api/spadex/busi-groups/tags', {
     method: RequestMethod.Get,
   }).then((res) => res.dat);
 }
 
 export function operateTargetLife(data) {
-  return request('/api/n9e/targets/life', {
+  return request('/api/spadex/targets/life', {
     method: RequestMethod.Put,
     data,
   });

@@ -134,7 +134,7 @@ export default function Title(props: IProps) {
 
   return (
     <div
-      className={`dashboard-detail-header ${!IS_ENT ? 'n9e-page-header-content' : ''}`}
+      className={`dashboard-detail-header ${!IS_ENT ? 'spadex-page-header-content' : ''}`}
       style={{
         display: query.viewMode === 'fullscreen' ? 'none' : 'flex',
       }}
@@ -152,7 +152,7 @@ export default function Title(props: IProps) {
               setDashboardListDropdownVisible(visible);
             }}
             overlay={
-              <div className='collects-payloads-dropdown-overlay p2 n9e-fill-color-2 n9e-border-base n9e-border-radius-base n9e-base-shadow'>
+              <div className='collects-payloads-dropdown-overlay p2 spadex-fill-color-2 spadex-border-base spadex-border-radius-base spadex-base-shadow'>
                 <Input
                   className='mb1'
                   placeholder={t('common:search_placeholder')}

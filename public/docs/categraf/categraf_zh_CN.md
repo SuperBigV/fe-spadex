@@ -1,8 +1,9 @@
 ## 部署 categraf
 
-
 ## 开源用户
+
 ### 1. 下载并解压的安装包
+
 > categraf 最新版本可以到 https://flashcat.cloud/download/categraf/ 获取
 
 ```bash
@@ -10,16 +11,16 @@ wget https://download.flashcat.cloud/categraf-v0.3.73-linux-amd64.tar.gz
 tar zxvf categraf-v0.3.73-linux-amd64.tar.gz
 ```
 
-### 2. 修改 conf/config.toml , 将下面的上报数据的地址修改为 n9e 的实际地址
+### 2. 修改 conf/config.toml , 将下面的上报数据的地址修改为 spadex 的实际地址
 
 ```toml
-[[writers]]  
+[[writers]]
 url = "http://127.0.0.1:17000/prometheus/v1/write"
 
 [heartbeat]
 enable = true
 # report os version cpu.util mem.util metadata
-url = "http://127.0.0.1:17000/v1/n9e/heartbeat"
+url = "http://127.0.0.1:17000/v1/spadex/heartbeat"
 ```
 
 ### 3. 启动 categraf 采集器

@@ -20,7 +20,7 @@ import { RequestMethod } from '@/store/common';
 import { RuleType } from './types';
 
 export const createRule = function (id: number, data: RuleType[]) {
-  return request(`/api/n9e/busi-group/${id}/alert-rules/import`, {
+  return request(`/api/spadex/busi-group/${id}/alert-rules/import`, {
     method: RequestMethod.Post,
     data,
     silence: true,

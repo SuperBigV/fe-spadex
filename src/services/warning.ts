@@ -21,11 +21,11 @@ import type { MetricListRes, strategyGroup, strategyStatus, TagKeysRes, TagValue
 import { PAGE_SIZE } from '@/utils/constant';
 import React from 'react';
 import queryString from 'query-string';
-import { N9E_PATHNAME, IS_ENT } from '@/utils/constant';
+import { spadex_PATHNAME, IS_ENT } from '@/utils/constant';
 
 // 获得策略分组列表
 export const getStrategyGroupList = function (query?: string, p = 1) {
-  return request(`/api/n9e/alert-rule-groups`, {
+  return request(`/api/spadex/alert-rule-groups`, {
     method: RequestMethod.Get,
     params: {
       query,
@@ -37,7 +37,7 @@ export const getStrategyGroupList = function (query?: string, p = 1) {
 
 // 添加策略分组
 export const addStrategyGroup = function (data: strategyGroup) {
-  return request(`/api/n9e/alert-rule-groups`, {
+  return request(`/api/spadex/alert-rule-groups`, {
     method: RequestMethod.Post,
     data,
   });
@@ -45,21 +45,21 @@ export const addStrategyGroup = function (data: strategyGroup) {
 
 // 获取策略分组
 export const getStrategyGroup = function (id: number) {
-  return request(`/api/n9e/alert-rule-group/${id}`, {
+  return request(`/api/spadex/alert-rule-group/${id}`, {
     method: RequestMethod.Get,
   });
 };
 
 // 删除策略分组
 export const deleteStrategyGroup = function (id: number) {
-  return request(`/api/n9e/alert-rule-group/${id}`, {
+  return request(`/api/spadex/alert-rule-group/${id}`, {
     method: RequestMethod.Delete,
   });
 };
 
 // 更新策略分组
 export const updateStrategyGroup = function (data: Partial<strategyGroup> & { id: number }) {
-  return request(`/api/n9e/alert-rule-group/${data.id}`, {
+  return request(`/api/spadex/alert-rule-group/${data.id}`, {
     method: RequestMethod.Put,
     data,
   });
@@ -67,14 +67,14 @@ export const updateStrategyGroup = function (data: Partial<strategyGroup> & { id
 
 // 获取策略列表
 export const getStrategyGroupSubList = function (params: { id: number }) {
-  return request(`/api/n9e/busi-group/${params.id}/alert-rules`, {
+  return request(`/api/spadex/busi-group/${params.id}/alert-rules`, {
     method: RequestMethod.Get,
   });
 };
 
 // 查询多个业务组的规则列表 2023-11-24 新增
 export const getBusiGroupsAlertRules = function (gids?: string) {
-  return request('/api/n9e/busi-groups/alert-rules', {
+  return request('/api/spadex/busi-groups/alert-rules', {
     method: RequestMethod.Get,
     params: {
       gids,
@@ -84,14 +84,14 @@ export const getBusiGroupsAlertRules = function (gids?: string) {
 
 // 获取收藏分组
 export const getFavoritesStrategyGroups = function () {
-  return request(`/api/n9e/alert-rule-groups/favorites`, {
+  return request(`/api/spadex/alert-rule-groups/favorites`, {
     method: RequestMethod.Get,
   });
 };
 
 // 添加收藏分组
 export const addFavoriteGroup = function (id: number) {
-  return request(`/api/n9e/alert-rule-group/${id}/favorites`, {
+  return request(`/api/spadex/alert-rule-group/${id}/favorites`, {
     method: RequestMethod.Post,
     data: {
       id,
@@ -101,7 +101,7 @@ export const addFavoriteGroup = function (id: number) {
 
 // 删除收藏分组
 export const deleteFavoriteGroup = function (id: number) {
-  return request(`/api/n9e/alert-rule-group/${id}/favorites`, {
+  return request(`/api/spadex/alert-rule-group/${id}/favorites`, {
     method: RequestMethod.Delete,
     data: {
       id,
@@ -110,7 +110,7 @@ export const deleteFavoriteGroup = function (id: number) {
 };
 
 export const getMetrics = function (params = {}) {
-  return request(`/api/n9e/prometheus/api/v1/label/__name__/values`, {
+  return request(`/api/spadex/prometheus/api/v1/label/__name__/values`, {
     method: RequestMethod.Get,
     params,
     paramsSerializer: function (params) {
@@ -120,83 +120,83 @@ export const getMetrics = function (params = {}) {
 };
 
 export const getMetricsDesc = function (data = []) {
-  return request(`/api/n9e/metrics/desc`, {
+  return request(`/api/spadex/metrics/desc`, {
     method: RequestMethod.Post,
     data,
   });
 };
 
 export const getTagKeys = function (params): Promise<TagKeysRes> {
-  return request(`/api/n9e/tag-keys`, {
+  return request(`/api/spadex/tag-keys`, {
     method: RequestMethod.Post,
     data: params,
   });
 };
 
 export const getTagValuesByKey = function (params): Promise<TagValuesRes> {
-  return request(`/api/n9e/tag-values`, {
+  return request(`/api/spadex/tag-values`, {
     method: RequestMethod.Post,
     data: params,
   });
 };
 
 export const getWarningStrategy = function (id): Promise<any> {
-  return request(`/api/n9e/alert-rule/${id}`, {
+  return request(`/api/spadex/alert-rule/${id}`, {
     method: RequestMethod.Get,
   });
 };
 
 export const addStrategy = function (data: any[], busiId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-rules`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-rules`, {
     method: 'POST',
     data: data,
   });
 };
 
 export const importStrategy = function (data: any[], busiId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-rules/import`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-rules/import`, {
     method: 'POST',
     data: data,
   });
 };
 
 export const importPromRule = function (data: any, busiId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-rules/import-prom-rule`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-rules/import-prom-rule`, {
     method: 'POST',
     data: data,
   });
 };
 
 export const EditStrategy = function (data: any[], busiId: number, strategyId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-rule/${strategyId}`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-rule/${strategyId}`, {
     method: RequestMethod.Put,
     data: data,
   });
 };
 
 export const deleteStrategy = function (ids: number[], strategyId: number) {
-  return request(`/api/n9e/busi-group/${strategyId}/alert-rules`, {
+  return request(`/api/spadex/busi-group/${strategyId}/alert-rules`, {
     method: RequestMethod.Delete,
     data: { ids },
   });
 };
 
 export const batchDeleteStrategy = function (ruleId, ids: Array<number>) {
-  return request(`/api/n9e/alert-rule-group/${ruleId}/alert-rules`, {
+  return request(`/api/spadex/alert-rule-group/${ruleId}/alert-rules`, {
     method: RequestMethod.Delete,
     data: { ids },
   });
 };
 
 export const prometheusQuery = function (data, datasourceValue): Promise<any> {
-  return request(`/api/${N9E_PATHNAME}/proxy/${datasourceValue}/api/v1/query`, {
+  return request(`/api/${spadex_PATHNAME}/proxy/${datasourceValue}/api/v1/query`, {
     method: RequestMethod.Get,
     params: data,
   });
 };
 
 export const validateRule = function (data: any[]) {
-  return request(`/api/n9e/busi-group/alert-rule/validate`, {
+  return request(`/api/spadex/busi-group/alert-rule/validate`, {
     method: RequestMethod.Put,
     data: data,
   });
@@ -213,7 +213,7 @@ export const updateAlertRules = function (
   },
   busiId: number,
 ) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-rules/fields`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-rules/fields`, {
     method: RequestMethod.Put,
     data: data,
   });
@@ -226,7 +226,7 @@ export const updateServiceCal = function (
   },
   busiId: number,
 ) {
-  return request(`/api/n9e-plus/busi-group/${busiId}/alert-rules/service-cal`, {
+  return request(`/api/spadex-plus/busi-group/${busiId}/alert-rules/service-cal`, {
     method: RequestMethod.Put,
     data: data,
   });
@@ -240,7 +240,7 @@ export const updateNotifyChannels = function (
   },
   busiId: number,
 ) {
-  return request(`/api/n9e-plus/busi-group/${busiId}/alert-rules/notify_channels`, {
+  return request(`/api/spadex-plus/busi-group/${busiId}/alert-rules/notify_channels`, {
     method: RequestMethod.Put,
     data: data,
   });
@@ -250,14 +250,14 @@ export const updateNotifyChannels = function (
  * 获取未恢复告警列表
  */
 export function getBusiGroupsCurAlerts(ids: number[]) {
-  return request(`/api/n9e/busi-groups/alertings`, {
+  return request(`/api/spadex/busi-groups/alertings`, {
     method: RequestMethod.Get,
     params: { ids: ids.join(',') },
   });
 }
 
 export const getAlertEvents = function (data) {
-  return request(`/api/n9e/alert-events`, {
+  return request(`/api/spadex/alert-events`, {
     method: RequestMethod.Get,
     params: data,
   });
@@ -266,16 +266,16 @@ export const getAlertEvents = function (data) {
  * 获取全量告警历史页面
  */
 export const getHistoryEvents = function (data) {
-  return request(`/api/n9e/history-alert-events`, {
+  return request(`/api/spadex/history-alert-events`, {
     method: RequestMethod.Get,
     params: data,
   });
 };
 // 获取告警详情
 export function getAlertEventsById(eventId) {
-  let url = '/api/n9e/alert-cur-event';
+  let url = '/api/spadex/alert-cur-event';
   if (IS_ENT) {
-    url = '/api/n9e-plus/alert-cur-event';
+    url = '/api/spadex-plus/alert-cur-event';
   }
   return request(`${url}/${eventId}`, {
     method: RequestMethod.Get,
@@ -283,9 +283,9 @@ export function getAlertEventsById(eventId) {
 }
 
 export function getHistoryEventsById(eventId) {
-  let url = '/api/n9e/alert-his-event';
+  let url = '/api/spadex/alert-his-event';
   if (IS_ENT) {
-    url = '/api/n9e-plus/alert-his-event';
+    url = '/api/spadex-plus/alert-his-event';
   }
   return request(`${url}/${eventId}`, {
     method: RequestMethod.Get,
@@ -295,7 +295,7 @@ export function getHistoryEventsById(eventId) {
  * 批量删除(忽略)告警历史
  */
 export const deleteAlertEvents = function (ids: Array<number | string>) {
-  return request(`/api/n9e/alert-cur-events`, {
+  return request(`/api/spadex/alert-cur-events`, {
     method: RequestMethod.Delete,
     data: {
       ids,
@@ -307,7 +307,7 @@ export const deleteAlertEvents = function (ids: Array<number | string>) {
  * 批量更新告警策略状态
  */
 export const updateAlertEventsStatus = function (ids: Array<number>, status: strategyStatus) {
-  return request(`/api/n9e/alert-rules/status`, {
+  return request(`/api/spadex/alert-rules/status`, {
     method: RequestMethod.Put,
     data: {
       ids,
@@ -319,7 +319,7 @@ export const updateAlertEventsStatus = function (ids: Array<number>, status: str
  * 批量更新告警通知接收组+接收人
  */
 export const updateAlertEventsNotifyGroups = function (ids: Array<number>, notify_groups: string, notify_users: string) {
-  return request(`/api/n9e/alert-rules/notify-groups`, {
+  return request(`/api/spadex/alert-rules/notify-groups`, {
     method: RequestMethod.Put,
     data: {
       ids,
@@ -332,7 +332,7 @@ export const updateAlertEventsNotifyGroups = function (ids: Array<number>, notif
  * 批量更新告警通知接收人
  */
 export const updateAlertEventsNotifyUsers = function (ids: Array<number>, notify_users: string) {
-  return request(`/api/n9e/alert-rules/notify-users`, {
+  return request(`/api/spadex/alert-rules/notify-users`, {
     method: RequestMethod.Put,
     data: {
       ids,
@@ -344,7 +344,7 @@ export const updateAlertEventsNotifyUsers = function (ids: Array<number>, notify
  * 批量更新告警通知媒介
  */
 export const updateAlertEventsNotifyChannels = function (ids: Array<number>, notify_channels: string) {
-  return request(`/api/n9e/alert-rules/notify-channels`, {
+  return request(`/api/spadex/alert-rules/notify-channels`, {
     method: RequestMethod.Put,
     data: {
       ids,
@@ -356,7 +356,7 @@ export const updateAlertEventsNotifyChannels = function (ids: Array<number>, not
  * 批量更新告警附加标签
  */
 export const updateAlertEventsAppendTags = function (ids: Array<number>, append_tags: string) {
-  return request(`/api/n9e/alert-rules/append-tags`, {
+  return request(`/api/spadex/alert-rules/append-tags`, {
     method: RequestMethod.Put,
     data: {
       ids,
@@ -366,56 +366,56 @@ export const updateAlertEventsAppendTags = function (ids: Array<number>, append_
 };
 
 export const getBuiltinAlerts = function () {
-  return request('/api/n9e/alert-rules/builtin/list', {
+  return request('/api/spadex/alert-rules/builtin/list', {
     method: RequestMethod.Get,
   });
 };
 
 export const createBuiltinAlerts = function (name: string, cluster: string, id: number) {
-  return request(`/api/n9e/busi-group/${id}/alert-rules/builtin`, {
+  return request(`/api/spadex/busi-group/${id}/alert-rules/builtin`, {
     method: RequestMethod.Post,
     data: { name, cluster },
   });
 };
 
 export const getAggrAlerts = function () {
-  return request('/api/n9e/alert-aggr-views', {
+  return request('/api/spadex/alert-aggr-views', {
     method: RequestMethod.Get,
   });
 };
 
 export const AddAggrAlerts = function (data) {
-  return request('/api/n9e/alert-aggr-views', {
+  return request('/api/spadex/alert-aggr-views', {
     method: RequestMethod.Post,
     data,
   });
 };
 
 export const updateAggrAlerts = function (data) {
-  return request('/api/n9e/alert-aggr-views', {
+  return request('/api/spadex/alert-aggr-views', {
     method: RequestMethod.Put,
     data,
   });
 };
 
 export const deleteAggrAlerts = function (ids: number[]) {
-  return request('/api/n9e/alert-aggr-views', {
+  return request('/api/spadex/alert-aggr-views', {
     method: RequestMethod.Delete,
     data: { ids },
   });
 };
 
 export const getAlertCards = function (params) {
-  return request('/api/n9e/alert-cur-events/card', {
+  return request('/api/spadex/alert-cur-events/card', {
     method: RequestMethod.Get,
     params,
   });
 };
 
 export const getCardDetail = function (ids) {
-  let url = '/api/n9e/alert-cur-events/card/details';
+  let url = '/api/spadex/alert-cur-events/card/details';
   if (import.meta.env.VITE_IS_PRO === 'true') {
-    url = '/api/n9e-plus/alert-cur-events/card/details';
+    url = '/api/spadex-plus/alert-cur-events/card/details';
   }
   return request(url, {
     method: RequestMethod.Post,
@@ -460,7 +460,7 @@ export const getBrainJobs = function (id) {
 };
 
 export function getDsQuery(datasourceValue: number, requestBody) {
-  return request(`/api/${N9E_PATHNAME}/proxy/${datasourceValue}/_msearch`, {
+  return request(`/api/${spadex_PATHNAME}/proxy/${datasourceValue}/_msearch`, {
     method: RequestMethod.Post,
     data: requestBody,
     headers: {
@@ -474,7 +474,7 @@ export function getDsQuery(datasourceValue: number, requestBody) {
 }
 
 export function getLogQuery(params) {
-  return request('/api/n9e-plus/log-query', {
+  return request('/api/spadex-plus/log-query', {
     method: RequestMethod.Post,
     data: params,
     headers: {
@@ -485,7 +485,7 @@ export function getLogQuery(params) {
 }
 
 export function getIndices(datasourceValue: number) {
-  return request(`/api/${N9E_PATHNAME}/proxy/${datasourceValue}/_cat/indices`, {
+  return request(`/api/${spadex_PATHNAME}/proxy/${datasourceValue}/_cat/indices`, {
     method: RequestMethod.Get,
     params: {
       format: 'json',
@@ -496,7 +496,7 @@ export function getIndices(datasourceValue: number) {
 }
 
 export function getESVersion(datasourceValue: number) {
-  return request(`/api/${N9E_PATHNAME}/proxy/${datasourceValue}/`, {
+  return request(`/api/${spadex_PATHNAME}/proxy/${datasourceValue}/`, {
     method: RequestMethod.Get,
   }).then((res) => {
     const dat = _.get(res, 'version.number');
@@ -505,35 +505,35 @@ export function getESVersion(datasourceValue: number) {
 }
 
 export function getEventTSQuery(params) {
-  return request('/api/n9e-plus/event-ts-query', {
+  return request('/api/spadex-plus/event-ts-query', {
     method: RequestMethod.Post,
     data: params,
   });
 }
 
 export function getEventLogQuery(params) {
-  return request('/api/n9e-plus/event-log-query', {
+  return request('/api/spadex-plus/event-log-query', {
     method: RequestMethod.Post,
     data: params,
   });
 }
 
 export function getLogsQuery(params) {
-  return request('/api/n9e-plus/logs-query', {
+  return request('/api/spadex-plus/logs-query', {
     method: RequestMethod.Post,
     data: params,
   });
 }
 
 export const getAlertEventList = function (params) {
-  return request('/api/n9e/alert-his-events/list', {
+  return request('/api/spadex/alert-his-events/list', {
     method: RequestMethod.Get,
     params,
   }).then((res) => res?.dat?.list || []);
 };
 
 export const getAlertRulesCallbacks = function () {
-  return request('/api/n9e/alert-rules/callbacks', {
+  return request('/api/spadex/alert-rules/callbacks', {
     method: RequestMethod.Get,
   }).then((res) => res?.dat || []);
 };

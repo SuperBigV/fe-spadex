@@ -9,7 +9,7 @@ import TplSettings from './TplSettings';
 
 function getTpls(gids: string | undefined) {
   if (gids) {
-    return request(`/api/n9e/busi-groups/task-tpls?gids=${gids}&limit=5000&p=1`).then((res) => {
+    return request(`/api/spadex/busi-groups/task-tpls?gids=${gids}&limit=5000&p=1`).then((res) => {
       return { list: res.dat.list, total: res.dat.total };
     });
   }

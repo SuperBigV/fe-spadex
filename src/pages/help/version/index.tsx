@@ -30,7 +30,7 @@ export default function version() {
   const [backendVersion, setBackendVersion] = useState('');
 
   useEffect(() => {
-    fetch('/api/n9e/version')
+    fetch('/api/spadex/version')
       .then((res) => {
         return res.text();
       })
@@ -48,7 +48,7 @@ export default function version() {
       }
     >
       <div>
-        <ul className='n9e-border-base' style={{ padding: '20px 30px' }}>
+        <ul className='spadex-border-base' style={{ padding: '20px 30px' }}>
           <li>
             {t('frontend')}：{pkgJson.version}
           </li>

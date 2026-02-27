@@ -19,7 +19,7 @@ import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 
 export function getBusiGroups(params?: { query?: string; typ: string; limit?: number; all?: boolean }) {
-  return request(`/api/n9e/busi-groups`, {
+  return request(`/api/spadex/busi-groups`, {
     method: RequestMethod.Get,
     params: {
       ...(params || {}),

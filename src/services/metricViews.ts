@@ -18,7 +18,7 @@ import _ from 'lodash';
 import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 import { IRawTimeRange, timeRangeUnix } from '@/components/TimeRangePicker';
-import { N9E_PATHNAME } from '@/utils/constant';
+import { spadex_PATHNAME } from '@/utils/constant';
 import { getRealStep } from '@/pages/dashboard/Renderer/datasource/prometheus';
 import { completeBreakpoints } from '@/pages/dashboard/Renderer/datasource/utils';
 
@@ -29,7 +29,7 @@ export const getLabelValues = function (datasourceValue: number, label: string, 
   if (match) {
     params['match[]'] = match;
   }
-  return request(`/api/${N9E_PATHNAME}/proxy/${datasourceValue}/api/v1/label/${label}/values`, {
+  return request(`/api/${spadex_PATHNAME}/proxy/${datasourceValue}/api/v1/label/${label}/values`, {
     method: RequestMethod.Get,
     params,
   }).then((res) => {
@@ -44,7 +44,7 @@ export const getLabels = function (datasourceValue: number, match: string, range
   if (match) {
     params['match[]'] = match;
   }
-  return request(`/api/${N9E_PATHNAME}/proxy/${datasourceValue}/api/v1/labels`, {
+  return request(`/api/${spadex_PATHNAME}/proxy/${datasourceValue}/api/v1/labels`, {
     method: RequestMethod.Get,
     params,
   }).then((res) => {
@@ -53,7 +53,7 @@ export const getLabels = function (datasourceValue: number, match: string, range
 };
 
 export const getMetricValues = function (datasourceValue: number, match: string, range: IRawTimeRange) {
-  return request(`/api/${N9E_PATHNAME}/proxy/${datasourceValue}/api/v1/label/__name__/values`, {
+  return request(`/api/${spadex_PATHNAME}/proxy/${datasourceValue}/api/v1/label/__name__/values`, {
     method: RequestMethod.Get,
     params: {
       ...timeRangeUnix(range),
@@ -134,7 +134,7 @@ export const getQueryRange = function (
     aggrGroups,
   });
   const requests = _.map(exprs, (expr) => {
-    return request(`/api/${N9E_PATHNAME}/proxy/${datasourceValue}/api/v1/query_range`, {
+    return request(`/api/${spadex_PATHNAME}/proxy/${datasourceValue}/api/v1/query_range`, {
       method: RequestMethod.Get,
       params: {
         start: start - (start % _step!),
@@ -165,7 +165,7 @@ export const getQueryRange = function (
 };
 
 export const getList = function () {
-  return request('/api/n9e/metric-views', {
+  return request('/api/spadex/metric-views', {
     method: RequestMethod.Get,
   }).then((res) => {
     return res?.dat;
@@ -173,7 +173,7 @@ export const getList = function () {
 };
 
 export const addMetricView = function (data) {
-  return request('/api/n9e/metric-views', {
+  return request('/api/spadex/metric-views', {
     method: RequestMethod.Post,
     data,
   }).then((res) => {
@@ -182,7 +182,7 @@ export const addMetricView = function (data) {
 };
 
 export const updateMetricView = function (data) {
-  return request('/api/n9e/metric-views', {
+  return request('/api/spadex/metric-views', {
     method: RequestMethod.Put,
     data,
   }).then((res) => {
@@ -191,7 +191,7 @@ export const updateMetricView = function (data) {
 };
 
 export const deleteMetricView = function (data) {
-  return request('/api/n9e/metric-views', {
+  return request('/api/spadex/metric-views', {
     method: RequestMethod.Delete,
     data,
   }).then((res) => {
@@ -200,14 +200,14 @@ export const deleteMetricView = function (data) {
 };
 
 export const setTmpChartData = function (data: { configs: string }[]) {
-  return request(`/api/n9e/share-charts`, {
+  return request(`/api/spadex/share-charts`, {
     method: RequestMethod.Post,
     data,
   });
 };
 
 export const getMetricsDesc = function (data) {
-  return request('/api/n9e/metrics/desc', {
+  return request('/api/spadex/metrics/desc', {
     method: RequestMethod.Post,
     data,
     silence: true,
@@ -221,7 +221,7 @@ export const getQueryRangeSingleMetric = function (params: { metric: string; mat
   let { start, end } = timeRangeUnix(range);
   const step = Math.max(Math.floor((end - start) / 240), 1);
   const query = `${calcFunc}(${metric}${match}) by (ident)`;
-  return request('/api/n9e/prometheus/api/v1/query_range', {
+  return request('/api/spadex/prometheus/api/v1/query_range', {
     method: RequestMethod.Get,
     params: {
       start,

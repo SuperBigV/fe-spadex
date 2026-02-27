@@ -54,7 +54,7 @@ export default function index() {
   return (
     <PageLayout title={<Space>{'凭证管理'}</Space>} icon={<SettingOutlined />}>
       <div
-        className='n9e-border-base'
+        className='spadex-border-base'
         style={{
           padding: 16,
         }}

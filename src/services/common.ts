@@ -20,7 +20,7 @@ import { RequestMethod } from '@/store/common';
 
 // 匿名获取数据源列表
 export function getDatasourceBriefList(): Promise<{ name: string; id: number; plugin_type: string }[]> {
-  const url = '/api/n9e/datasource/brief';
+  const url = '/api/spadex/datasource/brief';
   return request(url, {
     method: RequestMethod.Get,
   })
@@ -33,7 +33,7 @@ export function getDatasourceBriefList(): Promise<{ name: string; id: number; pl
 }
 
 export function getBusiGroups(query = '', limit: number = 5000, typ: string = 'busi') {
-  return request(`/api/n9e/busi-groups`, {
+  return request(`/api/spadex/busi-groups`, {
     method: RequestMethod.Get,
     params: Object.assign(
       {
@@ -73,7 +73,7 @@ export function getAssetModels(query = '', limit: number = 5000) {
 }
 
 export function getBusiGroupsForChBusi(query = '', limit: number = 5000, gtp: string = '') {
-  return request(`/api/n9e/busi-groups/ch-busi`, {
+  return request(`/api/spadex/busi-groups/ch-busi`, {
     method: RequestMethod.Get,
     params: Object.assign(
       {
@@ -91,7 +91,7 @@ export function getBusiGroupsForChBusi(query = '', limit: number = 5000, gtp: st
 }
 
 export function getModelGroups(query = '', limit: number = 5000, gtp: string = '') {
-  return request(`/api/n9e/device-models`, {
+  return request(`/api/spadex/device-models`, {
     method: RequestMethod.Get,
     params: Object.assign(
       {
@@ -108,13 +108,13 @@ export function getModelGroups(query = '', limit: number = 5000, gtp: string = '
 }
 
 export function getPerm(busiGroup: string, perm: 'ro' | 'rw') {
-  return request(`/api/n9e/busi-group/${busiGroup}/perm/${perm}`, {
+  return request(`/api/spadex/busi-group/${busiGroup}/perm/${perm}`, {
     method: RequestMethod.Get,
   });
 }
 
 export function getMenuPerm() {
-  return request(`/api/n9e/self/perms`, {
+  return request(`/api/spadex/self/perms`, {
     method: RequestMethod.Get,
   });
 }

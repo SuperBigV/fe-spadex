@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Card, Form, Input, Button, message, Row, Col, Space, Select, Switch } from 'antd';
 import PageLayout, { HelpLink } from '@/components/pageLayout';
-import { getN9eConfig, putN9eConfig } from './services';
+import { getspadexConfig, putspadexConfig } from './services';
 import './locale';
 
 // @ts-ignore
@@ -16,7 +16,7 @@ export default function index() {
   const teamDisplayMode = Form.useWatch('teamDisplayMode', form);
 
   useEffect(() => {
-    getN9eConfig('site_info').then((res) => {
+    getspadexConfig('site_info').then((res) => {
       if (res) {
         try {
           const result = JSON.parse(res);
@@ -46,7 +46,7 @@ export default function index() {
               layout='vertical'
               form={form}
               onFinish={(value) => {
-                putN9eConfig({
+                putspadexConfig({
                   ckey: 'site_info',
                   cval: JSON.stringify(value),
                 }).then(() => {
@@ -126,7 +126,7 @@ export default function index() {
                   </Col>
                   <Col span={20}>
                     <Form.Item label={t('print_body_paths')} name={['print_body_paths']}>
-                      <Select mode='tags' placeholder='/api/n9e/busi-groups/alert-rules' style={{ width: '100%' }} open={false} />
+                      <Select mode='tags' placeholder='/api/spadex/busi-groups/alert-rules' style={{ width: '100%' }} open={false} />
                     </Form.Item>
                   </Col>
                 </Row>

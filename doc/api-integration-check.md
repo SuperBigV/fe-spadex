@@ -284,7 +284,7 @@
 1. **实现真实 API 调用**
 
    - 在 `services.ts` 中取消注释真实 API 调用
-   - 添加 API 路径前缀：`/api/n9e/cmdb` 或 `/api/cmdb`
+   - 添加 API 路径前缀：`/api/spadex/cmdb` 或 `/api/cmdb`
 
 2. **处理响应格式**
 
@@ -378,7 +378,7 @@
 ### 7.1 前端 services.ts 修复示例
 
 ```typescript
-const API_PREFIX = '/api/n9e/cmdb';
+const API_PREFIX = '/api/spadex/cmdb';
 
 // 处理响应数据
 const handleResponse = <T>(response: any): T => {

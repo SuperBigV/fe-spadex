@@ -19,7 +19,7 @@ import { RequestMethod } from '@/store/common';
 
 // 登录
 export const authLogin = function (username: string, password: string, captchaid?: string, verifyvalue?: string) {
-  return request(`/api/n9e/auth/login`, {
+  return request(`/api/spadex/auth/login`, {
     method: RequestMethod.Post,
     data: { username, password, captchaid, verifyvalue },
   });
@@ -32,13 +32,13 @@ export const authDingLogin = function (url: string) {
 };
 
 export const getCaptcha = function () {
-  return request('/api/n9e/auth/captcha', {
+  return request('/api/spadex/auth/captcha', {
     method: RequestMethod.Post,
   });
 };
 
 export const ifShowCaptcha = function () {
-  return request('/api/n9e/auth/ifshowcaptcha', {
+  return request('/api/spadex/auth/ifshowcaptcha', {
     method: RequestMethod.Get,
     silence: true,
   });
@@ -46,7 +46,7 @@ export const ifShowCaptcha = function () {
 
 // 刷新accessToken
 export const UpdateAccessToken = function () {
-  return request(`/api/n9e/auth/refresh`, {
+  return request(`/api/spadex/auth/refresh`, {
     method: RequestMethod.Post,
     data: {
       refresh_token: localStorage.getItem('refresh_token'),
@@ -56,7 +56,7 @@ export const UpdateAccessToken = function () {
 
 // 更改密码
 export const UpdatePwd = function (oldpass: string, newpass: string) {
-  return request(`/api/n9e/self/password`, {
+  return request(`/api/spadex/self/password`, {
     method: RequestMethod.Put,
     data: { oldpass, newpass },
   });
@@ -64,65 +64,65 @@ export const UpdatePwd = function (oldpass: string, newpass: string) {
 
 // 获取csrf token
 export const GenCsrfToken = function () {
-  return request(`/api/n9e/csrf`, {
+  return request(`/api/spadex/csrf`, {
     method: RequestMethod.Get,
   });
 };
 
 // 退出
 export const Logout = function () {
-  return request(`/api/n9e/auth/logout`, {
+  return request(`/api/spadex/auth/logout`, {
     method: RequestMethod.Post,
   });
 };
 
 export const getRedirectURL = function () {
-  return request('/api/n9e/auth/redirect', {
+  return request('/api/spadex/auth/redirect', {
     method: RequestMethod.Get,
   });
 };
 
 export const authCallback = function (params) {
-  return request('/api/n9e/auth/callback', {
+  return request('/api/spadex/auth/callback', {
     method: RequestMethod.Get,
     params,
   });
 };
 
 export const getRedirectURLCAS = function () {
-  return request('/api/n9e/auth/redirect/cas', {
+  return request('/api/spadex/auth/redirect/cas', {
     method: RequestMethod.Get,
   });
 };
 
 export const authCallbackCAS = function (params) {
-  return request('/api/n9e/auth/callback/cas', {
+  return request('/api/spadex/auth/callback/cas', {
     method: RequestMethod.Get,
     params,
   });
 };
 
 export const getRedirectURLOAuth = function () {
-  return request('/api/n9e/auth/redirect/oauth', {
+  return request('/api/spadex/auth/redirect/oauth', {
     method: RequestMethod.Get,
   });
 };
 
 export const authCallbackOAuth = function (params) {
-  return request('/api/n9e/auth/callback/oauth', {
+  return request('/api/spadex/auth/callback/oauth', {
     method: RequestMethod.Get,
     params,
   });
 };
 
 export const getSsoConfig = function () {
-  return request('/api/n9e/auth/sso-config', {
+  return request('/api/spadex/auth/sso-config', {
     method: RequestMethod.Get,
   });
 };
 
 export const getRSAConfig = function () {
-  return request('/api/n9e/auth/rsa-config', {
+  return request('/api/spadex/auth/rsa-config', {
     method: RequestMethod.Get,
   });
 };

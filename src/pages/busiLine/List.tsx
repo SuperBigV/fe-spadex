@@ -155,7 +155,7 @@ export default function List(props: IProps) {
         </Space>
       ),
       dataIndex: 'ident',
-      className: 'n9e-hosts-table-column-ident',
+      className: 'spadex-hosts-table-column-ident',
       render: (text, record) => {
         return (
           <Space>
@@ -182,14 +182,14 @@ export default function List(props: IProps) {
       columns.push({
         title: t('host_ip'),
         dataIndex: 'host_ip',
-        className: 'n9e-hosts-table-column-ip',
+        className: 'spadex-hosts-table-column-ip',
       });
     }
     if (item.name === 'ident_type') {
       columns.push({
         title: '类型',
         dataIndex: 'ident_type',
-        className: 'n9e-hosts-table-column-ip',
+        className: 'spadex-hosts-table-column-ip',
         render(typ) {
           return (
             <Tag color='purple' key={typ}>
@@ -210,7 +210,7 @@ export default function List(props: IProps) {
     //       </Space>
     //     ),
     //     dataIndex: 'host_tags',
-    //     className: 'n9e-hosts-table-column-tags',
+    //     className: 'spadex-hosts-table-column-tags',
     //     ellipsis: {
     //       showTitle: false,
     //     },
@@ -254,7 +254,7 @@ export default function List(props: IProps) {
           </Space>
         ),
         dataIndex: 'tags',
-        className: 'n9e-hosts-table-column-tags',
+        className: 'spadex-hosts-table-column-tags',
         ellipsis: {
           showTitle: false,
         },
@@ -291,7 +291,7 @@ export default function List(props: IProps) {
       columns.push({
         title: t('group_obj'),
         dataIndex: 'group_objs',
-        className: 'n9e-hosts-table-column-tags',
+        className: 'spadex-hosts-table-column-tags',
         ellipsis: {
           showTitle: false,
         },
@@ -684,7 +684,7 @@ export default function List(props: IProps) {
         </Space>
       </div>
       <Table
-        className='mt8 n9e-hosts-table'
+        className='mt8 spadex-hosts-table'
         rowKey='id'
         columns={columns}
         size='small'

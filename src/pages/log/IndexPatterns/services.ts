@@ -16,10 +16,10 @@
  */
 import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
-import { N9E_PATHNAME } from '@/utils/constant';
+import { spadex_PATHNAME } from '@/utils/constant';
 
 export const getESIndexPatterns = function (datasource_id?: number) {
-  return request(`/api/${N9E_PATHNAME}/es-index-pattern-list`, {
+  return request(`/api/${spadex_PATHNAME}/es-index-pattern-list`, {
     method: RequestMethod.Get,
     params: {
       datasource_id,
@@ -28,7 +28,7 @@ export const getESIndexPatterns = function (datasource_id?: number) {
 };
 
 export const getESIndexPattern = function (id: number) {
-  return request('/api/n9e/es-index-pattern', {
+  return request('/api/spadex/es-index-pattern', {
     method: RequestMethod.Get,
     params: {
       id,
@@ -37,14 +37,14 @@ export const getESIndexPattern = function (id: number) {
 };
 
 export const postESIndexPattern = function (data: any) {
-  return request('/api/n9e/es-index-pattern', {
+  return request('/api/spadex/es-index-pattern', {
     method: RequestMethod.Post,
     data,
   });
 };
 
 export const putESIndexPattern = function (id, data: any) {
-  return request('/api/n9e/es-index-pattern', {
+  return request('/api/spadex/es-index-pattern', {
     method: RequestMethod.Put,
     params: {
       id,
@@ -54,7 +54,7 @@ export const putESIndexPattern = function (id, data: any) {
 };
 
 export const deleteESIndexPattern = function (id: number) {
-  return request('/api/n9e/es-index-pattern', {
+  return request('/api/spadex/es-index-pattern', {
     method: RequestMethod.Delete,
     data: { ids: [id] },
   });

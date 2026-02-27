@@ -19,9 +19,9 @@ import { RequestMethod } from '@/store/common';
 
 // 获取监控对象列表
 export function getMonObjectList(params) {
-  let url = '/api/n9e/targets';
+  let url = '/api/spadex/targets';
   if (import.meta.env.VITE_IS_PRO === 'true') {
-    url = '/api/n9e-plus/targets';
+    url = '/api/spadex-plus/targets';
   }
   return request(url, {
     method: RequestMethod.Get,
@@ -39,34 +39,34 @@ export function unbindTags(data) {
 
 // 获取监控对象标签列表
 export function getTargetTags(params) {
-  return request(`/api/n9e/targets/tags`, {
+  return request(`/api/spadex/targets/tags`, {
     method: RequestMethod.Get,
     params,
   });
 }
 
 export function controlTarget(data) {
-  return request(`/api/n9e/target/control`, {
+  return request(`/api/spadex/target/control`, {
     method: RequestMethod.Post,
     data,
   });
 }
 
 export function getTargetById(id) {
-  return request(`/api/n9e/target/${id}`, {
+  return request(`/api/spadex/target/${id}`, {
     method: RequestMethod.Get,
   });
 }
 
 export function fetchInitLog(id) {
-  return request(`/api/n9e/target/init-log/${id}`, {
+  return request(`/api/spadex/target/init-log/${id}`, {
     method: RequestMethod.Get,
   });
 }
 
 export function initTarget(data) {
   console.log('@@initdata:', data);
-  return request(`/api/n9e/target/init`, {
+  return request(`/api/spadex/target/init`, {
     method: RequestMethod.Post,
     data,
   });
@@ -74,21 +74,21 @@ export function initTarget(data) {
 
 // 绑定/解绑标签
 export function bindOrUnbindTags(isBind, data) {
-  return request(`/api/n9e/targets/tags`, {
+  return request(`/api/spadex/targets/tags`, {
     method: isBind ? RequestMethod.Post : RequestMethod.Delete,
     data,
   });
 }
 
 export function offlineTarget(data) {
-  return request(`/api/n9e/targets/offline`, {
+  return request(`/api/spadex/targets/offline`, {
     method: RequestMethod.Post,
     data,
   });
 }
 
 export function maintainTarget(data) {
-  return request(`/api/n9e/targets/maintain`, {
+  return request(`/api/spadex/targets/maintain`, {
     method: RequestMethod.Post,
     data,
   });
@@ -96,7 +96,7 @@ export function maintainTarget(data) {
 
 // 修改业务组
 export function moveTargetBusi(data) {
-  return request(`/api/n9e/targets/bgids`, {
+  return request(`/api/spadex/targets/bgids`, {
     method: RequestMethod.Put,
     data: data,
   });
@@ -104,7 +104,7 @@ export function moveTargetBusi(data) {
 
 // 移出业务组
 export function deleteTargetBusi(data) {
-  return request(`/api/n9e/targets/bgids`, {
+  return request(`/api/spadex/targets/bgids`, {
     method: RequestMethod.Delete,
     data: data,
   });
@@ -112,7 +112,7 @@ export function deleteTargetBusi(data) {
 
 // 修改对象备注
 export function updateTargetNote(data) {
-  return request(`/api/n9e/targets/note`, {
+  return request(`/api/spadex/targets/note`, {
     method: RequestMethod.Put,
     data,
   });
@@ -120,34 +120,34 @@ export function updateTargetNote(data) {
 
 // 删除对象
 export function deleteTargets(data) {
-  return request(`/api/n9e/targets`, {
+  return request(`/api/spadex/targets`, {
     method: RequestMethod.Delete,
     data,
   });
 }
 
 export function getTargetList(data) {
-  return request(`/api/n9e/target/list`, {
+  return request(`/api/spadex/target/list`, {
     method: RequestMethod.Post,
     data,
   });
 }
 export function postTarget(data) {
-  return request(`/api/n9e/target`, {
+  return request(`/api/spadex/target`, {
     method: RequestMethod.Post,
     data,
   });
 }
 
 export function putTarget(data) {
-  return request(`/api/n9e/target`, {
+  return request(`/api/spadex/target`, {
     method: RequestMethod.Put,
     data,
   });
 }
 
 export function getJumpBusiGroups(params) {
-  return request(`/api/n9e/busi-group/jump`, {
+  return request(`/api/spadex/busi-group/jump`, {
     method: RequestMethod.Get,
     params,
   });

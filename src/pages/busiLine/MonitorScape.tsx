@@ -81,7 +81,7 @@ export default function List(props: IProps) {
     {
       title: '采集类型',
       dataIndex: 'collect_type',
-      className: 'n9e-hosts-table-column-ip',
+      className: 'spadex-hosts-table-column-ip',
       render(value) {
         const found = ScrpTyps.find((item) => item.value === value);
         return found ? found.label : value;
@@ -90,7 +90,7 @@ export default function List(props: IProps) {
     {
       title: '采集状态',
       dataIndex: 'status',
-      className: 'n9e-hosts-table-column-ip',
+      className: 'spadex-hosts-table-column-ip',
       width: 120,
       render: (val, reocrd) => {
         if (!reocrd.status) {
@@ -121,7 +121,7 @@ export default function List(props: IProps) {
     // {
     //   title: '数据源',
     //   dataIndex: 'collect_source',
-    //   className: 'n9e-hosts-table-column-ip',
+    //   className: 'spadex-hosts-table-column-ip',
 
     //   render(item) {
     //     const content = (
@@ -139,7 +139,7 @@ export default function List(props: IProps) {
     {
       title: '采集主机',
       dataIndex: 'collect_idents',
-      className: 'n9e-hosts-table-column-tags',
+      className: 'spadex-hosts-table-column-tags',
 
       render(identArr) {
         if (!identArr) return <Unknown />;
@@ -167,12 +167,12 @@ export default function List(props: IProps) {
     {
       title: '采集目标',
       dataIndex: 'collect_target',
-      className: 'n9e-hosts-table-column-tags',
+      className: 'spadex-hosts-table-column-tags',
     },
     {
       title: '数据源',
       dataIndex: 'datasource_id',
-      className: 'n9e-hosts-table-column-tags',
+      className: 'spadex-hosts-table-column-tags',
       render(value) {
         const found = datasourceLists.find((item) => item.id === value);
         return found ? found.name : '-';
@@ -372,7 +372,7 @@ export default function List(props: IProps) {
         </Space>
       </div>
       <Table
-        className='mt8 n9e-hosts-table'
+        className='mt8 spadex-hosts-table'
         rowKey='id'
         columns={columns}
         size='small'

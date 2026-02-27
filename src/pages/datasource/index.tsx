@@ -45,7 +45,7 @@ export default function index() {
     <PageLayout title={t('title')}>
       <div>
         <div
-          className='n9e-border-base'
+          className='spadex-border-base'
           style={{
             padding: 16,
           }}

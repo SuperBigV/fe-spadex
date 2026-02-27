@@ -67,7 +67,7 @@ export default function index(props: IProps) {
             </div>
             {fields.map((field, index) => {
               return (
-                <div key={field.key} className='n9e-fill-color-3' style={{ padding: 10, marginBottom: 10, position: 'relative' }}>
+                <div key={field.key} className='spadex-fill-color-3' style={{ padding: 10, marginBottom: 10, position: 'relative' }}>
                   <Row gutter={8}>
                     <Col flex='32px'>
                       <Form.Item name={[field.name, 'ref']} initialValue={alphabet[index]}>

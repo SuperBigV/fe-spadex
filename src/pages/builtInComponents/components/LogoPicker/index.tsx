@@ -27,10 +27,10 @@ export default function index(props: Props) {
         }}
         footer={null}
       >
-        <div className='n9e-logo-picker-content'>
+        <div className='spadex-logo-picker-content'>
           {_.map(components, (item) => {
             return (
-              <div key={item.id} className='n9e-logo-picker-item'>
+              <div key={item.id} className='spadex-logo-picker-item'>
                 <img
                   key={item.id}
                   src={item.logo}
@@ -46,7 +46,7 @@ export default function index(props: Props) {
         </div>
       </Modal>
       <div
-        className='n9e-logo-picker-trigger'
+        className='spadex-logo-picker-trigger'
         onClick={() => {
           setVisible(true);
         }}

@@ -42,14 +42,14 @@ export { default as Edit } from './edit';
 
 const QUERY_LOCAL_STORAGE_KEY = 'alertSubscribes_filter_query';
 const DATASOURCE_IDS_LOCAL_STORAGE_KEY = 'alertSubscribes_filter_datasource_ids';
-const N9E_GIDS_LOCALKEY = 'n9e_subscribes_gids';
+const spadex_GIDS_LOCALKEY = 'spadex_subscribes_gids';
 
 const { confirm } = Modal;
 const Shield: React.FC = () => {
   const { t } = useTranslation('alertSubscribes');
   const history = useHistory();
   const { datasourceList, businessGroup, busiGroups } = useContext(CommonStateContext);
-  const [gids, setGids] = useState<string | undefined>(getDefaultGids(N9E_GIDS_LOCALKEY, businessGroup)); // -2: 所有告警策略
+  const [gids, setGids] = useState<string | undefined>(getDefaultGids(spadex_GIDS_LOCALKEY, businessGroup)); // -2: 所有告警策略
   const [columnsConfigs, setColumnsConfigs] = useState<{ name: string; visible: boolean }[]>(getDefaultColumnsConfigs(defaultColumnsConfigs, LOCAL_STORAGE_KEY));
   const [query, setQuery] = useState<string>(localStorage.getItem(QUERY_LOCAL_STORAGE_KEY) || '');
   const [currentShieldDataAll, setCurrentShieldDataAll] = useState<Array<subscribeItem>>([]);
@@ -355,9 +355,9 @@ const Shield: React.FC = () => {
   return (
     <PageLayout title={t('title')} icon={<CopyOutlined />}>
       <div className='shield-content'>
-        <BusinessGroupSideBarWithAll gids={gids} setGids={setGids} localeKey={N9E_GIDS_LOCALKEY} />
+        <BusinessGroupSideBarWithAll gids={gids} setGids={setGids} localeKey={spadex_GIDS_LOCALKEY} />
         <div
-          className='n9e-border-base p2'
+          className='spadex-border-base p2'
           style={{
             width: '100%',
             overflow: 'hidden auto',

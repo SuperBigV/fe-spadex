@@ -15,8 +15,8 @@ interface IProps extends SelectProps {
 export const ProSvg = ({ type = 'normal' }) => (
   <div
     className={classNames({
-      'n9e-pro-tag': true,
-      'n9e-pro-tag-selected': type === 'selected',
+      'spadex-pro-tag': true,
+      'spadex-pro-tag-selected': type === 'selected',
     })}
   >
     Pro

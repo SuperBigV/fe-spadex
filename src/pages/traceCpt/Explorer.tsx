@@ -13,7 +13,7 @@ export default function index() {
   return (
     <PageLayout title={'链路追踪查询'}>
       <div>
-        <div className='n9e-border-base p2'>
+        <div className='spadex-border-base p2'>
           <Trace />
         </div>
       </div>

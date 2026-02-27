@@ -87,7 +87,7 @@ export default function index() {
         </div>
       }
     >
-      <div className='n9e-metric-views'>
+      <div className='spadex-metric-views'>
         <List
           datasourceValue={datasourceValue}
           onSelect={(record: IMatch) => {

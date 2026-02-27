@@ -11,7 +11,7 @@ interface IItem {
   status: 'enabled';
 }
 
-const apiPrefix = '/api/n9e/datasource';
+const apiPrefix = '/api/spadex/datasource';
 
 export const getDataSourcePluginList = (): Promise<IItem[]> => {
   return request(`${apiPrefix}/plugin/list`, {
@@ -37,7 +37,7 @@ export const getDataSourceDetailById = (id: string | number) => {
 export const submitRequest = (body) => {
   let url = `${apiPrefix}/upsert`;
   if (import.meta.env['VITE_IS_PRO']) {
-    url = ' /api/n9e-plus/datasource/upsert';
+    url = ' /api/spadex-plus/datasource/upsert';
   }
   return request(url, {
     method: RequestMethod.Post,
@@ -60,7 +60,7 @@ export const deleteDataSourceById = (id: string | number) => {
 };
 
 export const getServerClusters = () => {
-  return request('/api/n9e/server-clusters', {
+  return request('/api/spadex/server-clusters', {
     method: RequestMethod.Get,
   }).then((res) => res.dat);
 };

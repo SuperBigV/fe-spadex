@@ -36,11 +36,11 @@ export default function index(props: Props) {
         }}
         destroyOnClose
       >
-        <div className='n9e-hosts-explorer-metrics-container'>
-          <div className='n9e-hosts-explorer-metrics-list'>
+        <div className='spadex-hosts-explorer-metrics-container'>
+          <div className='spadex-hosts-explorer-metrics-list'>
             <Metrics setExplorerDrawerData={setExplorerDrawerData} selectedIdents={selectedIdents} />
           </div>
-          <div className='n9e-hosts-explorer-metrics-main'>
+          <div className='spadex-hosts-explorer-metrics-main'>
             <ExplorerPanels data={explorerDrawerData} />
           </div>
         </div>

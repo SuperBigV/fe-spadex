@@ -50,24 +50,25 @@ const BusiGroupList: React.FC<BusiGroupListProps> = ({ data, loading }) => {
               </Space>
             }
             description={
-              <Space direction="vertical" size="small" style={{ width: '100%' }}>
+              <Space direction='vertical' size='small' style={{ width: '100%' }}>
                 <Space>
-                  <Text type="secondary">资产: {item.assetCount}</Text>
-                  <Text type="secondary" style={{ color: '#52c41a' }}>
+                  <Text type='secondary'>资产: {item.assetCount}</Text>
+                  <Text type='secondary' style={{ color: '#52c41a' }}>
                     在线: {item.onlineAssetCount}
                   </Text>
-                  <Text type="secondary" style={{ color: '#ff4d4f' }}>
+                  <Text type='secondary' style={{ color: '#ff4d4f' }}>
                     离线: {item.offlineAssetCount}
                   </Text>
                 </Space>
                 <Space>
-                  <Tag color="red">严重: {item.alertCount.critical}</Tag>
-                  <Tag color="orange">警告: {item.alertCount.warning}</Tag>
-                  <Tag color="blue">通知: {item.alertCount.info}</Tag>
+                  <Tag color='red'>严重: {item.alertCount.critical}</Tag>
+                  <Tag color='orange'>警告: {item.alertCount.warning}</Tag>
+                  <Tag color='blue'>通知: {item.alertCount.info}</Tag>
                 </Space>
                 <Progress
+                  style={{ paddingRight: '40px' }}
                   percent={calculateHealthRate(item)}
-                  size="small"
+                  size='small'
                   strokeColor={item.healthStatus === 'healthy' ? '#52c41a' : item.healthStatus === 'warning' ? '#faad14' : '#ff4d4f'}
                   format={(percent) => `健康率: ${percent?.toFixed(1)}%`}
                 />

@@ -114,7 +114,7 @@ export default function index(props: IProps) {
         localStorage.setItem('leftwidth', curWidth.toString());
       }}
     >
-      <div className={collapse ? 'n9e-biz-group-container collapse' : 'n9e-biz-group-container'}>
+      <div className={collapse ? 'spadex-biz-group-container collapse' : 'spadex-biz-group-container'}>
         <Tabs
           defaultActiveKey={busiType}
           onChange={(key) => {
@@ -131,9 +131,9 @@ export default function index(props: IProps) {
             >
               {!collapse ? <LeftOutlined /> : <RightOutlined />}
             </div>
-            <div className='n9e-biz-group-container-group group-shrink'>
+            <div className='spadex-biz-group-container-group group-shrink'>
               {renderHeadExtra && renderHeadExtra()}
-              <div className='n9e-biz-group-container-group-title'>
+              <div className='spadex-biz-group-container-group-title'>
                 {title}
                 {title === t('common:business_group') && (
                   <Link to='/busi-groups' target='_blank'>
@@ -142,7 +142,7 @@ export default function index(props: IProps) {
                 )}
               </div>
               <Input
-                className='n9e-biz-group-container-group-search'
+                className='spadex-biz-group-container-group-search'
                 prefix={<SearchOutlined />}
                 onPressEnter={(e) => {
                   e.preventDefault();
@@ -163,7 +163,7 @@ export default function index(props: IProps) {
                     return (
                       <div
                         className={classNames({
-                          'n9e-metric-views-list-content-item': true,
+                          'spadex-metric-views-list-content-item': true,
                           active: showSelected ? itemKey === businessGroup.key : false,
                         })}
                         key={itemKey}
@@ -224,9 +224,9 @@ export default function index(props: IProps) {
             >
               {!collapse ? <LeftOutlined /> : <RightOutlined />}
             </div>
-            <div className='n9e-biz-group-container-group group-shrink'>
+            <div className='spadex-biz-group-container-group group-shrink'>
               {renderHeadExtra && renderHeadExtra()}
-              <div className='n9e-biz-group-container-group-title'>
+              <div className='spadex-biz-group-container-group-title'>
                 {title}
                 {title === t('common:business_group') && (
                   <Link to='/busi-groups' target='_blank'>
@@ -235,7 +235,7 @@ export default function index(props: IProps) {
                 )}
               </div>
               <Input
-                className='n9e-biz-group-container-group-search'
+                className='spadex-biz-group-container-group-search'
                 prefix={<SearchOutlined />}
                 onPressEnter={(e) => {
                   e.preventDefault();
@@ -256,7 +256,7 @@ export default function index(props: IProps) {
                     return (
                       <div
                         className={classNames({
-                          'n9e-metric-views-list-content-item': true,
+                          'spadex-metric-views-list-content-item': true,
                           active: showSelected ? itemKey === businessGroup.key : false,
                         })}
                         key={itemKey}

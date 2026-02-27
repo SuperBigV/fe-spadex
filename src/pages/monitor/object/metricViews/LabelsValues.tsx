@@ -90,9 +90,9 @@ export default function LabelsValues(props: IProps) {
 
   return (
     <Collapse collapseLocalStorageKey='quick_view_filter_collapse' widthLocalStorageKey='quick_view_filter_width' defaultWidth={240} tooltip={t('list.filters_title')}>
-      <div className='n9e-metric-views-labels-values'>
+      <div className='spadex-metric-views-labels-values'>
         {!_.isEmpty(filtersStr) && (
-          <div className='n9e-metric-views-labels-values-item'>
+          <div className='spadex-metric-views-labels-values-item'>
             <div
               className='page-title'
               style={{ cursor: 'pointer' }}
@@ -108,11 +108,11 @@ export default function LabelsValues(props: IProps) {
                 {expaned.filters ? <UpOutlined /> : <DownOutlined />}
               </Space>
             </div>
-            {expaned.filters && <div className='n9e-metric-views-filters'>{filtersStr ? filtersStr : '暂无数据'}</div>}
+            {expaned.filters && <div className='spadex-metric-views-filters'>{filtersStr ? filtersStr : '暂无数据'}</div>}
           </div>
         )}
         {!_.isEmpty(dynamicLabels) && (
-          <div className='n9e-metric-views-labels-values-item'>
+          <div className='spadex-metric-views-labels-values-item'>
             <div
               className='page-title'
               style={{ cursor: 'pointer' }}
@@ -129,14 +129,14 @@ export default function LabelsValues(props: IProps) {
               </Space>
             </div>
             {expaned.dynamicLabels && (
-              <div className='n9e-metric-views-dynamicLabels'>
+              <div className='spadex-metric-views-dynamicLabels'>
                 {_.isEmpty(dynamicLabels) ? (
                   <div style={{ marginBottom: 10 }}>No Data</div>
                 ) : (
                   _.map(dynamicLabels, (item) => {
                     return (
-                      <div key={item.label} className='n9e-metric-views-dynamicLabels-item'>
-                        <div className='n9e-metric-views-dynamicLabels-item-label'>{item.label}:</div>
+                      <div key={item.label} className='spadex-metric-views-dynamicLabels-item'>
+                        <div className='spadex-metric-views-dynamicLabels-item-label'>{item.label}:</div>
                         <Select
                           allowClear
                           showSearch
@@ -186,7 +186,7 @@ export default function LabelsValues(props: IProps) {
         {_.map(dimensionLabels, (dimensionLabel) => {
           const dimensionLabelValues = dimensionLabelsValues[dimensionLabel.label];
           return (
-            <div key={dimensionLabel.label} className='n9e-metric-views-labels-values-item'>
+            <div key={dimensionLabel.label} className='spadex-metric-views-labels-values-item'>
               <div className='page-title'>
                 <div
                   style={{
@@ -233,7 +233,7 @@ export default function LabelsValues(props: IProps) {
                   </a>
                 </div>
               </div>
-              <div className='n9e-metric-views-dimensionLabel'>
+              <div className='spadex-metric-views-dimensionLabel'>
                 <Input.Group compact>
                   <Input
                     style={{ width: 'calc(100% - 32px)' }}
@@ -267,7 +267,7 @@ export default function LabelsValues(props: IProps) {
                   </Tooltip>
                 </Input.Group>
 
-                <div className='n9e-metric-views-dimensionLabel-content'>
+                <div className='spadex-metric-views-dimensionLabel-content'>
                   {_.isEmpty(dimensionLabelValues) ? (
                     'No Data'
                   ) : (
@@ -290,7 +290,7 @@ export default function LabelsValues(props: IProps) {
                             <div
                               key={item}
                               className={classNames({
-                                'n9e-metric-views-dimensionLabel-content-item': true,
+                                'spadex-metric-views-dimensionLabel-content-item': true,
                                 active: _.includes(dimensionLabel.value, item),
                               })}
                               onClick={() => {

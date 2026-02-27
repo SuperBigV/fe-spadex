@@ -50,7 +50,7 @@ enum AdvancedDatasourceCateEnum {}
 const getLicense = async () => {
   return {};
 };
-const getN9eConfig = async () => {
+const getspadexConfig = async () => {
   return {};
 };
 const getDefaultValuesByCate = () => {};
@@ -76,7 +76,7 @@ export {
   envCateMap,
   AdvancedDatasourceCateEnum,
   getLicense,
-  getN9eConfig,
+  getspadexConfig,
   getDefaultValuesByCate,
   autoDatasourcetype,
   AuthList,

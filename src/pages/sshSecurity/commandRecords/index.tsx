@@ -366,7 +366,7 @@ export default function CommandRecordsPage() {
           </Row>
         </Card>
         <div
-          className='n9e-border-base'
+          className='spadex-border-base'
           style={{
             padding: 16,
           }}

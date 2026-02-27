@@ -18,48 +18,48 @@ import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 
 export const getShieldList = function (params: { id: number }) {
-  return request(`/api/n9e/busi-group/${params.id}/alert-mutes`, {
+  return request(`/api/spadex/busi-group/${params.id}/alert-mutes`, {
     method: RequestMethod.Get,
   });
 };
 
 export const getBusiGroupsAlertMutes = function (gids?: string) {
-  return request('/api/n9e/busi-groups/alert-mutes', {
+  return request('/api/spadex/busi-groups/alert-mutes', {
     method: RequestMethod.Get,
     params: { gids },
   });
 };
 
 export const addShield = function (data: any, busiId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-mutes`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-mutes`, {
     method: RequestMethod.Post,
     data,
   });
 };
 
 export const deleteShields = function (data: { ids: number[] }, busiId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-mutes`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-mutes`, {
     method: RequestMethod.Delete,
     data,
   });
 };
 
 export const editShield = function (data: any[], busiId: number, shiedId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-mute/${shiedId}`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-mute/${shiedId}`, {
     method: RequestMethod.Put,
     data: data,
   });
 };
 
 export const updateShields = function (data: { ids: React.Key[]; fields: any }, busiId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-mutes/fields`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-mutes/fields`, {
     method: RequestMethod.Put,
     data: data,
   });
 };
 
 export const previewMutedEvents = function (data: any, busiId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-mutes/preview`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-mutes/preview`, {
     method: RequestMethod.Post,
     data: data,
   });

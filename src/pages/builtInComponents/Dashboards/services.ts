@@ -20,7 +20,7 @@ import { RequestMethod } from '@/store/common';
 
 // 创建仪表盘
 export const createDashboard = function (id: number, data: any) {
-  return request(`/api/n9e/busi-group/${id}/boards`, {
+  return request(`/api/spadex/busi-group/${id}/boards`, {
     method: RequestMethod.Post,
     data,
     silence: true,

@@ -1,16 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
-  getWorkbenchOverview,
-  getMyAssets,
-  getMyAlerts,
-  getMyBusiGroupsNew,
-} from '../services';
-import {
-  WorkbenchOverviewResponse,
-  MyAssetsResponse,
-  MyAlertsResponse,
-  MyBusiGroupsResponse,
-} from '../types/workbench';
+import { getWorkbenchOverview, getMyAssets, getMyAlerts, getMyBusiGroupsNew } from '../services';
+import { WorkbenchOverviewResponse, MyAssetsResponse, MyAlertsResponse, MyBusiGroupsResponse } from '../types/workbench';
 
 interface UseWorkbenchDataParams {
   timeRange?: '1h' | '6h' | '24h' | '7d';
@@ -24,10 +14,15 @@ interface UseWorkbenchDataReturn {
   busiGroupsData: MyBusiGroupsResponse | null;
   loading: boolean;
   refresh: () => void;
-  refreshAssets: () => Promise<void>;
+  refreshAssets: (page?: number, pageSize?: number) => Promise<void>;
   refreshAlerts: () => Promise<void>;
   refreshBusiGroups: () => Promise<void>;
+  assetPage: number;
+  assetPageSize: number;
 }
+
+const DEFAULT_ASSET_PAGE = 1;
+const DEFAULT_ASSET_PAGE_SIZE = 10;
 
 export const useWorkbenchData = (params: UseWorkbenchDataParams = {}): UseWorkbenchDataReturn => {
   const [overviewData, setOverviewData] = useState<WorkbenchOverviewResponse | null>(null);
@@ -35,16 +30,20 @@ export const useWorkbenchData = (params: UseWorkbenchDataParams = {}): UseWorkbe
   const [alertsData, setAlertsData] = useState<MyAlertsResponse | null>(null);
   const [busiGroupsData, setBusiGroupsData] = useState<MyBusiGroupsResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [assetPage, setAssetPage] = useState(DEFAULT_ASSET_PAGE);
+  const [assetPageSize, setAssetPageSize] = useState(DEFAULT_ASSET_PAGE_SIZE);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
+    setAssetPage(DEFAULT_ASSET_PAGE);
+    setAssetPageSize(DEFAULT_ASSET_PAGE_SIZE);
     try {
       const [overview, assets, alerts, busiGroups] = await Promise.all([
         getWorkbenchOverview({
           timeRange: params.timeRange || '24h',
           busiGroupIds: params.busiGroupIds || [],
         }),
-        getMyAssets({ page: 1, pageSize: 10 }),
+        getMyAssets({ page: DEFAULT_ASSET_PAGE, pageSize: DEFAULT_ASSET_PAGE_SIZE }),
         getMyAlerts({ page: 1, pageSize: 10, timeRange: params.timeRange || '24h' }),
         getMyBusiGroupsNew(),
       ]);
@@ -64,21 +63,28 @@ export const useWorkbenchData = (params: UseWorkbenchDataParams = {}): UseWorkbe
     fetchData();
   }, [fetchData]);
 
-  const refreshAssets = useCallback(async () => {
-    try {
-      const assets = await getMyAssets({ page: 1, pageSize: 10 });
-      setAssetsData(assets);
-    } catch (error) {
-      console.error('刷新资产数据失败:', error);
-    }
-  }, []);
+  const refreshAssets = useCallback(
+    async (page?: number, pageSize?: number) => {
+      const nextPage = page ?? assetPage;
+      const nextPageSize = pageSize ?? assetPageSize;
+      if (page !== undefined) setAssetPage(page);
+      if (pageSize !== undefined) setAssetPageSize(pageSize);
+      try {
+        const assets = await getMyAssets({ page: nextPage, pageSize: nextPageSize });
+        setAssetsData(assets);
+      } catch (error) {
+        console.error('刷新资产数据失败:', error);
+      }
+    },
+    [assetPage, assetPageSize],
+  );
 
   const refreshAlerts = useCallback(async () => {
     try {
-      const alerts = await getMyAlerts({ 
-        page: 1, 
-        pageSize: 10, 
-        timeRange: params.timeRange || '24h' 
+      const alerts = await getMyAlerts({
+        page: 1,
+        pageSize: 10,
+        timeRange: params.timeRange || '24h',
       });
       setAlertsData(alerts);
     } catch (error) {
@@ -105,5 +111,7 @@ export const useWorkbenchData = (params: UseWorkbenchDataParams = {}): UseWorkbe
     refreshAssets,
     refreshAlerts,
     refreshBusiGroups,
+    assetPage,
+    assetPageSize,
   };
 };

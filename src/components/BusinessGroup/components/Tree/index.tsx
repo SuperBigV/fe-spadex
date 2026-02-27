@@ -23,17 +23,17 @@ const renderTree = (
   onExpand?: (expandedKeys: string[]) => void,
 ) => {
   return (
-    <ul className='n9e-tree-nodes'>
+    <ul className='spadex-tree-nodes'>
       {_.map(treeData, (item, nodeIdx) => {
         const hasChildren = item.children && item.children.length > 0;
         const isExpanded = _.includes(expandedKeys, item.key);
         const isSelected = _.includes(selectedKeys, item.key);
         const newEachLevelIsLast = [...eachLevelIsLast, nodeIdx === treeData.length - 1];
         return (
-          <li key={item.key} className='n9e-tree-node'>
+          <li key={item.key} className='spadex-tree-node'>
             <div
-              className={classNames('n9e-tree-node-title', {
-                'n9e-tree-node-title-selected': isSelected,
+              className={classNames('spadex-tree-node-title', {
+                'spadex-tree-node-title-selected': isSelected,
               })}
               onClick={() => {
                 onSelect && onSelect([item.key], { node: item });
@@ -42,20 +42,20 @@ const renderTree = (
               {_.map(Array.from({ length: level }), (_, index) => {
                 const realIndex = index + 1;
                 return (
-                  <div key={realIndex} className={classNames('n9e-tree-node-indent')}>
+                  <div key={realIndex} className={classNames('spadex-tree-node-indent')}>
                     {index !== 0 && (
                       <>
                         {realIndex === level ? (
                           <>
                             <div
-                              className={classNames('n9e-tree-node-indent-current-branch', {
-                                'n9e-tree-node-indent-current-branch-active': isSelected,
+                              className={classNames('spadex-tree-node-indent-current-branch', {
+                                'spadex-tree-node-indent-current-branch-active': isSelected,
                               })}
                             />
                             {treeData.length - 1 !== nodeIdx && (
                               <div
-                                className={classNames('n9e-tree-node-indent-next-branch', {
-                                  'n9e-tree-node-indent-next-branch-active': isSelected,
+                                className={classNames('spadex-tree-node-indent-next-branch', {
+                                  'spadex-tree-node-indent-next-branch-active': isSelected,
                                 })}
                               />
                             )}
@@ -63,8 +63,8 @@ const renderTree = (
                         ) : (
                           !eachLevelIsLast[realIndex] && (
                             <div
-                              className={classNames('n9e-tree-node-indent-next-branch', {
-                                'n9e-tree-node-indent-next-branch-active': isSelected,
+                              className={classNames('spadex-tree-node-indent-next-branch', {
+                                'spadex-tree-node-indent-next-branch-active': isSelected,
                               })}
                             />
                           )
@@ -74,11 +74,11 @@ const renderTree = (
                   </div>
                 );
               })}
-              <div className='n9e-tree-node-title-content'>
+              <div className='spadex-tree-node-title-content'>
                 {item.title}
                 {hasChildren && (
                   <span
-                    className='n9e-tree-node-icon'
+                    className='spadex-tree-node-icon'
                     onClick={(event) => {
                       event.stopPropagation();
                       // 如果 item.key 在 defaultExpandedKeys 中，就从 defaultExpandedKeys 中移除，否则添加
@@ -108,7 +108,7 @@ function index(props: Props) {
   }, [defaultExpandedKeys]);
 
   return (
-    <div className='n9e-tree-container'>
+    <div className='spadex-tree-container'>
       {renderTree(treeData, [false], 1, expandedKeys, selectedKeys, onSelect, (newExpandedKeys) => {
         setExpandedKeys(newExpandedKeys);
         onExpand && onExpand(newExpandedKeys);

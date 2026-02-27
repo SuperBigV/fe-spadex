@@ -347,7 +347,7 @@ export const getMenuList = (t) => {
     {
       key: 'manage',
       icon: <IconFont type='icon-Menu_PersonnelOrganization' />,
-      label: t('用户团队'),
+      label: t('用户分组'),
       children: [
         {
           key: '/users',
@@ -355,7 +355,7 @@ export const getMenuList = (t) => {
         },
         {
           key: '/user-groups',
-          label: t('团队管理'),
+          label: t('分组管理'),
         },
 
         {

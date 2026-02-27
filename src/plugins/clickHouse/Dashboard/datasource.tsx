@@ -141,7 +141,7 @@ export default async function mysqlQuery(options: IOptions): Promise<Result> {
         resolveData.query.push({
           type: 'TimeSeries',
           request: {
-            url: `/api/n9e/ds-query`,
+            url: `/api/spadex/ds-query`,
             method: 'POST',
             data: batchTimeSeriesParams,
           },
@@ -152,7 +152,7 @@ export default async function mysqlQuery(options: IOptions): Promise<Result> {
         resolveData.query.push({
           type: 'Logs',
           request: {
-            url: `/api/n9e/logs-query`,
+            url: `/api/spadex/logs-query`,
             method: 'POST',
             data: batchTimeRawParams,
           },

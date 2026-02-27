@@ -17,7 +17,7 @@ export default function RelabelItem(props: Props) {
   const action = Form.useWatch([...prefixName, field.name, 'action']);
 
   return (
-    <div className='n9e-alert-relabel-item'>
+    <div className='spadex-alert-relabel-item'>
       <Row gutter={10}>
         <Col span={12}>
           <Form.Item {...field} name={[field.name, 'action']} label='action'>
@@ -105,7 +105,7 @@ export default function RelabelItem(props: Props) {
         )}
       </Row>
       <div style={{ marginTop: 8 }}></div>
-      <MinusCircleOutlined className='n9e-alert-relabel-item-remove' onClick={() => remove(field.name)} />
+      <MinusCircleOutlined className='spadex-alert-relabel-item-remove' onClick={() => remove(field.name)} />
     </div>
   );
 }

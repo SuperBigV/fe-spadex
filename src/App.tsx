@@ -36,7 +36,7 @@ import { getCleanNetGroupIds, getDefaultNetGroup, getVaildNetGroup } from '@/com
 // import { getCleanAssetGroupIds, getVaildAssetGroup } from '@/components/BusinessGroupAsset';
 import { getCleanModelGroupIds, getDefaultModel, getVaildModelGroup } from '@/components/ModelGroup';
 import Feedback from '@/components/Feedback';
-import { getN9eConfig } from '@/pages/siteSettings/services';
+import { getspadexConfig } from '@/pages/siteSettings/services';
 import HeaderMenu from './components/menu/SideMenu';
 import Content from './routers';
 import { getDarkMode, updateDarkMode } from '@/utils/darkMode';
@@ -316,7 +316,7 @@ function App() {
       (async () => {
         const iconLink = document.querySelector("link[rel~='icon']") as any;
         let siteInfo;
-        const siteInfoStr = await getN9eConfig('site_info');
+        const siteInfoStr = await getspadexConfig('site_info');
         if (siteInfoStr) {
           try {
             siteInfo = JSON.parse(siteInfoStr);
@@ -403,8 +403,8 @@ function App() {
     if (!location.pathname.startsWith('/login')) {
       document.body.className = commonState.darkMode ? 'theme-dark' : 'theme-light';
       // TODO: 临时兼容 Class 组件的写法
-      localStorage.setItem('n9e-dark-mode', _.toString(commonState.darkMode));
-      window.dispatchEvent(new Event('n9e-dark-mode-update'));
+      localStorage.setItem('spadex-dark-mode', _.toString(commonState.darkMode));
+      window.dispatchEvent(new Event('spadex-dark-mode-update'));
     }
   }, [commonState.darkMode]);
 

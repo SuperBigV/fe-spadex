@@ -23,13 +23,13 @@ import { defaultValues, calcsOptions } from './Editor/config';
 import updateSchema from './updateSchema';
 
 // @ts-ignore
-import convertVariableQuery from 'plus:/utils/convertDashboardGrafanaToN9E/convertVariableQuery';
+import convertVariableQuery from 'plus:/utils/convertDashboardGrafanaTospadex/convertVariableQuery';
 // @ts-ignore
-import convertVariableDefault from 'plus:/utils/convertDashboardGrafanaToN9E/convertVariableDefault';
+import convertVariableDefault from 'plus:/utils/convertDashboardGrafanaTospadex/convertVariableDefault';
 // @ts-ignore
-import convertPanleTarget from 'plus:/utils/convertDashboardGrafanaToN9E/convertPanleTarget';
+import convertPanleTarget from 'plus:/utils/convertDashboardGrafanaTospadex/convertPanleTarget';
 // @ts-ignore
-import convertDatasource from 'plus:/utils/convertDashboardGrafanaToN9E/convertDatasource';
+import convertDatasource from 'plus:/utils/convertDashboardGrafanaTospadex/convertDatasource';
 
 export function JSONParse(str) {
   if (str) {
@@ -93,7 +93,7 @@ function normalizeCalc(calc: string) {
   return 'lastNotNull';
 }
 
-function convertThresholdsGrafanaToN9E(config: any) {
+function convertThresholdsGrafanaTospadex(config: any) {
   return {
     mode: config.thresholds?.mode, // mode 目前是不支持的
     style: config.custom?.thresholdsStyle?.mode || 'line', // 目前只有固定的 line 风格，但是这个只用于折线图
@@ -116,7 +116,7 @@ const varWithUnitMap = {
   '${__range_ms}ms': '${__range_ms}',
 };
 
-function convertVariablesGrafanaToN9E(templates: any, __inputs: any[], data: any) {
+function convertVariablesGrafanaTospadex(templates: any, __inputs: any[], data: any) {
   const vars = _.chain(templates.list)
     .filter((item) => {
       // 3.0.0 版本只支持 query / custom / textbox / constant 类型的变量
@@ -141,7 +141,7 @@ function convertVariablesGrafanaToN9E(templates: any, __inputs: any[], data: any
           } else if (typeof item.query?.query === 'string') {
             varObj.definition = item.query.query;
           }
-          const datasource = convertDatasourceGrafanaToN9E(item, templates.list);
+          const datasource = convertDatasourceGrafanaTospadex(item, templates.list);
           varObj.datasource = {
             cate: datasource.datasourceCate,
             value: datasource.datasourceValue,
@@ -228,7 +228,7 @@ function convertVariablesGrafanaToN9E(templates: any, __inputs: any[], data: any
   return vars;
 }
 
-function convertLinksGrafanaToN9E(links: any) {
+function convertLinksGrafanaTospadex(links: any) {
   return _.chain(links)
     .filter((item) => {
       // 3.0.0 版本只支持 link 类型的链接设置
@@ -244,7 +244,7 @@ function convertLinksGrafanaToN9E(links: any) {
     .value();
 }
 
-function convertOptionsGrafanaToN9E(panel: any) {
+function convertOptionsGrafanaTospadex(panel: any) {
   if (panel.type === 'graph') {
     // 旧版本的 Graph 不转换 options
     return defaultValues.options;
@@ -262,10 +262,10 @@ function convertOptionsGrafanaToN9E(panel: any) {
     s: 'seconds',
     ms: 'milliseconds',
   };
-  // 这里有 default 和 overrides 区别，目前 n9e 暂不支持 overrides
+  // 这里有 default 和 overrides 区别，目前 spadex 暂不支持 overrides
   return {
     valueMappings: config?.mappings,
-    thresholds: convertThresholdsGrafanaToN9E(config),
+    thresholds: convertThresholdsGrafanaTospadex(config),
     standardOptions: {
       util: unitMap[config.unit] ? unitMap[config.unit] : 'none',
       min: config.min,
@@ -283,7 +283,7 @@ function convertOptionsGrafanaToN9E(panel: any) {
   };
 }
 
-function convertTimeseriesGrafanaToN9E(panel: any) {
+function convertTimeseriesGrafanaTospadex(panel: any) {
   const lineInterpolation = _.get(panel, 'fieldConfig.defaults.custom.lineInterpolation');
   const fillOpacity = _.get(panel, 'fieldConfig.defaults.custom.fillOpacity');
   const stack = _.get(panel, 'fieldConfig.defaults.custom.stacking.mode');
@@ -296,7 +296,7 @@ function convertTimeseriesGrafanaToN9E(panel: any) {
   };
 }
 
-function convertPieGrafanaToN9E(panel: any) {
+function convertPieGrafanaTospadex(panel: any) {
   return {
     version: '3.0.0',
     calc: normalizeCalc(_.get(panel, 'options.reduceOptions.calcs[0]')),
@@ -304,7 +304,7 @@ function convertPieGrafanaToN9E(panel: any) {
   };
 }
 
-function convertStatGrafanaToN9E(panel: any) {
+function convertStatGrafanaTospadex(panel: any) {
   return {
     version: '3.0.0',
     textMode: 'value',
@@ -313,7 +313,7 @@ function convertStatGrafanaToN9E(panel: any) {
   };
 }
 
-function convertGaugeGrafanaToN9E(panel: any) {
+function convertGaugeGrafanaTospadex(panel: any) {
   return {
     version: '3.0.0',
     textMode: 'value',
@@ -322,21 +322,21 @@ function convertGaugeGrafanaToN9E(panel: any) {
   };
 }
 
-function convertBarGaugeGrafanaToN9E(panel: any) {
+function convertBarGaugeGrafanaTospadex(panel: any) {
   return {
     version: '3.0.0',
     calc: normalizeCalc(_.get(panel, 'options.reduceOptions.calcs[0]')),
   };
 }
 
-function convertTextGrafanaToN9E(panel: any) {
+function convertTextGrafanaTospadex(panel: any) {
   return {
     version: '3.0.0',
     content: _.get(panel, 'options.content'),
   };
 }
 
-function convertDatasourceGrafanaToN9E(panel: any, vars: any[]) {
+function convertDatasourceGrafanaTospadex(panel: any, vars: any[]) {
   const firstDatasource = _.find(vars, { type: 'datasource' });
   let defaultDatasourceValue = '${datasource}';
   if (firstDatasource && firstDatasource.name) {
@@ -360,44 +360,44 @@ function convertDatasourceGrafanaToN9E(panel: any, vars: any[]) {
   }
 }
 
-function convertPanlesGrafanaToN9E(panels: any, vars: any) {
+function convertPanlesGrafanaTospadex(panels: any, vars: any) {
   const chartsMap = {
     graph: {
       // 旧版本的时间序列折线图
       type: 'timeseries',
-      fn: convertTimeseriesGrafanaToN9E,
+      fn: convertTimeseriesGrafanaTospadex,
     },
     timeseries: {
       type: 'timeseries',
-      fn: convertTimeseriesGrafanaToN9E,
+      fn: convertTimeseriesGrafanaTospadex,
     },
     barchart: {
       type: 'timeseries',
-      fn: convertTimeseriesGrafanaToN9E,
+      fn: convertTimeseriesGrafanaTospadex,
     },
     piechart: {
       type: 'pie',
-      fn: convertPieGrafanaToN9E,
+      fn: convertPieGrafanaTospadex,
     },
     gauge: {
       type: 'gauge',
-      fn: convertGaugeGrafanaToN9E,
+      fn: convertGaugeGrafanaTospadex,
     },
     singlestat: {
       type: 'gauge',
-      fn: convertStatGrafanaToN9E,
+      fn: convertStatGrafanaTospadex,
     },
     stat: {
       type: 'stat',
-      fn: convertStatGrafanaToN9E,
+      fn: convertStatGrafanaTospadex,
     },
     bargauge: {
       type: 'barGauge',
-      fn: convertBarGaugeGrafanaToN9E,
+      fn: convertBarGaugeGrafanaTospadex,
     },
     text: {
       type: 'text',
-      fn: convertTextGrafanaToN9E,
+      fn: convertTextGrafanaTospadex,
     },
   };
   return _.chain(panels)
@@ -414,7 +414,7 @@ function convertPanlesGrafanaToN9E(panels: any, vars: any) {
             ...item.gridPos,
             i: uid,
           },
-          panels: convertPanlesGrafanaToN9E(item.panels, vars),
+          panels: convertPanlesGrafanaTospadex(item.panels, vars),
         };
       }
       return {
@@ -423,7 +423,7 @@ function convertPanlesGrafanaToN9E(panels: any, vars: any) {
         type: chartsMap[item.type] ? chartsMap[item.type].type : 'unknown',
         name: item.title,
         description: item.description,
-        links: convertLinksGrafanaToN9E(item.links),
+        links: convertLinksGrafanaTospadex(item.links),
         layout: {
           ...item.gridPos,
           i: uid,
@@ -449,17 +449,17 @@ function convertPanlesGrafanaToN9E(panels: any, vars: any) {
             }
           })
           .value(),
-        options: convertOptionsGrafanaToN9E(item),
+        options: convertOptionsGrafanaTospadex(item),
         custom: chartsMap[item.type] ? chartsMap[item.type].fn(item) : {},
         maxPerRow: item.maxPerRow || 4,
         repeat: item.repeat,
-        ...convertDatasourceGrafanaToN9E(item, vars),
+        ...convertDatasourceGrafanaTospadex(item, vars),
       };
     })
     .value();
 }
 
-export function convertDashboardGrafanaToN9E(data) {
+export function convertDashboardGrafanaTospadex(data) {
   data = updateSchema(data);
   const dashboard: {
     name: string;
@@ -468,9 +468,9 @@ export function convertDashboardGrafanaToN9E(data) {
     name: data.title,
     configs: {
       version: '3.0.0',
-      links: convertLinksGrafanaToN9E(data.links),
-      var: convertVariablesGrafanaToN9E(data.templating, data.__inputs, data) as IVariable[],
-      panels: convertPanlesGrafanaToN9E(data.panels, data.templating?.list),
+      links: convertLinksGrafanaTospadex(data.links),
+      var: convertVariablesGrafanaTospadex(data.templating, data.__inputs, data) as IVariable[],
+      panels: convertPanlesGrafanaTospadex(data.panels, data.templating?.list),
     } as IDashboardConfig,
   };
   return dashboard;

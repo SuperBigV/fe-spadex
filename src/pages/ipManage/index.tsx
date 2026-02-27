@@ -61,7 +61,7 @@ export default function index() {
     <PageLayout title={<Space>{t('IP管理')}</Space>} icon={<SettingOutlined />}>
       <div>
         <div
-          className='n9e-border-base'
+          className='spadex-border-base'
           style={{
             padding: 16,
           }}

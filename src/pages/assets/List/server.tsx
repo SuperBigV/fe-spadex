@@ -591,7 +591,7 @@ export default function AssetList(props: IProps) {
           )}
           {tableLoading && (
             <Table
-              className='mt8 n9e-hosts-table'
+              className='mt8 spadex-hosts-table'
               size='small'
               {...tableProps}
               rowSelection={{

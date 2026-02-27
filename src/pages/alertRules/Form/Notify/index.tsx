@@ -59,7 +59,7 @@ export default function index({ disabled, bgid }) {
       const globalFlashdutyPushConfigured = _.some(res, (item) => {
         // TODO 糟糕的设计，需要根据 url pathnam 这种匹配来判断是否配置了 flashduty
         // 2024-03-05 排除掉事件墙的推送
-        return _.includes(item.url, '/event/push/alert/n9e') && !_.includes(item.url, '/api/v1/event/push/alert/n9e') && item.enable;
+        return _.includes(item.url, '/event/push/alert/spadex') && !_.includes(item.url, '/api/v1/event/push/alert/spadex') && item.enable;
       });
       setGlobalFlashdutyPushConfigured(globalFlashdutyPushConfigured);
       if (globalFlashdutyPushConfigured) {

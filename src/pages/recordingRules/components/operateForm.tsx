@@ -122,7 +122,7 @@ const operateForm: React.FC<Props> = ({ type, detail = {} }) => {
 
   return (
     <div>
-      <div className='n9e-border-base p2'>
+      <div className='spadex-border-base p2'>
         <Form
           form={form}
           className='strategy-form'

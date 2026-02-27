@@ -48,7 +48,7 @@ const MyBusiGroups: React.FC<MyBusiGroupsProps> = ({ data: externalData, loading
   const rawData = useExternalData ? externalData : data;
   const filteredData = useExternalData ? filterData(rawData, keyword) : rawData;
   const finalData = filteredData;
-  const finalLoading = useExternalData ? (externalLoading || false) : loading;
+  const finalLoading = useExternalData ? externalLoading || false : loading;
 
   const fetchData = async (searchKeyword?: string) => {
     if (useExternalData) {
@@ -63,7 +63,7 @@ const MyBusiGroups: React.FC<MyBusiGroupsProps> = ({ data: externalData, loading
       }
       return;
     }
-    
+
     setLoading(true);
     try {
       const finalKeyword = searchKeyword !== undefined ? searchKeyword : keyword;
@@ -101,23 +101,30 @@ const MyBusiGroups: React.FC<MyBusiGroupsProps> = ({ data: externalData, loading
     // 如果不使用外部数据，需要点击搜索按钮或按回车才会触发 API 调用
   };
 
+  const totalCount = rawData?.list?.length ?? 0;
+
   return (
     <Card
-      title="我的业务组"
+      title={
+        <>
+          我的业务组
+          <span className='workbench-card-title-count'>({totalCount})</span>
+        </>
+      }
       extra={
-        <Button icon={<ReloadOutlined />} size="small" onClick={() => fetchData()} loading={useExternalData ? refreshing : loading}>
+        <Button icon={<ReloadOutlined />} size='small' onClick={() => fetchData()} loading={useExternalData ? refreshing : loading}>
           刷新
         </Button>
       }
       style={{ marginBottom: 16 }}
     >
-      <Space direction="vertical" style={{ width: '100%' }} size="middle">
+      <Space direction='vertical' style={{ width: '100%' }} size='middle'>
         <Search
-          placeholder="搜索业务组名称"
+          placeholder='搜索业务组名称'
           value={keyword}
           onSearch={handleSearch}
           onChange={(e) => handleSearchChange(e.target.value)}
-          size="small"
+          size='small'
           allowClear
           enterButton={<SearchOutlined />}
         />

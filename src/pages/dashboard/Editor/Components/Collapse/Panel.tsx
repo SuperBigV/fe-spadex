@@ -31,21 +31,21 @@ export default function Panel(props: IProps) {
   return (
     <div
       className={classnames({
-        'n9e-collapse-item': true,
-        'n9e-collapse-item-active': isActive,
-        'n9e-collapse-item-inner': props.isInner,
+        'spadex-collapse-item': true,
+        'spadex-collapse-item-active': isActive,
+        'spadex-collapse-item-inner': props.isInner,
       })}
     >
       <div
-        className='n9e-collapse-header'
+        className='spadex-collapse-header'
         onClick={() => {
           setIsActive(!isActive);
         }}
       >
-        {isActive ? <DownOutlined className='n9e-collapse-arrow' /> : <RightOutlined className='n9e-collapse-arrow' />}
+        {isActive ? <DownOutlined className='spadex-collapse-arrow' /> : <RightOutlined className='spadex-collapse-arrow' />}
         {props.header}
         <div
-          className='n9e-collapse-extra'
+          className='spadex-collapse-extra'
           onClick={(e) => {
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
@@ -56,11 +56,11 @@ export default function Panel(props: IProps) {
       </div>
       <div
         className={classnames({
-          'n9e-collapse-content': true,
-          'n9e-collapse-content-hidden': !isActive,
+          'spadex-collapse-content': true,
+          'spadex-collapse-content-hidden': !isActive,
         })}
       >
-        <div className='n9e-collapse-content-box'>{props.children}</div>
+        <div className='spadex-collapse-content-box'>{props.children}</div>
       </div>
     </div>
   );

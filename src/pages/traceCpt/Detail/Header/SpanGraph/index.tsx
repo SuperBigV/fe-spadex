@@ -50,7 +50,7 @@ export default class SpanGraph extends React.PureComponent<SpanGraphProps> {
 
     const items = memoizedGetItems(trace);
     return (
-      <div className='n9e-fill-color-3' style={{ padding: '0px 8px 8px' }}>
+      <div className='spadex-fill-color-3' style={{ padding: '0px 8px 8px' }}>
         <TickLabels numTicks={TIMELINE_TICK_INTERVAL} duration={trace.duration} />
         <div style={{ width: '100%', position: 'relative' }}>
           <CanvasSpanGraph valueWidth={trace.duration} items={items} />

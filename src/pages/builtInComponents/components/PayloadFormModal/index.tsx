@@ -155,7 +155,7 @@ function index(props: Props & ModalWrapProps) {
           >
             <CodeMirror
               theme={darkMode ? 'dark' : 'light'}
-              className='n9e-border-base n9e-border-radius-base'
+              className='spadex-border-base spadex-border-radius-base'
               height='300px'
               basicSetup
               editable
@@ -185,7 +185,7 @@ function index(props: Props & ModalWrapProps) {
           >
             <CodeMirror
               theme={darkMode ? 'dark' : 'light'}
-              className='n9e-border-base n9e-border-radius-base'
+              className='spadex-border-base spadex-border-radius-base'
               height='300px'
               basicSetup
               editable

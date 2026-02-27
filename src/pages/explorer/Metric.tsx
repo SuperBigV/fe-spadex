@@ -40,7 +40,7 @@ const MetricExplorerPage = () => {
               return (
                 <div
                   key={panel.uuid}
-                  className='n9e-fill-color-2 n9e-border-base'
+                  className='spadex-fill-color-2 spadex-border-base'
                   style={{ padding: 16, maxHeight: 650, overflowY: 'auto', marginBottom: 16, position: 'relative', display: 'flex' }}
                 >
                   <Explorer type='metric' defaultCate='prometheus' panelIdx={idx} />

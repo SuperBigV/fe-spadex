@@ -72,8 +72,8 @@ export default function List(props: IProps) {
 
   return (
     <Collapse collapseLocalStorageKey='quick_view_list_collapse' widthLocalStorageKey='quick_view_list_width' defaultWidth={240} tooltip={t('list.title')}>
-      <div className='n9e-metric-views-list'>
-        <div className='n9e-metric-views-list-header'>
+      <div className='spadex-metric-views-list'>
+        <div className='spadex-metric-views-list-header'>
           <div className='metric-page-title'>{t('list.title')}</div>
           <a>
             <PlusSquareOutlined
@@ -99,7 +99,7 @@ export default function List(props: IProps) {
             setSearch(e.target.value);
           }}
         />
-        <div className='n9e-metric-views-list-content'>
+        <div className='spadex-metric-views-list-content'>
           {_.isEmpty(list)
             ? 'No Data'
             : _.map(
@@ -120,7 +120,7 @@ export default function List(props: IProps) {
                   return (
                     <div
                       className={classNames({
-                        'n9e-metric-views-list-content-item': true,
+                        'spadex-metric-views-list-content-item': true,
                         active: item.id === active,
                       })}
                       key={item.id}
@@ -144,11 +144,11 @@ export default function List(props: IProps) {
                       {item.cate === 1 || profile.admin ? (
                         <span>
                           {item.cate === 0 && (
-                            <span className='n9e-metric-views-list-content-item-cate' style={{ color: '#ccc' }}>
+                            <span className='spadex-metric-views-list-content-item-cate' style={{ color: '#ccc' }}>
                               {t('list.public')}
                             </span>
                           )}
-                          <div className='n9e-metric-views-list-content-item-opes'>
+                          <div className='spadex-metric-views-list-content-item-opes'>
                             <EditOutlined
                               onClick={(e) => {
                                 e.stopPropagation();

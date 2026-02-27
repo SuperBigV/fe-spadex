@@ -52,7 +52,7 @@ export default function index() {
   return (
     <PageLayout title={t('title')}>
       <div>
-        <div className='n9e-border-base pr2 pb2 pl2'>
+        <div className='spadex-border-base pr2 pb2 pl2'>
           <Tabs
             activeKey={activeKey}
             onChange={(val) => {

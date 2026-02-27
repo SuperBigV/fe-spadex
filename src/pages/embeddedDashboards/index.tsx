@@ -142,7 +142,7 @@ export default function index() {
                     setDashboardListDropdownVisible(visible);
                   }}
                   overlay={
-                    <div className='collects-payloads-dropdown-overlay p2 n9e-fill-color-2 n9e-border-base n9e-border-radius-base n9e-base-shadow'>
+                    <div className='collects-payloads-dropdown-overlay p2 spadex-fill-color-2 spadex-border-base spadex-border-radius-base spadex-base-shadow'>
                       <Input
                         className='mb1'
                         placeholder={t('common:search_placeholder')}

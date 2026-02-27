@@ -229,7 +229,7 @@ const Event: React.FC = () => {
       }
     >
       <div className='event-content'>
-        <div className='table-area n9e-border-base'>
+        <div className='table-area spadex-border-base'>
           {!query.ids && (
             <div className='table-operate-box'>
               <Space>

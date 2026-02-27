@@ -43,6 +43,7 @@ const WorkformConfig: React.FC = () => {
   const [typeEditId, setTypeEditId] = useState<number | null>(null);
   const [typeEditLoading, setTypeEditLoading] = useState(false);
   const [typeEditSubmitting, setTypeEditSubmitting] = useState(false);
+  const [typeEditRuleTargetName, setTypeEditRuleTargetName] = useState<string>('');
   const [typeGroupOptions, setTypeGroupOptions] = useState<{ id: number; name: string }[]>([]);
   const [typeForm] = Form.useForm();
   const [typeAddForm] = Form.useForm(); // 新建使用独立 form，避免与编辑 form 冲突导致 target_type/target_id 未收集
@@ -145,6 +146,7 @@ const WorkformConfig: React.FC = () => {
         setTypeGroupOptions(groupsRes?.list || []);
         return getAssignmentRule(typeEditId).then((rule: any) => {
           const targetId = rule?.target_type === 'user' && rule?.target_id != null ? Number(rule.target_id) : rule?.target_id;
+          setTypeEditRuleTargetName(rule?.target_name || '');
           typeForm.setFieldsValue({
             name: typeRes.name,
             description: typeRes.description,
@@ -176,10 +178,18 @@ const WorkformConfig: React.FC = () => {
       const { target_type, target_id, ...rest } = values;
       const payload = { ...rest, sort_order: rest.sort_order != null ? Number(rest.sort_order) : 0 };
       setTypeEditSubmitting(true);
+      const rulePayload =
+        target_type && target_id != null && target_id !== ''
+          ? {
+              target_type,
+              target_id: String(target_id),
+              target_name: target_type === 'user' ? userOptions.find((o) => o.value === target_id)?.label || typeEditRuleTargetName || '' : undefined,
+            }
+          : undefined;
       updateWorkOrderType(typeEditId, payload)
         .then(() => {
-          if (target_type && target_id) {
-            return setAssignmentRule(typeEditId, { target_type, target_id: String(target_id) });
+          if (rulePayload) {
+            return setAssignmentRule(typeEditId, rulePayload);
           }
           return Promise.resolve();
         })
@@ -226,12 +236,20 @@ const WorkformConfig: React.FC = () => {
       const { target_type, target_id, ...rest } = values;
       const payload = { ...rest, sort_order: rest.sort_order != null ? Number(rest.sort_order) : 0 };
       setTypeAddSubmitting(true);
+      const rulePayload =
+        target_type && target_id != null && target_id !== ''
+          ? {
+              target_type,
+              target_id: String(target_id),
+              target_name: target_type === 'user' ? userOptions.find((o) => o.value === target_id)?.label || '' : undefined,
+            }
+          : undefined;
       createWorkOrderType(payload)
         .then((res: any) => {
           // const newId = res?.id;
           const newId = res?.id ?? res;
-          if (newId != null && target_type && target_id != null && target_id !== '') {
-            return setAssignmentRule(newId, { target_type, target_id: String(target_id) });
+          if (newId != null && rulePayload) {
+            return setAssignmentRule(newId, rulePayload);
           }
           return Promise.resolve();
         })

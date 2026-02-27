@@ -13,8 +13,8 @@ tar zxvf categraf_ent-v0.3.94-linux-amd64.tar.gz
 providers = ["local","http"]
 
 [http_provider]
-# 將 ${n9e_ip} 替換為 n9e 的實際位址
-remote_url = "http://${n9e_ip}:17000/v1/n9e-plus/collects"
+# 將 ${spadex_ip} 替換為 spadex 的實際位址
+remote_url = "http://${spadex_ip}:17000/v1/spadex-plus/collects"
 ```
 
 ### 3. 啟動 categraf 採集器

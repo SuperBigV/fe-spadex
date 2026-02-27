@@ -36,12 +36,12 @@ import { Tpl } from './interface';
 import BindTags from './bindTags';
 import UnBindTags from './unBindTags';
 
-const N9E_GIDS_LOCALKEY = 'N9E_TASK_TPL_NODE_ID';
+const spadex_GIDS_LOCALKEY = 'spadex_TASK_TPL_NODE_ID';
 
 function getTableData(options: any, gids: string | undefined, query: string) {
   if (gids) {
     const ids = gids === '-2' ? undefined : gids;
-    return request(`/api/n9e/busi-groups/task-tpls`, {
+    return request(`/api/spadex/busi-groups/task-tpls`, {
       method: RequestMethod.Get,
       params: {
         gids: ids,
@@ -61,7 +61,7 @@ const index = (_props: any) => {
   const [query, setQuery] = useState('');
   const { busiGroups, businessGroup } = useContext(CommonStateContext);
   const [selectedIds, setSelectedIds] = useState([] as any[]);
-  const [gids, setGids] = useState<string | undefined>(getDefaultGids(N9E_GIDS_LOCALKEY, businessGroup));
+  const [gids, setGids] = useState<string | undefined>(getDefaultGids(spadex_GIDS_LOCALKEY, businessGroup));
   const { tableProps, refresh } = useAntdTable<any, any>((options) => getTableData(options, gids, query), {
     refreshDeps: [gids, query],
     debounceWait: 300,
@@ -199,9 +199,9 @@ const index = (_props: any) => {
       }
     >
       <div style={{ display: 'flex' }}>
-        <BusinessGroupSideBarWithAll gids={gids} setGids={setGids} localeKey={N9E_GIDS_LOCALKEY} allOptionLabel={t('common:tpl.allOptionLabel')} />
+        <BusinessGroupSideBarWithAll gids={gids} setGids={setGids} localeKey={spadex_GIDS_LOCALKEY} allOptionLabel={t('common:tpl.allOptionLabel')} />
         {gids ? (
-          <div className='n9e-border-base p2' style={{ flex: 1 }}>
+          <div className='spadex-border-base p2' style={{ flex: 1 }}>
             <Row>
               <Col span={14} className='mb10'>
                 <Input

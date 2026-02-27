@@ -16,7 +16,7 @@ export default function PrometheusV2() {
     <>
       <Form.List name={name}>
         {(fields, { add, remove }) => (
-          <div className='n9e-alert-relabel-list'>
+          <div className='spadex-alert-relabel-list'>
             {fields.map((field) => (
               <RelabelItem key={field.key} prefixName={name} field={field} remove={remove} />
             ))}

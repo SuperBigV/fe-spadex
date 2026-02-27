@@ -21,7 +21,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 import PageLayout, { HelpLink } from '@/components/pageLayout';
-import { getN9EServers } from '@/services/help';
+import { getspadexServers } from '@/services/help';
 import { CommonStateContext } from '@/App';
 import SystemInfoSvg from '../../../../public/image/system-info.svg';
 import localeCompare from '@/pages/dashboard/Renderer/utils/localeCompare';
@@ -119,7 +119,7 @@ export default function Servers() {
     },
   ];
   const fetchData = () => {
-    getN9EServers()
+    getspadexServers()
       .then((res) => {
         setData(convertDataToRowSpan(res.dat, columns));
       })
@@ -143,7 +143,7 @@ export default function Servers() {
       }
     >
       <div>
-        <div className='n9e-border-base' style={{ padding: 20 }}>
+        <div className='spadex-border-base' style={{ padding: 20 }}>
           {profile.admin ? (
             <div>
               <Table bordered size='small' rowKey='id' tableLayout='fixed' loading={loading} dataSource={data} pagination={false} columns={columns} />

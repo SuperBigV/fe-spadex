@@ -26,7 +26,7 @@ import ServerList from './List/server';
 import NetworkList from './List/network';
 import BusinessGroup from '../assetModels/BusinessGroup';
 import BusinessGroup2, { getCleanAssetModelIds } from '@/components/BusinessGroup2';
-import { CmdbLifecycle, N9eLifecycle, initTarget, getJumpBusiGroups, getTargetTags, fetchInitLog, bindTargetsTags, unbindTargetsTags } from './services';
+import { CmdbLifecycle, spadexLifecycle, initTarget, getJumpBusiGroups, getTargetTags, fetchInitLog, bindTargetsTags, unbindTargetsTags } from './services';
 import './locale';
 import './index.less';
 export { BusinessGroup }; // TODO 部分页面使用的老的业务组组件，后续逐步替换
@@ -120,7 +120,7 @@ const OperationModal: React.FC<OperateionModalProps> = ({ operateType, setOperat
     };
   }, [timer]);
   const AssetLifecycle = (data) => {
-    N9eLifecycle(data).then((res) => {
+    spadexLifecycle(data).then((res) => {
       if (res.err !== '') {
         message.error(res.err);
       } else {
@@ -462,7 +462,7 @@ const Targets: React.FC = () => {
           }}
         />
         <div
-          className='table-area n9e-border-base'
+          className='table-area spadex-border-base'
           style={{
             height: '100%',
             overflowY: 'auto',

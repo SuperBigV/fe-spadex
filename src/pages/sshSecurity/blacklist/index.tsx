@@ -156,10 +156,7 @@ export default function BlacklistPage() {
         <Space>
           <span>{text}</span>
           <Tooltip title={t('copy_command')}>
-            <CopyOutlined
-              onClick={() => handleCopyCommand(text)}
-              style={{ cursor: 'pointer', color: '#1890ff' }}
-            />
+            <CopyOutlined onClick={() => handleCopyCommand(text)} style={{ cursor: 'pointer', color: '#1890ff' }} />
           </Tooltip>
         </Space>
       ),
@@ -169,11 +166,7 @@ export default function BlacklistPage() {
       dataIndex: 'match_type',
       key: 'match_type',
       width: 100,
-      render: (type: string) => (
-        <Tag color={type === 'exact' ? 'blue' : 'orange'}>
-          {type === 'exact' ? t('exact_match') : t('regex_match')}
-        </Tag>
-      ),
+      render: (type: string) => <Tag color={type === 'exact' ? 'blue' : 'orange'}>{type === 'exact' ? t('exact_match') : t('regex_match')}</Tag>,
     },
     {
       title: t('pattern'),
@@ -194,12 +187,7 @@ export default function BlacklistPage() {
       key: 'enabled',
       width: 100,
       render: (enabled: boolean, record: BlacklistItem) => (
-        <Switch
-          checked={enabled}
-          checkedChildren={t('switch_enabled')}
-          unCheckedChildren={t('switch_disabled')}
-          onChange={(checked) => handleStatusChange(record, checked)}
-        />
+        <Switch checked={enabled} checkedChildren={t('switch_enabled')} unCheckedChildren={t('switch_disabled')} onChange={(checked) => handleStatusChange(record, checked)} />
       ),
     },
     {
@@ -242,20 +230,10 @@ export default function BlacklistPage() {
       fixed: 'right',
       render: (_: any, record: BlacklistItem) => (
         <Space size='middle'>
-          <Button
-            type='link'
-            size='small'
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
+          <Button type='link' size='small' icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             {t('edit')}
           </Button>
-          <Popconfirm
-            title={t('confirm_delete')}
-            onConfirm={() => handleDelete(record.id)}
-            okText='确定'
-            cancelText='取消'
-          >
+          <Popconfirm title={t('confirm_delete')} onConfirm={() => handleDelete(record.id)} okText='确定' cancelText='取消'>
             <Button type='link' size='small' danger icon={<DeleteOutlined />}>
               {t('delete')}
             </Button>
@@ -269,7 +247,7 @@ export default function BlacklistPage() {
     <PageLayout title={t('title')}>
       <div>
         <div
-          className='n9e-border-base'
+          className='spadex-border-base'
           style={{
             padding: 16,
           }}
@@ -286,13 +264,7 @@ export default function BlacklistPage() {
                   onChange={(e) => setKeyword(e.target.value)}
                   onPressEnter={handleSearch}
                 />
-                <Select
-                  placeholder={t('status_filter')}
-                  style={{ width: 120 }}
-                  allowClear
-                  value={enabledFilter}
-                  onChange={(value) => setEnabledFilter(value)}
-                >
+                <Select placeholder={t('status_filter')} style={{ width: 120 }} allowClear value={enabledFilter} onChange={(value) => setEnabledFilter(value)}>
                   <Option value='true'>{t('enabled')}</Option>
                   <Option value='false'>{t('disabled')}</Option>
                 </Select>
@@ -326,4 +298,3 @@ export default function BlacklistPage() {
     </PageLayout>
   );
 }
-

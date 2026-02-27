@@ -18,40 +18,40 @@ import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 
 export const getSubscribeList = function (params: { id: number }) {
-  return request(`/api/n9e/busi-group/${params.id}/alert-subscribes`, {
+  return request(`/api/spadex/busi-group/${params.id}/alert-subscribes`, {
     method: RequestMethod.Get,
   });
 };
 
 export const getBusiGroupsAlertSubscribes = function (gids?: string) {
-  return request('/api/n9e/busi-groups/alert-subscribes', {
+  return request('/api/spadex/busi-groups/alert-subscribes', {
     method: RequestMethod.Get,
     params: { gids },
   });
 };
 
 export const getSubscribeData = function (subscribeId: number) {
-  return request(`/api/n9e/alert-subscribe/${subscribeId}`, {
+  return request(`/api/spadex/alert-subscribe/${subscribeId}`, {
     method: RequestMethod.Get,
   });
 };
 
 export const addSubscribe = function (data: any, busiId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-subscribes`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-subscribes`, {
     method: RequestMethod.Post,
     data,
   });
 };
 
 export const editSubscribe = function (data: any, busiId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-subscribes`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-subscribes`, {
     method: RequestMethod.Put,
     data,
   });
 };
 
 export const deleteSubscribes = function (data: { ids: number[] }, busiId: number) {
-  return request(`/api/n9e/busi-group/${busiId}/alert-subscribes`, {
+  return request(`/api/spadex/busi-group/${busiId}/alert-subscribes`, {
     method: RequestMethod.Delete,
     data,
   });

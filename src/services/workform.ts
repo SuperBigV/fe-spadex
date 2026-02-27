@@ -31,7 +31,7 @@ export const deleteWorkOrderType = (id: number) => request(`${PREFIX}/work-order
 export const getAssignmentRule = (workOrderTypeId: number) =>
   request(`${PREFIX}/work-order-types/${workOrderTypeId}/assignment-rule`, { method: 'GET' }).then((res: any) => unwrap(res));
 
-export const setAssignmentRule = (workOrderTypeId: number, data: { target_type: string; target_id: string }) =>
+export const setAssignmentRule = (workOrderTypeId: number, data: { target_type: string; target_id: string; target_name?: string }) =>
   request(`${PREFIX}/work-order-types/${workOrderTypeId}/assignment-rule`, { method: 'PUT', data }).then((res: any) => unwrap(res));
 
 // 处理组
@@ -75,7 +75,7 @@ export const supplementWorkOrder = (id: number, data: { description_append?: str
 
 export const claimWorkOrder = (id: number) => request(`${PREFIX}/work-orders/${id}/claim`, { method: 'POST' }).then((res: any) => unwrap(res));
 
-export const assignWorkOrder = (id: number, data: { target_type: string; target_id: string; remark?: string }) =>
+export const assignWorkOrder = (id: number, data: { target_type: string; target_id: string; target_name?: string; remark?: string }) =>
   request(`${PREFIX}/work-orders/${id}/assign`, { method: 'POST', data }).then((res: any) => unwrap(res));
 
 export const startWorkOrder = (id: number) => request(`${PREFIX}/work-orders/${id}/start`, { method: 'POST' }).then((res: any) => unwrap(res));

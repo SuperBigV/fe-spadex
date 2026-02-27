@@ -295,7 +295,7 @@ const Targets: React.FC = () => {
           }}
         />
         <div
-          className='table-area n9e-border-base'
+          className='table-area spadex-border-base'
           style={{
             height: '100%',
             overflowY: 'auto',

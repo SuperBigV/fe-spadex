@@ -10,7 +10,7 @@ export interface Versions {
 }
 
 export const getVersions = function (): Promise<Versions> {
-  return request('/api/n9e/versions', {
+  return request('/api/spadex/versions', {
     method: RequestMethod.Get,
   }).then((res) => {
     const data = _.isPlainObject(res.dat) ? res.dat : {};

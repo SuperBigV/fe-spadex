@@ -26,7 +26,7 @@ export const getGidDetail = (id: string) => {
 };
 
 export const getAlertRulePure = (id: number) => {
-  return request(`/api/n9e/alert-rule/${id}/pure`, {
+  return request(`/api/spadex/alert-rule/${id}/pure`, {
     method: RequestMethod.Get,
     silence: true,
   }).then((res) => res.dat);
@@ -37,7 +37,7 @@ export function fetchInitLog(id) {
   });
 }
 export const rulesClone = (gid, data) => {
-  return request(`/api/n9e/busi-group/${gid}/alert-rules/clone`, {
+  return request(`/api/spadex/busi-group/${gid}/alert-rules/clone`, {
     method: RequestMethod.Post,
     data,
   }).then((res) => res.dat);
@@ -57,8 +57,8 @@ export function CmdbLifecycle(data) {
   });
 }
 
-export function N9eLifecycle(data) {
-  return request(`/api/n9e/targets/lifecycle`, {
+export function spadexLifecycle(data) {
+  return request(`/api/spadex/targets/lifecycle`, {
     method: RequestMethod.Post,
     data,
   });
@@ -88,7 +88,7 @@ export function unbindTagsCMDB(data) {
   return bindOrUnbindTags(false, data);
 }
 export function getTargetTags(params) {
-  return request(`/api/n9e/targets/tags`, {
+  return request(`/api/spadex/targets/tags`, {
     method: RequestMethod.Get,
     params,
   });

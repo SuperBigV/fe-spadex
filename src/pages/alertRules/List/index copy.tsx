@@ -574,7 +574,7 @@ export default function List(props: ListProps) {
 
   const filteredData = filterData();
   return (
-    <div className='n9e-border-base alert-rules-list-container' style={{ height: '100%', overflowY: 'auto' }}>
+    <div className='spadex-border-base alert-rules-list-container' style={{ height: '100%', overflowY: 'auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
         <Space>
           <RefreshIcon

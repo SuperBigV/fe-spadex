@@ -86,6 +86,11 @@ export default function Login() {
     authLogin(username, authPassWord, captchaidRef.current!, verifyvalue)
       .then((res) => {
         const { dat, err } = res;
+        //{err: '用户名或密码错误', success: true} 提示用户名或密码错误
+        if (err) {
+          message.error(err);
+          return;
+        }
         const { access_token, refresh_token } = dat;
         localStorage.setItem(AccessTokenKey, access_token);
         localStorage.setItem('refresh_token', refresh_token);

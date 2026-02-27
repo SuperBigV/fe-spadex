@@ -21,7 +21,7 @@ export { convertDashboardV1ToV2 } from '../../help/migrate/utils';
 import { JSONParse } from '../utils';
 import moment from 'moment';
 export { JSONParse } from '../utils';
-export { convertDashboardGrafanaToN9E, checkGrafanaDashboardVersion } from '../utils';
+export { convertDashboardGrafanaTospadex, checkGrafanaDashboardVersion } from '../utils';
 
 export function exportDataStringify(data: any) {
   return JSON.stringify(

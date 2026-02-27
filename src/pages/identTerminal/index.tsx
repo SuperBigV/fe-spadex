@@ -264,7 +264,7 @@ const Xterm = () => {
     {
       title: '名称',
       dataIndex: 'name',
-      className: 'n9e-hosts-table-column-ident',
+      className: 'spadex-hosts-table-column-ident',
     },
     {
       title: '类型',
@@ -329,7 +329,7 @@ const Xterm = () => {
   return (
     <PageLayout icon={<DatabaseOutlined />} title={'资产终端'}>
       <div
-        className='n9e-border-base'
+        className='spadex-border-base'
         style={{
           padding: 16,
         }}

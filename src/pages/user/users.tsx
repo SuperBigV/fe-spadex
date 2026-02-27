@@ -286,7 +286,7 @@ const Resource: React.FC = () => {
       icon={<UserOutlined />}
     >
       <div className='user-manage-content'>
-        <div className='user-content n9e-border-base'>
+        <div className='user-content spadex-border-base'>
           <Row className='event-table-search'>
             <div className='event-table-search-left'>
               <Space>

@@ -38,13 +38,13 @@ export { default as Add } from './add';
 export { default as Edit } from './edit';
 
 const { confirm } = Modal;
-const N9E_GIDS_LOCALKEY = 'n9e_mutes_gids';
+const spadex_GIDS_LOCALKEY = 'spadex_mutes_gids';
 
 const Shield: React.FC = () => {
   const { t } = useTranslation('alertMutes');
   const history = useHistory();
   const { datasourceList, groupedDatasourceList, businessGroup, busiGroups } = useContext(CommonStateContext);
-  const [gids, setGids] = useState<string | undefined>(getDefaultGids(N9E_GIDS_LOCALKEY, businessGroup));
+  const [gids, setGids] = useState<string | undefined>(getDefaultGids(spadex_GIDS_LOCALKEY, businessGroup));
   const [query, setQuery] = useState<string>('');
   const [currentShieldDataAll, setCurrentShieldDataAll] = useState<Array<shieldItem>>([]);
   const [currentShieldData, setCurrentShieldData] = useState<Array<shieldItem>>([]);
@@ -335,8 +335,8 @@ const Shield: React.FC = () => {
   return (
     <PageLayout title={t('title')} icon={<CloseCircleOutlined />}>
       <div className='shield-content'>
-        <BusinessGroupSideBarWithAll gids={gids} setGids={setGids} localeKey={N9E_GIDS_LOCALKEY} />
-        <div className='shield-index n9e-border-base' style={{ height: '100%', overflowY: 'auto' }}>
+        <BusinessGroupSideBarWithAll gids={gids} setGids={setGids} localeKey={spadex_GIDS_LOCALKEY} />
+        <div className='shield-index spadex-border-base' style={{ height: '100%', overflowY: 'auto' }}>
           <div className='header'>
             <Space>
               <RefreshIcon

@@ -49,7 +49,7 @@ export default function index(props: Props) {
     datasourceValue,
     query,
     historicalRecords,
-    url = '/api/n9e',
+    url = '/api/spadex',
     headers,
     value,
     onChange,

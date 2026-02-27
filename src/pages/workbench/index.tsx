@@ -17,7 +17,10 @@ const Workbench: React.FC = () => {
   const [timeRange, setTimeRange] = useState<'1h' | '6h' | '24h' | '7d'>('24h');
   const [busiGroupIds, setBusiGroupIds] = useState<number[]>([]);
 
-  const { overviewData, assetsData, alertsData, busiGroupsData, loading, refresh, refreshAssets, refreshAlerts, refreshBusiGroups } = useWorkbenchData({ timeRange, busiGroupIds });
+  const { overviewData, assetsData, alertsData, busiGroupsData, loading, refresh, refreshAssets, refreshAlerts, refreshBusiGroups, assetPage, assetPageSize } = useWorkbenchData({
+    timeRange,
+    busiGroupIds,
+  });
 
   // 启用自动刷新（每30秒）
   useAutoRefresh({
@@ -40,7 +43,7 @@ const Workbench: React.FC = () => {
           {/* 左侧栏：我的资产 */}
           <Col xs={24} sm={24} md={8} lg={6} xl={6}>
             <div className='workbench-content-item'>
-              <MyAssets data={assetsData} loading={loading} onRefresh={refreshAssets} />
+              <MyAssets data={assetsData} loading={loading} onRefresh={refreshAssets} externalPage={assetPage} externalPageSize={assetPageSize} />
             </div>
           </Col>
 

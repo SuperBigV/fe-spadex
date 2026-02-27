@@ -67,7 +67,7 @@ export default function Metrics(props: IProps) {
     return (
       <div className='tabPane' style={{ height: 240, overflow: 'auto' }}>
         {filtered.length ? (
-          <ul className='n9e-metric-views-metrics-content' style={{ border: 'none' }}>
+          <ul className='spadex-metric-views-metrics-content' style={{ border: 'none' }}>
             {_.map(filtered, (metric, i) => {
               return (
                 <li
@@ -123,9 +123,9 @@ export default function Metrics(props: IProps) {
   }, [match.id, matchStr]);
 
   return (
-    <div className='n9e-metric-views-metrics'>
+    <div className='spadex-metric-views-metrics'>
       <div>
-        <div className='n9e-metric-views-metrics-header'>
+        <div className='spadex-metric-views-metrics-header'>
           {parentSource === 'srm' ? (
             <div className='page-title' style={{ margin: 0 }}>
               {t('metrics.title')}

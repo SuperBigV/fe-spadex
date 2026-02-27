@@ -43,7 +43,7 @@ import './locale';
 export const pageSizeOptions = ['10', '20', '50', '100'];
 import { targetControlPost } from '@/pages/assets/List/services';
 import ControlModal from '@/pages/assets/List/ControlModal';
-import { CmdbLifecycle, N9eLifecycle } from '@/pages/assets/services';
+import { CmdbLifecycle, spadexLifecycle } from '@/pages/assets/services';
 enum OperateType {
   BindTag = 'bindTag',
   UnbindTag = 'unbindTag',
@@ -197,7 +197,7 @@ export default function List(props: IProps) {
       ),
       dataIndex: 'ident',
       width: 200,
-      className: 'n9e-hosts-table-column-ident',
+      className: 'spadex-hosts-table-column-ident',
       render: (text, record) => {
         return (
           <Space>
@@ -225,7 +225,7 @@ export default function List(props: IProps) {
         title: t('host_ip'),
         width: 140,
         dataIndex: 'host_ip',
-        className: 'n9e-hosts-table-column-ip',
+        className: 'spadex-hosts-table-column-ip',
       });
     }
     // if (item.name === 'ident_type') {
@@ -233,7 +233,7 @@ export default function List(props: IProps) {
     //     title: '类型',
     //     dataIndex: 'ident_type',
     //     width: 80,
-    //     className: 'n9e-hosts-table-column-ip',
+    //     className: 'spadex-hosts-table-column-ip',
     //     render(typ) {
     //       return (
     //         <Tag color='purple' key={typ}>
@@ -289,7 +289,7 @@ export default function List(props: IProps) {
     //     ),
     //     width: 100,
     //     dataIndex: 'host_tags',
-    //     className: 'n9e-hosts-table-column-tags',
+    //     className: 'spadex-hosts-table-column-tags',
     //     ellipsis: {
     //       showTitle: false,
     //     },
@@ -334,7 +334,7 @@ export default function List(props: IProps) {
         ),
         width: 120,
         dataIndex: 'tags',
-        className: 'n9e-hosts-table-column-tags',
+        className: 'spadex-hosts-table-column-tags',
         ellipsis: {
           showTitle: false,
         },
@@ -371,7 +371,7 @@ export default function List(props: IProps) {
       columns.push({
         title: t('group_obj'),
         dataIndex: 'group_objs',
-        className: 'n9e-hosts-table-column-tags',
+        className: 'spadex-hosts-table-column-tags',
         ellipsis: {
           showTitle: false,
         },
@@ -693,7 +693,7 @@ export default function List(props: IProps) {
       idents: [row.ident],
       lifeStatus: life_status,
     };
-    N9eLifecycle(data).then((res) => {
+    spadexLifecycle(data).then((res) => {
       if (res.err !== '') {
         message.error(res.err);
       } else {
@@ -894,7 +894,7 @@ export default function List(props: IProps) {
         </Space>
       </div>
       <Table
-        className='mt8 n9e-hosts-table'
+        className='mt8 spadex-hosts-table'
         rowKey='id'
         columns={columns}
         size='small'

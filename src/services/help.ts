@@ -17,8 +17,8 @@
 import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 
-export const getN9EServers = function () {
-  return request('/api/n9e/servers', {
+export const getspadexServers = function () {
+  return request('/api/spadex/servers', {
     method: RequestMethod.Get,
   });
 };

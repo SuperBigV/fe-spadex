@@ -175,7 +175,7 @@ export default function TableCpt(props: IProps) {
   });
 
   return (
-    <div className='n9e-border-base' style={{ padding: 16, width: '100%', overflowY: 'auto' }}>
+    <div className='spadex-border-base' style={{ padding: 16, width: '100%', overflowY: 'auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <Title level={2} style={{ margin: 0 }}>
           <DesktopOutlined /> {t('当前告警事件')}

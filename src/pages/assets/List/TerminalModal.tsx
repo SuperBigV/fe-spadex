@@ -219,7 +219,7 @@ const TerminalModal: React.FC<TerminalModalProps> = ({ visible, onCancel, assetI
     {
       title: '名称',
       dataIndex: 'name',
-      className: 'n9e-hosts-table-column-ident',
+      className: 'spadex-hosts-table-column-ident',
     },
     {
       title: '类型',
@@ -291,7 +291,7 @@ const TerminalModal: React.FC<TerminalModalProps> = ({ visible, onCancel, assetI
         bodyStyle={{ padding: 16, height: 'calc(100vh - 100px)' }}
       >
         <div
-          className='n9e-border-base'
+          className='spadex-border-base'
           style={{
             padding: 16,
             height: '100%',

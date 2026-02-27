@@ -40,7 +40,7 @@ const AssetList: React.FC<AssetListProps> = ({ data, loading }) => {
           style={{ cursor: 'pointer', padding: '12px' }}
           onClick={() => {
             // 跳转到资产详情
-            history.push(`/targets?id=${item.id}`);
+            // history.push(`/targets?id=${item.id}`);
           }}
         >
           <List.Item.Meta
@@ -52,20 +52,18 @@ const AssetList: React.FC<AssetListProps> = ({ data, loading }) => {
               </Space>
             }
             description={
-              <Space direction="vertical" size="small">
-                <Text type="secondary">IP: {item.ip}</Text>
-                {item.busiGroupName && (
-                  <Tag color="blue">{item.busiGroupName}</Tag>
-                )}
+              <Space direction='vertical' size='small'>
+                <Text type='secondary'>IP: {item.ip}</Text>
+                {item.busiGroupName && <Tag color='blue'>{item.busiGroupName}</Tag>}
                 {(item.cpuUsage !== undefined || item.memoryUsage !== undefined) && (
-                  <Space size="small">
+                  <Space size='small'>
                     {item.cpuUsage !== undefined && (
-                      <Text type="secondary" style={{ fontSize: '12px' }}>
+                      <Text type='secondary' style={{ fontSize: '12px' }}>
                         CPU: {item.cpuUsage.toFixed(1)}%
                       </Text>
                     )}
                     {item.memoryUsage !== undefined && (
-                      <Text type="secondary" style={{ fontSize: '12px' }}>
+                      <Text type='secondary' style={{ fontSize: '12px' }}>
                         内存: {item.memoryUsage.toFixed(1)}%
                       </Text>
                     )}

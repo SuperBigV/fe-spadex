@@ -41,9 +41,9 @@ import { exportDataStringify } from './utils';
 import PublicForm from './PublicForm';
 import './style.less';
 
-const N9E_GIDS_LOCALKEY = 'N9E_BOARD_NODE_ID';
-const SEARCH_LOCAL_STORAGE_KEY = 'n9e_dashboard_search';
-const PUBLIC_SELECT_GIDS_LOCALKEY = 'N9E_PUBLIC_SELECT_GIDS';
+const spadex_GIDS_LOCALKEY = 'spadex_BOARD_NODE_ID';
+const SEARCH_LOCAL_STORAGE_KEY = 'spadex_dashboard_search';
+const PUBLIC_SELECT_GIDS_LOCALKEY = 'spadex_PUBLIC_SELECT_GIDS';
 const getDefaultPublicSelectGids = (localKey: string) => {
   const valueStr = localStorage.getItem(localKey);
   const value = valueStr ? _.map(_.split(valueStr, ','), _.toNumber) : [];
@@ -53,7 +53,7 @@ const getDefaultPublicSelectGids = (localKey: string) => {
 export default function index() {
   const { t } = useTranslation('dashboard');
   const { businessGroup, perms } = useContext(CommonStateContext);
-  const [gids, setGids] = useState<string | undefined>(getDefaultGidsInDashboard(N9E_GIDS_LOCALKEY, businessGroup));
+  const [gids, setGids] = useState<string | undefined>(getDefaultGidsInDashboard(spadex_GIDS_LOCALKEY, businessGroup));
   const [list, setList] = useState<any[]>([]);
   const [selectRowKeys, setSelectRowKeys] = useState<number[]>([]);
   const [refreshKey, setRefreshKey] = useState(_.uniqueId('refreshKey_'));
@@ -107,13 +107,13 @@ export default function index() {
         <BusinessGroupSideBarWithAll
           gids={gids}
           setGids={setGids}
-          localeKey={N9E_GIDS_LOCALKEY}
+          localeKey={spadex_GIDS_LOCALKEY}
           showPublicOption={_.includes(perms, '/public-dashboards')}
           publicOptionLabel={t('default_filter.public')}
           allOptionLabel={t('default_filter.all')}
           allOptionTooltip={t('default_filter.all_tip')}
         />
-        <div className='n9e-border-base dashboards-v2'>
+        <div className='spadex-border-base dashboards-v2'>
           <Header
             gids={gids}
             selectRowKeys={selectRowKeys}

@@ -5,7 +5,7 @@ import { IRawTimeRange, parseRange } from '@/components/TimeRangePicker';
 import { getDsQuery, getESVersion } from '@/services/warning';
 import { fetchHistoryRangeBatch2 } from '@/services/dashboardV2';
 import { flattenHits } from '@/pages/explorer/Elasticsearch/utils';
-import { N9E_PATHNAME, IS_PLUS } from '@/utils/constant';
+import { spadex_PATHNAME, IS_PLUS } from '@/utils/constant';
 import { ITarget } from '../../../types';
 import { IVariable } from '../../../VariableConfig/definition';
 import { replaceExpressionVars } from '../../../VariableConfig/constant';
@@ -216,7 +216,7 @@ export default async function elasticSearchQuery(options: IOptions): Promise<Res
         resolveData.query.push({
           type: 'TimeSeries',
           request: {
-            url: `/api/${N9E_PATHNAME}/proxy/${datasourceValue}/_msearch`,
+            url: `/api/${spadex_PATHNAME}/proxy/${datasourceValue}/_msearch`,
             method: 'POST',
             data: dsPlayload,
           },
@@ -227,7 +227,7 @@ export default async function elasticSearchQuery(options: IOptions): Promise<Res
         resolveData.query.push({
           type: 'Logs',
           request: {
-            url: `/api/${N9E_PATHNAME}/proxy/${datasourceValue}/_msearch`,
+            url: `/api/${spadex_PATHNAME}/proxy/${datasourceValue}/_msearch`,
             method: 'POST',
             data: logPlayload,
           },

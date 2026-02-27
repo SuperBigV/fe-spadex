@@ -2,7 +2,7 @@ import request from '@/utils/request';
 import { RequestMethod } from '@/store/common';
 
 export function getDsQuery(params, silence = true) {
-  return request('/api/n9e/ds-query', {
+  return request('/api/spadex/ds-query', {
     method: RequestMethod.Post,
     data: params,
     headers: {
@@ -13,7 +13,7 @@ export function getDsQuery(params, silence = true) {
 }
 
 export function getLogsQuery(params) {
-  return request('/api/n9e/logs-query', {
+  return request('/api/spadex/logs-query', {
     method: RequestMethod.Post,
     data: params,
     headers: {
@@ -24,7 +24,7 @@ export function getLogsQuery(params) {
 }
 
 export function getBusiScrapeInfo(datasourceValue, bgid) {
-  return request('/api/n9e/busi-scrape/sls', {
+  return request('/api/spadex/busi-scrape/sls', {
     method: RequestMethod.Get,
     params: {
       gid: bgid,
